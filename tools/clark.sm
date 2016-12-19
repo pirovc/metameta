@@ -1,0 +1,18 @@
+rule clark_run_1:
+	input:
+		fq1="{sample}/reads/clark.1.fq",
+		fq2="{sample}/reads/clark.2.fq",
+		dbcheck=config['dbdir'] + "clark_db_check.done"
+	output:	"{sample}/clark/{sample}.results.csv"
+	log: "{sample}/log/clark_run_1.log"
+	benchmark: "{sample}/log/clark_run_1.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/clark.yaml")
+	shell: "{tool_path[clark]}CLARK -T {db_path[clark]}targets.txt -D {db_path[clark]}bacteria_0/ -P {input.fq1} {input.fq2} -R {wildcards.sample}/clark/{wildcards.sample}.results -n {threads} > {log} 2>&1"
+
+rule clark_rpt:
+	input: "{sample}/clark/{sample}.results.csv"
+	output: "{sample}/profiles/clark.profile.out"
+	log: "{sample}/log/clark_rpt.log"
+	benchmark: "{sample}/log/clark_rpt.time"
+	shell: """awk -F "," 'NR>1 {{if($3!="NA") print $1"\t"$3"\t"$2}}' {input} > {output} 2> {log}"""

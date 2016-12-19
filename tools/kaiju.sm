@@ -1,0 +1,19 @@
+rule kaiju_run_1:
+	input:
+		fq1="{sample}/reads/kaiju.1.fq",
+		fq2="{sample}/reads/kaiju.2.fq",
+		dbcheck=config['dbdir'] + "kaiju_db_check.done"
+	output: "{sample}/kaiju/{sample}.results.out"
+	log: "{sample}/log/kaiju_run_1.log"
+	benchmark: "{sample}/log/kaiju_run_1.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/kaiju.yaml")
+	shell: "{tool_path[kaiju]}kaiju -v -z {threads} -f {db_path[kaiju]}kaiju_db.fmi -t {db_path[kaiju]}nodes.dmp -i {input.fq1} -j {input.fq2} -o {output} > {log} 2>&1"
+
+rule kaiju_rpt:
+	input: "{sample}/kaiju/{sample}.results.out"
+	output: "{sample}/profiles/kaiju.profile.out"
+	log: "{sample}/log/kaiju_rpt.log"
+	benchmark: "{sample}/log/kaiju_rpt.time"
+	shell: """awk '{{if($1=="C") print $2"\t"$3"\t"($4*3*2)}}' {input} > {output} 2> {log}"""
+

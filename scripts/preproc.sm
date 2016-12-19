@@ -1,0 +1,88 @@
+subsample_path=srcdir("randomReadSubSample.py")
+
+## .gz -> define dict. of suffix for gzipped files
+#gz = {}
+#for sample,fq in config["samples"].items():	
+#	gz[(sample,1)] = ".gz" if fq["fq1"].endswith(".gz") else ""
+#	gz[(sample,2)] = ".gz" if fq["fq2"].endswith(".gz") else ""
+#print(gz)
+
+gz = ".gz" if config["gzipped"] else ""
+
+#print(config["samples"])
+
+rule trim_reads:
+	input:
+		# from sample (target) to real read file names 
+		# Processed reads (targets) have the sample name as prefix, so it's necessary to retrieve the fq names from the config file
+		fq1=lambda wildcards: config["samples"][wildcards.sample]["fq1"],
+		fq2=lambda wildcards: config["samples"][wildcards.sample]["fq2"]
+	output:
+		fq1="{sample}/reads/pre1.1.fq"+gz,
+		fq2="{sample}/reads/pre1.2.fq"+gz
+	log: "{sample}/log/trim_reads.log"
+	benchmark: "{sample}/log/trim_reads.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/trimmomatic.yaml")
+	run:
+		if config["trimming"]:
+			shell("{config[tool_alt_path][trimmomatic]}trimmomatic PE -threads {threads} {input.fq1} {input.fq2} {output.fq1} {wildcards.sample}/reads/unpaired.1.fq"+gz+" {output.fq2} {wildcards.sample}/reads/unpaired.2.fq"+gz+" AVGQUAL:2 LEADING:3 TRAILING:3 MAXINFO:" + str(config["desiredminlen"]) + ":" + str(config["strictness"]) + " > {log} 2>&1")
+			shell("rm -rfv {wildcards.sample}/reads/unpaired.1.fq"+gz+" {wildcards.sample}/reads/unpaired.2.fq"+gz+" >> {log} 2>&1")
+		else:
+			shell("ln -sfv {input.fq1} {output.fq1} > {log} 2>&1")
+			shell("ln -sfv {input.fq2} {output.fq2} >> {log} 2>&1")
+
+rule errorcorr_reads:
+	input:
+		fq1="{sample}/reads/pre1.1.fq"+gz,
+		fq2="{sample}/reads/pre1.2.fq"+gz
+	output:
+		fq1="{sample}/reads/pre2.1.fq"+gz,
+		fq2="{sample}/reads/pre2.2.fq"+gz
+	log: "{sample}/log/errorcorr_reads.log"
+	benchmark: "{sample}/log/errorcorr_reads.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/spades.yaml")
+	run:
+		if config["errorcorr"]:
+			errorcorr_gz = " --disable-gzip-output " if not gz else ""
+			shell("{config[tool_alt_path][spades]}spades.py -1 {input.fq1} -2 {input.fq2} --only-error-correction --meta -o {wildcards.sample}/reads/spades/ -t {threads} "+errorcorr_gz+" > {log} 2>&1")
+			shell("mv -v {wildcards.sample}/reads/spades/corrected/pre1.1.00.0_0.cor.fastq"+gz+" {output.fq1} >> {log} 2>&1")
+			shell("mv -v {wildcards.sample}/reads/spades/corrected/pre1.2.00.0_0.cor.fastq"+gz+" {output.fq2} >> {log} 2>&1")
+			shell("rm -rfv {wildcards.sample}/reads/spades/ >> {log} 2>&1")
+		else: #Create links
+			shell("ln -sfv `readlink -f {input.fq1}` {output.fq1} > {log} 2>&1")
+			shell("ln -sfv `readlink -f {input.fq2}` {output.fq2} >> {log} 2>&1")
+
+rule subsample_reads:
+	input:
+		fq1="{sample}/reads/pre2.1.fq"+gz,
+		fq2="{sample}/reads/pre2.2.fq"+gz
+	output:
+		# Always outputs ungziped files
+		expand("{{sample}}/reads/{tool}.1.fq", tool=config["tools"]),
+		expand("{{sample}}/reads/{tool}.2.fq", tool=config["tools"])
+	log: "{sample}/log/subsample_reads.log"
+	benchmark: "{sample}/log/subsample_reads.time"
+	run:
+		if config["subsample"]:
+			shell("python3 {subsample_path} -f1 {input.fq1} -f2 {input.fq2} --sample-size " + str(config["samplesize"]) + " --sample-number " + str(len(config["tools"])) + " --replacement " + str(config["replacement"]) + " --gzip 0 --output-prefix {wildcards.sample}/reads/pre3 > {log} 2>&1")
+			for i,t in enumerate(config["tools"]):
+				shell("mv -v {wildcards.sample}/reads/pre3_"+str(i)+".1.fq {wildcards.sample}/reads/"+t+".1.fq >> {log} 2>&1")
+				shell("mv -v {wildcards.sample}/reads/pre3_"+str(i)+".2.fq {wildcards.sample}/reads/"+t+".2.fq >> {log} 2>&1")
+		else: #Create links
+			# If no sub-sampling is requested, only single files are stored (_pp) and links are created to the tools
+			if gz:# ungzip
+				shell("gzip -dc "+input.fq1+" > {wildcards.sample}/reads/pp.1.fq > {log} 2>&1")
+			else:	
+				shell("ln -sfv `readlink -f "+input.fq1+"` {wildcards.sample}/reads/pp.1.fq > {log} 2>&1")
+			
+			if gz:# ungzip
+				shell("gzip -dc "+input.fq2+" > {wildcards.sample}/reads/pp.2.fq >> {log} 2>&1")
+			else:
+				shell("ln -sfv `readlink -f "+input.fq2+"` {wildcards.sample}/reads/pp.2.fq >> {log} 2>&1")
+
+			# create links to each tool
+			for t in config["tools"]:
+				shell("ln -sfv `readlink -f {wildcards.sample}/reads/pp.1.fq` {wildcards.sample}/reads/"+t+".1.fq >> {log} 2>&1")
+				shell("ln -sfv `readlink -f {wildcards.sample}/reads/pp.2.fq` {wildcards.sample}/reads/"+t+".2.fq >> {log} 2>&1")

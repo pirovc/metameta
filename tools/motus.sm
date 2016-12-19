@@ -1,0 +1,34 @@
+rule motus_run_1:
+	input:
+		fq1="{sample}/reads/motus.1.fq",
+		fq2="{sample}/reads/motus.2.fq",
+		dbcheck=config['dbdir'] + "motus_db_check.done"
+	output: "{sample}/motus/{sample}.species.abundances.gz"
+	log: "{sample}/log/motus_run_1.log"
+	benchmark: "{sample}/log/motus_run_1.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/motus.yaml")
+	shell: 
+		"""
+		cd {wildcards.sample}/motus/
+		{tool_path[motus]}mOTUs.pl --processors={threads} ../../{input.fq1} ../../{input.fq2} --output-directory ./ > ../../{log} 2>&1
+		mv NCBI.species.abundances.gz ../../{output}
+		"""
+
+rule motus_rpt:
+	input: "{sample}/motus/{sample}.species.abundances.gz"
+	output:	"{sample}/profiles/motus.profile.out"
+	log: "{sample}/log/motus_rpt.log"
+	benchmark: "{sample}/log/motus_rpt.time"
+	shell:
+		"""
+		rm -f {output} {log}
+		ranks=( kingdom phylum class order family genus species )
+		for r in "${{ranks[@]}}"
+		do
+			res=`readlink {input}`
+			nres=`echo $res | sed 's/.species./.'$r'./g'`
+			if [ "$r" == "kingdom" ]; then rank="superkingdom"; else rank=$r; fi
+			zcat $nres | tail -n+7 | awk -F '\t' '{{if($2!="0") print "'"$rank"'" "\t" $0}}' >> {output} 2>> {log}
+		done
+		"""

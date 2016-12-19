@@ -1,0 +1,24 @@
+default_val = {
+               'threads': 1,
+               'gzipped': 0,
+               'keepfiles': 0,		   
+			   'tools': {"clark": "b", "dudes": "p", "gottcha": "p", "kaiju": "b", "kraken": "b", "motus": "p"},
+			   'db_alt_path': {"clark": "", "dudes": "", "gottcha": "", "kaiju": "", "kraken": "", "motus": ""},
+			   'tool_alt_path': {"clark": "", "dudes": "", "gottcha": "", "kaiju": "", "kraken": "", "motus": "", "trimmomatic": "", "spades": "", "bowtie2": "", "metametamerge": ""},
+			   'trimming': 0,
+			   'desiredminlen': 70,
+			   'strictness': 0.8,
+			   'errorcorr': 0,
+			   'subsample': 0,
+			   'samplesize': 1,
+			   'replacement': 0,
+			   'mode': 'linear',
+			   'cutoff': 0.0001,
+			   'bins': 4,
+			   'reversed': 1,
+			   'detailed': 0
+			   }	
+	
+for key,value in default_val.items():
+	if key not in config:
+		config[key] = value

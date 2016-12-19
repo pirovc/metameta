@@ -1,0 +1,26 @@
+#!/bin/bash
+
+display_help() {
+    echo "MetaMeta Pipeline (powered by Snakemake)"
+	echo ""
+	echo "Usage: $0 --configfile FILE [Snakemake options]"
+	echo
+    echo " Useful Snakemake parameters:"
+	echo "   --use-conda            use conda to automatically install pre-configured packages"
+	echo "   -j, --cores            number of cores"
+	echo "   -k, --keep-going       go on with independent jobs if a job fails"
+	echo "   -n, --dryrun           do not execute anything"
+	echo "   -p, --printshellcmds   print out the shell commands that will be executed"
+    echo
+	echo " Full list of parameters:"
+    echo "   --help                 show Snakemake help (or snakemake -h)"
+	echo
+    exit 0
+}
+
+if [ "$1" == "" -o "$1" == "-h" -o \( "$1" != "--configfile" -a "$1" != "--help" \) ]; then
+  display_help
+  exit 0
+fi
+
+snakemake -s Snakefile "$@"

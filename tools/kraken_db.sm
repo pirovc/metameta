@@ -1,0 +1,69 @@
+rule kraken_db_1:
+	output: db_path['kraken'] + "all.fna.tar.gz"
+	log: config['dbdir'] + "log/kraken_db_1.log"
+	benchmark: config['dbdir'] + "log/kraken_db_1.time"
+	run:
+		shell(download("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/all.fna.tar.gz", output[0]) + " > {log} 2>&1")
+
+rule kraken_db_2:
+	input: db_path['kraken'] + "all.fna.tar.gz"
+	output: db_path['kraken'] + "old_refseq/"
+	log: config['dbdir'] + "log/kraken_db_2.log"
+	benchmark: config['dbdir'] + "log/kraken_db_2.time"
+	shell: 
+		"""
+		mkdir -p {output}
+		tar zxfv {input} -C {output} > {log} 2>&1
+		"""
+		
+rule kraken_db_3:
+	output: db_path['kraken'] + "taxonomy/nodes.dmp"
+			, db_path['kraken'] + "taxonomy/names.dmp"
+			, db_path['kraken'] + "taxonomy/gi_taxid_nucl.dmp"
+	log: config['dbdir'] + "log/kraken_db_3.log"
+	benchmark: config['dbdir'] + "log/kraken_db_3.time"
+	conda: srcdir("../envs/kraken.yaml")
+	shell: "{tool_path[kraken]}kraken-build --db {db_path[kraken]} --download-taxonomy > {log} 2>&1"
+		
+rule kraken_db_4:
+	input: db_path['kraken'] + "old_refseq/"
+	output: db_path['kraken'] + "library/"
+	log: config['dbdir'] + "log/kraken_db_4.log"
+	benchmark: config['dbdir'] + "log/kraken_db_4.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/kraken.yaml")
+	shell: "ls -t {db_path[kraken]}old_refseq/*/*.fna | xargs --max-procs={threads} -I '{{}}' kraken-build --db {db_path[kraken]} --add-to-library '{{}}' >> {log} 2>&1"
+		
+rule kraken_db_5:
+	input: db_path['kraken'] + "library/"
+			, db_path['kraken'] + "taxonomy/nodes.dmp"
+			, db_path['kraken'] + "taxonomy/names.dmp"
+			, db_path['kraken'] + "taxonomy/gi_taxid_nucl.dmp"
+	output: db_path['kraken'] + "database.idx"
+			, db_path['kraken'] + "database.kdb"
+	log: config['dbdir'] + "log/kraken_db_5.log"
+	benchmark: config['dbdir'] + "log/kraken_db_5.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/kraken.yaml")
+	shell: "{tool_path[kraken]}kraken-build --db {db_path[kraken]} --build --threads {threads} > {log} 2>&1"
+
+rule kraken_db_profile:
+	input: db_path['kraken'] + "library/"
+	output: config['dbdir'] + "kraken.dbaccession.out"
+	log: config['dbdir'] + "log/kraken_db_profile.log"
+	benchmark: config['dbdir'] + "log/kraken_db_profile.time"
+	shell: "cat {input}added/*.fna | grep '>' | grep -o '^[^ ]*' | cut -d '|' -f 4 > {output} 2> {log}"
+
+rule kraken_db_check:
+	input: config['dbdir'] + "kraken.dbaccession.out"
+			, db_path['kraken'] + "database.idx"
+			, db_path['kraken'] + "database.kdb"
+			, db_path['kraken'] + "taxonomy/nodes.dmp"
+			, db_path['kraken'] + "taxonomy/names.dmp"
+	output: touch(config['dbdir'] + "kraken_db_check.done")
+	log: config['dbdir'] + "log/kraken_db_check.log"
+	benchmark: config['dbdir'] + "log/kraken_db_check.time"
+	run:
+		if not config['keepfiles']: 
+			shell(rmTempFilesDB(db_path["kraken"], input[1:]) + " > {log} 2>&1")
+			shell(rmEmptyFolderDB(db_path["kraken"]) + " >> {log} 2>&1")

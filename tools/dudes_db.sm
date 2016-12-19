@@ -1,0 +1,56 @@
+rule dudes_db_1:
+	output: db_path['dudes'] + "ba_refseq_cg_20150326_av.tar.gz"
+	log: config['dbdir'] + "log/dudes_db_1.log"
+	benchmark: config['dbdir'] + "log/dudes_db_1.time"
+	run:
+		shell(download("https://www.dropbox.com/s/339sof2ffpxp08j/ba_refseq_cg_20150326_av.tar.gz?dl=1", output[0]) + " > {log} 2>&1")
+		
+rule dudes_db_2:
+	input: db_path['dudes'] + "ba_refseq_cg_20150326_av.tar.gz"
+	output: db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.1.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.2.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.3.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.4.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.rev.1.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.rev.2.bt2l"
+	log: config['dbdir'] + "log/dudes_db_2.log"
+	benchmark: config['dbdir'] + "log/dudes_db_2.time"
+	shell: "tar zxfv {input} -C {db_path[dudes]} > {log} 2>&1"
+
+rule dudes_db_3:
+	output: db_path['dudes'] + "ba_refseq_cg_20150326_av_0.07.npz"
+	log: config['dbdir'] + "log/dudes_db_3.log"
+	benchmark: config['dbdir'] + "log/dudes_db_3.time"
+	run:
+		shell(download("https://www.dropbox.com/s/jxchjp46nuvrlli/ba_refseq_cg_20150326_av_0.07.npz?dl=1", output[0]) + " > {log} 2>&1")
+
+rule dudes_db_profile:
+	input: db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.1.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.2.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.3.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.4.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.rev.1.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.rev.2.bt2l"
+	output: config['dbdir'] + "dudes.dbaccession.out"
+	log: config['dbdir'] + "log/dudes_db_profile.log"
+	benchmark: config['dbdir'] + "log/dudes_db_profile.time"
+	conda: srcdir("../envs/dudes.yaml")
+	shell: "{config[tool_alt_path][bowtie2]}bowtie2-inspect -n {db_path[dudes]}ba_refseq_cg_20150326_av.fasta | cut -d ' ' -f 1 > {output} 2> {log}"
+
+rule dudes_db_check:
+	input: config['dbdir'] + "dudes.dbaccession.out"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av_0.07.npz"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.1.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.2.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.3.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.4.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.rev.1.bt2l"
+			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.rev.2.bt2l"
+	output: touch(config['dbdir'] + "dudes_db_check.done")
+	log: config['dbdir'] + "log/dudes_db_check.log"
+	benchmark: config['dbdir'] + "log/dudes_db_check.time"
+	run:
+		if not config['keepfiles']: 
+			shell(rmTempFilesDB(db_path["dudes"], input[1:]) + " > {log} 2>&1")
+			shell(rmEmptyFolderDB(db_path["dudes"]) + " >> {log} 2>&1")
+		

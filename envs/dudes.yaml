@@ -1,0 +1,8 @@
+channels:
+ - bioconda
+ - r
+ - defaults
+ - conda-forge
+dependencies:
+ - bowtie2=2.2.8
+ - dudes=0.7

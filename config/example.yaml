@@ -1,0 +1,14 @@
+# Output directory
+workdir: "/home/user/folder/results/" 
+
+# Database output directory (Tip: create this folder in a common directory so it could be used for other runs as well as other users)
+dbdir: "/home/user/folder/databases/"
+
+# Sample (name and files)
+samples:
+  "sample_name_1":
+    fq1: "/home/user/folder/reads/file.1.fq"
+    fq2: "/home/user/folder/reads/file.2.fq"
+  "sample_name_2":
+    fq1: "/home/user/folder/reads/more.1.fq"
+    fq2: "/home/user/folder/reads/more.2.fq"

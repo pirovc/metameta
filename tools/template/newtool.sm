@@ -1,0 +1,22 @@
+# Template for adding new tools to MetaMeta pipeline
+# Replace all occurences of newtool with your tool identifier
+
+# Run
+rule newtool_run_1:
+	input:
+		fq1="{sample}/reads/newtool.1.fq",
+		fq2="{sample}/reads/newtool.2.fq",
+		dbcheck=config['dbdir'] + "newtool_db_check.done"
+	output:	"{sample}/newtool/{sample}.results.csv"
+	log: "{sample}/log/newtool_run_1.log"
+	benchmark: "{sample}/log/newtool_run_1.time"
+	threads: config["threads"]
+	shell: "{tool_path[newtool]}mycommand --database {db_path[newtool]}file.db --1 {input.fq1} --2 {input.fq2} --threads {threads} > {output} 2> {log}"
+
+# Generate report on supported formats
+rule newtool_rpt:
+	input: "{sample}/newtool/{sample}.results.csv"
+	output: "{sample}/profiles/newtool.profile.out"
+	log: "{sample}/log/newtool_rpt.log"
+	benchmark: "{sample}/log/newtool_rpt.time"
+	shell: "convert {input} > {output} 2> {log}"

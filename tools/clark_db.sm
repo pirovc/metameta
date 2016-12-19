@@ -1,0 +1,56 @@
+rule clark_db_1:
+	output: db_path['clark'] + "targets.txt"
+	log: config['dbdir'] + "log/clark_db_1.log"
+	benchmark: config['dbdir'] + "log/clark_db_1.time"
+	conda: srcdir("../envs/clark.yaml")
+	params: srcdir = srcdir("")
+	shell: 
+		"""
+		# The script should be on set_targets.sh script folder (opt/clark/) to generate the database 
+		# with correct paths. Since there's not much control over conda file yet, the rule checks if 
+		# there's an environment for this rule (md5 of the .yaml file), otherwise looks for the files 
+		# on the activated environment path
+		md5=($(md5sum "{params.srcdir}/../envs/clark.yaml"))
+		if [ -d ".snakemake/conda/${{md5}}" ]; then # Environment for rule was created
+			clark_opt_path=".snakemake/conda/${{md5}}/opt/clark/"
+		else
+			condadir=`conda env list | grep -o '\*.*' | grep -o '/.*'` # get active conda environment path
+			clark_opt_path="${{condadir}}/opt/clark/"
+		fi
+		cd ${{clark_opt_path}}
+		./set_targets.sh {db_path[clark]} bacteria > {log} 2>&1
+		"""
+
+rule clark_db_2:
+	# CLARK compiles the database on the first run -> use dummy .fq file to do it and delete results
+	input: db_path['clark'] + "targets.txt"
+			, srcdir("../scripts/dummy.fq")
+	output: db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.ky",
+			db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.lb",
+			db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.sz"
+	log: config['dbdir'] + "log/clark_db_2.log"
+	benchmark: config['dbdir'] + "log/clark_db_2.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/clark.yaml")
+	shell: "{tool_path[clark]}CLARK -T {input[0]} -D {db_path[clark]}bacteria_0/ -O {input[1]} -R {db_path[clark]}dummy_temp_db -n {threads} > {log} 2>&1"
+
+rule clark_db_profile:
+	input: db_path['clark'] + "targets.txt"
+	output: config['dbdir'] + "clark.dbaccession.out"
+	log: config['dbdir'] + "log/clark_db_profile.log"
+	benchmark: config['dbdir'] + "log/clark_db_profile.time"
+	shell: "for file in `cut {input} -f 1`; do grep '>' $file; done | grep -o '^[^ ]*' | cut -d '|' -f 4 > {output} 2> {log}"
+	
+rule clark_db_check:
+	input: config['dbdir'] + "clark.dbaccession.out"
+			, db_path['clark'] + "targets.txt"
+			, db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.ky"
+			, db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.lb"
+			, db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.sz"
+	output: touch(config['dbdir'] + "clark_db_check.done")
+	log: config['dbdir'] + "log/clark_db_check.log"
+	benchmark: config['dbdir'] + "log/clark_db_check.time"
+	run: 
+		if not config['keepfiles']: 
+			shell(rmTempFilesDB(db_path["clark"], input[1:]) + " > {log} 2>&1")
+			shell(rmEmptyFolderDB(db_path["clark"]) + " >> {log} 2>&1")

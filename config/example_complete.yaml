@@ -1,0 +1,89 @@
+# Output directory
+workdir: "/home/user/folder/results/" 
+
+# Database output directory (Tip: create this folder in a common directory so it could be used for other runs as well as other users)
+dbdir: "/home/user/folder/databases/"
+
+# Sample (name and files)
+samples:
+  "sample_name_1":
+    fq1: "/home/user/folder/reads/file.1.fq"
+    fq2: "/home/user/folder/reads/file.2.fq"
+  "sample_name_2":
+    fq1: "/home/user/folder/reads/more.1.fq"
+    fq2: "/home/user/folder/reads/more.2.fq"
+
+################################################################
+
+# Configured tools (p=profiling, b=binning) from tools folder (tool.sm and tool_db.sm)
+tools:
+    "clark": "b"
+    "dudes": "p"
+    "gottcha": "p"
+    "kaiju": "b"
+    "kraken": "b"
+    "motus": "p"
+
+### MetaMeta Pipeline ### 
+# Number of threads for each tool (distributed among the number of cores defined by main parameter --cores)
+threads: 12
+# Gzipped input files (0: not gzipped / 1: gzipped). Default: 0
+gzipped: 0
+# Keep intermediate files (database, reads and output) (0: do not keep files / 1: keep all files). Default: 0
+keepfiles: 0
+
+### Trimming ### 
+# Trimmomatic (0: off / 1: on). Default: 0
+trimming: 0
+# Trimmomatic parameter desiredminlen (minimun desired length). Default: 70
+desiredminlen: 70
+# Trimmomatic parameter strictness (range from 0-1 -> 0: not strict / 1: very scrict). Default: 0.8
+strictness: 0.8
+
+### Error correction ###
+# BayesHammer (0: off / 1: on). Default: 0
+errorcorr: 0
+
+### Sub-sampling ###
+# Sub-sampling (0: off / 1: on). Default: 0
+subsample: 0
+# Sub-sampe size (Integer: specific read number / Float: percentage of reads / 1: equally divide the whole set among the tools). Default: 1
+samplesize: 1
+# Sub-sample with replacement (0: without replacement / 1: with replacement). Default: 0
+replacement: 0
+
+### MetaMetaMerge ###
+# MetaMetaMerge mode (precise, very-precise, linear, sensitive, very-sensitive). Default: linear
+mode: 'linear'
+# MetaMetaMerge minimum abundance or Maximum results for each taxonomic level (0: off / 0-1: minimum relative abundance / >=1: maximum number of identifications). Default: 0.0001
+cutoff: 0.0001
+# MetaMetaMerge number of bins. Default: 4
+bins: 3
+# MetaMetaMerge reversed output. Generates the merged output based only on species identifications and estimate upper levels (0: off / 1: on). Default: 1
+reversed: 1
+# MetaMetaMerge detailed output. Generates detailed output for each taxon/tool and its normalized relative abundance estimation. It outputs 0 for tools which did not identified the taxon and -1 for tools without a taxon in the database. (0: off / 1: on). Default: 0
+detailed: 0
+
+### MetaMeta paths ###
+# Alternative path for the databases (uses it instead of the default path)
+# Warning: when keepfiles=0 metameta will delete all files inside the database folder but the ones necessary for the tools to run.
+db_alt_path:
+    "clark": ""
+    "dudes": ""
+    "gottcha": ""
+    "kaiju": ""
+    "kraken": ""
+    "motus": ""
+
+# Alternative path for the tools (uses it instead of the default path)
+tool_alt_path:
+    "clark": ""
+    "dudes": ""
+    "gottcha": ""
+    "kaiju": ""
+    "kraken": ""
+    "motus": ""
+    "trimmomatic": ""
+    "spades": ""
+    "bowtie2": ""
+    "metametamerge": ""

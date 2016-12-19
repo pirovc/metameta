@@ -1,0 +1,15 @@
+rule clean_files:
+	input: "{sample}/profiles/{tool}.profile.out"
+	output: temp(touch("{sample}/{tool}_clean_files.done"))
+	log: "{sample}/log/{tool}_clean_files.log"
+	benchmark: "{sample}/log/{tool}_clean_files.time"
+	run:
+		if not config["keepfiles"]: shell("rm -rfv {wildcards.sample}/{wildcards.tool}/ > {log} 2>&1")
+		
+rule clean_reads:
+	input: expand("{{sample}}/{tool}_clean_files.done", tool=config["tools"]) ## TARGET TOOLS CLEAN FILES 
+	output: temp(touch("{sample}/clean_reads.done"))
+	log: "{sample}/log/clean_reads.log"
+	benchmark: "{sample}/log/clean_reads.time"
+	run:
+		if not config["keepfiles"]: shell("rm -rfv {wildcards.sample}/reads/ > {log} 2>&1")

@@ -1,0 +1,13 @@
+rule motus_db_profile:
+	input: srcdir("../scripts/motus.dbprofile.out")
+	output: config['dbdir'] + "motus.dbprofile.out"
+	log: config['dbdir'] + "log/motus_db_profile.log"
+	benchmark: config['dbdir'] + "log/motus_db_profile.time"
+	shell: "cp {input} {output} > {log} 2>&1"
+
+rule motus_db_check:
+	input: config['dbdir'] + "motus.dbprofile.out"
+	output: touch(config['dbdir'] + "motus_db_check.done")
+	log: config['dbdir'] + "log/motus_db_check.log"
+	benchmark: config['dbdir'] + "log/motus_db_check.time"
+	run: pass #No database files

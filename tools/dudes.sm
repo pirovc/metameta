@@ -1,0 +1,27 @@
+rule dudes_run_1:
+	input:
+		fq1="{sample}/reads/dudes.1.fq",
+		fq2="{sample}/reads/dudes.2.fq",
+		dbcheck=config['dbdir'] + "dudes_db_check.done"
+	output: "{sample}/dudes/{sample}.sam"
+	log: "{sample}/log/dudes_run_1.log"
+	benchmark: "{sample}/log/dudes_run_1.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/dudes.yaml")
+	shell: "{config[tool_alt_path][bowtie2]}bowtie2 -x {db_path[dudes]}ba_refseq_cg_20150326_av.fasta -p {threads}  --no-unal --very-fast -k 10 -1 {input.fq1} -2 {input.fq2} -S {output} > {log} 2>&1"
+
+rule dudes_run_2:
+	input: "{sample}/dudes/{sample}.sam"
+	output: "{sample}/dudes/{sample}.results.out"
+	log: "{sample}/log/dudes_run_2.log"
+	benchmark: "{sample}/log/dudes_run_2.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/dudes.yaml")
+	shell: "{tool_path[dudes]}DUDes.py -s {input} -d {db_path[dudes]}ba_refseq_cg_20150326_av_0.07.npz -t {threads} -a 0.00001 -o {wildcards.sample}/dudes/{wildcards.sample}.results > {log} 2>&1"
+
+rule dudes_rpt:
+	input: "{sample}/dudes/{sample}.results.out"
+	output:	"{sample}/profiles/dudes.profile.out"
+	log: "{sample}/log/dudes_rpt.log"
+	benchmark: "{sample}/log/dudes_rpt.time"
+	shell: "cp {input} {output} > {log} 2>&1"

@@ -1,0 +1,23 @@
+rule metametamerge_get_taxdump:
+	output: taxdump=temp(config["dbdir"] + "taxdump.tar.gz")
+			, names=config["dbdir"] + "names.dmp"
+			, nodes=config["dbdir"] + "nodes.dmp"
+	log: config["dbdir"] + "log/metametamerge_get_taxdump.log"
+	benchmark: config["dbdir"] + "log/metametamerge_get_taxdump.time"
+	run:
+		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", output.taxdump) + " > {log} 2>&1")
+		shell("tar -zxvf {output.taxdump} -C {config[dbdir]} names.dmp nodes.dmp >> {log} 2>&1")
+
+rule metametamerge:
+	input: tool_profiles = expand("{{sample}}/profiles/{tool}.profile.out", tool=config["tools"]), ## TARGET TOOLS METAMETA
+		db_profiles = [config["dbdir"] + tool + ".dbprofile.out" for tool in config["tools"]], ## TARGET TOOLS DB 
+		clean_reads = "{sample}/clean_reads.done",
+		names=config["dbdir"] + "names.dmp",
+		nodes=config["dbdir"] + "nodes.dmp"
+	output: "{sample}/metametamerge/final.metametamerge.profile.out"
+	log: "{sample}/log/metametamerge.log"
+	benchmark: "{sample}/log/metametamerge.time"
+	params: t=','.join(config["tools"].keys()),
+			c=','.join(config["tools"].values())
+	conda: srcdir("../envs/metametamerge.yaml")
+	shell: "{config[tool_alt_path][metametamerge]}MetaMetaMerge.py -i {input.tool_profiles} -t '{params.t}' -c '{params.c}' -d {input.db_profiles} -r {config[cutoff]} -n {input.names} -e {input.nodes} -s {config[reversed]} -b {config[bins]} -f {config[mode]} -l {config[detailed]} -o {output} > {log} 2>&1"

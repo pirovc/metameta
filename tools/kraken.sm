@@ -1,0 +1,18 @@
+rule kraken_run_1:
+	input:
+		fq1="{sample}/reads/kraken.1.fq",
+		fq2="{sample}/reads/kraken.2.fq",
+		dbcheck=config['dbdir'] + "kraken_db_check.done"
+	output:	"{sample}/kraken/{sample}.results.out"
+	log: "{sample}/log/kraken_run_1.log"
+	benchmark: "{sample}/log/kraken_run_1.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/kraken.yaml")
+	shell: "{tool_path[kraken]}kraken --preload -db {db_path[kraken]} --output {output} --threads {threads} --paired --fastq-input {input.fq1} {input.fq2} > {log} 2>&1"
+
+rule kraken_rpt:
+	input: "{sample}/kraken/{sample}.results.out"
+	output: "{sample}/profiles/kraken.profile.out"
+	log: "{sample}/log/kraken_rpt.log"
+	benchmark: "{sample}/log/kraken_rpt.time"
+	shell: """awk '{{if($1=="C") print $2"\t"$3"\t"$4}}' {input} > {output} 2> {log}"""
