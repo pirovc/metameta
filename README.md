@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # MetaMeta: Integrating metagenome analysis tools to improve taxonomic profiling
 
 Vitor C. Piro (vitorpiro@gmail.com)
@@ -112,8 +111,4 @@ MetaMeta pipeline uses Snakemake. To add a new tool to the pipeline it is necess
 		- newtool_db_profile -> this rule generates automatically the database profile. It should have as an output a file (newtool.dbaccession.out) with the accession version identifier for all sequences used in the database.
 		- newtool_db_check -> rule to check the required database files. It should have as an input all mandatory files that should be present to the database work properly.
 
-Template files can be found inside the folder tools/template. Once the two files are inside the tools folder, it is necessary to add the tool identifier to the YAML configuration file.
-  
-=======
-# metameta
->>>>>>> 0057fd9f47bef5a2bb0aa8a83efe5ae54fe982bf
+* Template files can be found inside the folder tools/template. Once the two files are inside the tools folder, it is necessary to add the tool identifier to the YAML configuration file.
