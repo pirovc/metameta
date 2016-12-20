@@ -1,0 +1,6 @@
+workdir: "./"
+dbdir: "./"
+samples:
+  "test_files":
+     fq1: "scripts/dummy.fq"
+     fq2: "scripts/dummy.fq"
