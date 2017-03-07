@@ -22,22 +22,22 @@ def write_files(i):
 
     if args.paired1_fasta_q_files and args.paired2_fasta_q_files:
         if forward:
-            f = gzip.open(args.paired1_fasta_q_files, 'rb') if readgz else open(args.paired1_fasta_q_files,'r')
+            f = gzip.open(args.paired1_fasta_q_files, 'rt') if readgz else open(args.paired1_fasta_q_files,'r')
         else:
-            f = gzip.open(args.paired2_fasta_q_files, 'rb') if readgz else open(args.paired2_fasta_q_files,'r')
+            f = gzip.open(args.paired2_fasta_q_files, 'rt') if readgz else open(args.paired2_fasta_q_files,'r')
     else:
-        f = gzip.open(args.fasta_q_files, 'rb') if readgz else open(args.fasta_q_files,'r')
+        f = gzip.open(args.fasta_q_files, 'rt') if readgz else open(args.fasta_q_files,'r')
 
     if args.paired1_fasta_q_files and args.paired2_fasta_q_files:
         if forward:
             f_name = args.output_prefix + "_" + str(i//2) + ".1" + ext
-            f_out = gzip.open(f_name, 'wb') if args.gzip_output else open(f_name, 'w')
+            f_out = gzip.open(f_name, 'wt') if args.gzip_output else open(f_name, 'w')
         else:
             f_name = args.output_prefix + "_" + str(i//2) + ".2" + ext
-            f_out = gzip.open(f_name, 'wb') if args.gzip_output else open(f_name, 'w')
+            f_out = gzip.open(f_name, 'wt') if args.gzip_output else open(f_name, 'w')
     else:
         f_name = args.output_prefix + "_" + str(i) + ext
-        f_out = gzip.open(f_name, 'wb') if args.gzip_output else open(f_name, 'w')
+        f_out = gzip.open(f_name, 'wt') if args.gzip_output else open(f_name, 'w')
 
     #first file
     pointer_pos = 0
