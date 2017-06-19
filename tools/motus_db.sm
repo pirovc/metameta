@@ -1,5 +1,5 @@
 rule motus_db_profile:
-	input: srcdir("../scripts/motus.dbprofile.out")
+	input: ancient(srcdir("../scripts/motus.dbprofile.out"))
 	output: config['dbdir'] + "motus.dbprofile.out"
 	log: config['dbdir'] + "log/motus_db_profile.log"
 	benchmark: config['dbdir'] + "log/motus_db_profile.time"

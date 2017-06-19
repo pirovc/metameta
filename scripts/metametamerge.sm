@@ -2,22 +2,38 @@ rule metametamerge_get_taxdump:
 	output: taxdump=temp(config["dbdir"] + "taxdump.tar.gz")
 			, names=config["dbdir"] + "names.dmp"
 			, nodes=config["dbdir"] + "nodes.dmp"
+			, merged=config["dbdir"] + "merged.dmp"
 	log: config["dbdir"] + "log/metametamerge_get_taxdump.log"
 	benchmark: config["dbdir"] + "log/metametamerge_get_taxdump.time"
 	run:
 		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", output.taxdump) + " > {log} 2>&1")
-		shell("tar -zxvf {output.taxdump} -C {config[dbdir]} names.dmp nodes.dmp >> {log} 2>&1")
+		shell("tar -zxvf {output.taxdump} -C {config[dbdir]} names.dmp nodes.dmp merged.dmp >> {log} 2>&1")
 
 rule metametamerge:
 	input: tool_profiles = expand("{{sample}}/profiles/{tool}.profile.out", tool=config["tools"]), ## TARGET TOOLS METAMETA
 		db_profiles = [config["dbdir"] + tool + ".dbprofile.out" for tool in config["tools"]], ## TARGET TOOLS DB 
 		clean_reads = "{sample}/clean_reads.done",
 		names=config["dbdir"] + "names.dmp",
-		nodes=config["dbdir"] + "nodes.dmp"
+		nodes=config["dbdir"] + "nodes.dmp",
+		merged=config["dbdir"] + "merged.dmp"
 	output: "{sample}/metametamerge/final.metametamerge.profile.out"
 	log: "{sample}/log/metametamerge.log"
 	benchmark: "{sample}/log/metametamerge.time"
-	params: t=','.join(config["tools"].keys()),
-			c=','.join(config["tools"].values())
+	params: tool_identifier=','.join(config["tools"].keys()),
+			tool_method=','.join(config["tools"].values()),
+			detailed = "--detailed" if config["detailed"] else "",
+			verbose = "--verbose" if config["verbose"] else ""
 	conda: srcdir("../envs/metametamerge.yaml")
-	shell: "{config[tool_alt_path][metametamerge]}MetaMetaMerge.py -i {input.tool_profiles} -t '{params.t}' -c '{params.c}' -d {input.db_profiles} -r {config[cutoff]} -n {input.names} -e {input.nodes} -s {config[reversed]} -b {config[bins]} -f {config[mode]} -l {config[detailed]} -o {output} > {log} 2>&1"
+	shell: "{config[tool_alt_path][metametamerge]}MetaMetaMerge.py --input-files {input.tool_profiles} --database-profiles {input.db_profiles} --tool-identifier '{params.tool_identifier}' --tool-method '{params.tool_method}' --names-file {input.names} --nodes-file {input.nodes} --merged-file {input.merged} --bins {config[bins]} --cutoff {config[cutoff]} --mode '{config[mode]}' --ranks '{config[ranks]}' --output-file {output} {params.detailed} {params.verbose} > {log} 2>&1"
+
+rule metametamerge_plot:
+	input: p="{sample}/metametamerge/final.metametamerge.profile.out",
+			names=config["dbdir"] + "names.dmp",
+			nodes=config["dbdir"] + "nodes.dmp",
+			merged=config["dbdir"] + "merged.dmp"
+	output: "{sample}/metametamerge/eval.png"
+	log: "{sample}/log/metametamerge_plot.log"
+	benchmark: "{sample}/log/metametamerge_plot.time"
+	params: s=lambda wildcards: wildcards.sample
+	run: 
+		shell("python3 " + config["tool_alt_path"]["metametamerge"] + "/plots.py -i " + ' '.join([params.s+"/metameta_"+t+".out" for t in sorted(config["tools"])]) +" {input.p} -t '"+','.join(sorted(config["tools"]))+",metametamerge' -c '"+','.join(['p']*(len(config["tools"])+1))+"' -n {input.names} -e {input.nodes} -m {input.merged} -g "+config["samples"][params.s]["gt"]+" -r species -o {output} > {log} 2>&1")

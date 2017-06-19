@@ -42,11 +42,11 @@ rule clark_db_profile:
 	shell: "for file in `cut {input} -f 1`; do grep '>' $file; done | grep -o '^[^ ]*' | cut -d '|' -f 4 > {output} 2> {log}"
 	
 rule clark_db_check:
-	input: config['dbdir'] + "clark.dbaccession.out"
-			, db_path['clark'] + "targets.txt"
-			, db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.ky"
-			, db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.lb"
-			, db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.sz"
+	input: ancient(config['dbdir'] + "clark.dbaccession.out")
+			, ancient(db_path['clark'] + "targets.txt")
+			, ancient(db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.ky")
+			, ancient(db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.lb")
+			, ancient(db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.sz")
 	output: touch(config['dbdir'] + "clark_db_check.done")
 	log: config['dbdir'] + "log/clark_db_check.log"
 	benchmark: config['dbdir'] + "log/clark_db_check.time"

@@ -46,7 +46,7 @@ Run MetaMeta on cluster:
 	
 The automatic integration of conda and Snakemake is still not available in cluster mode. It is then necessary to pre-install the necessary tools (recommended in a separated environment)
 	
-	conda create -c bioconda -n metameta metameta=1.0 spades=3.9.0 trimmomatic=0.36 jellyfish=1.1.11 bowtie2=2.2.8 clark=1.2.3 dudes=0.07 gottcha=1.0 kaiju=1.0 kraken=0.10.5beta motus=1.0
+	conda create -c bioconda -n metameta metameta=1.0 spades=3.9.0 trimmomatic=0.36 jellyfish=1.1.11 bowtie2=2.2.8 clark=1.2.3 dudes=0.07 gottcha=1.0 kaiju=1.0 kraken=0.10.5beta motus=1.0 metametamerge=1.0
 
 Make a copy of the configuration file (use example_complete.yaml for a complete set of parameters) and the cluster configuration file:
 

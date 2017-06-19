@@ -38,14 +38,14 @@ rule dudes_db_profile:
 	shell: "{config[tool_alt_path][bowtie2]}bowtie2-inspect -n {db_path[dudes]}ba_refseq_cg_20150326_av.fasta | cut -d ' ' -f 1 > {output} 2> {log}"
 
 rule dudes_db_check:
-	input: config['dbdir'] + "dudes.dbaccession.out"
-			, db_path['dudes'] + "ba_refseq_cg_20150326_av_0.07.npz"
-			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.1.bt2l"
-			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.2.bt2l"
-			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.3.bt2l"
-			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.4.bt2l"
-			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.rev.1.bt2l"
-			, db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.rev.2.bt2l"
+	input: ancient(config['dbdir'] + "dudes.dbaccession.out")
+			, ancient(db_path['dudes'] + "ba_refseq_cg_20150326_av_0.07.npz")
+			, ancient(db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.1.bt2l")
+			, ancient(db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.2.bt2l")
+			, ancient(db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.3.bt2l")
+			, ancient(db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.4.bt2l")
+			, ancient(db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.rev.1.bt2l")
+			, ancient(db_path['dudes'] + "ba_refseq_cg_20150326_av.fasta.rev.2.bt2l")
 	output: touch(config['dbdir'] + "dudes_db_check.done")
 	log: config['dbdir'] + "log/dudes_db_check.log"
 	benchmark: config['dbdir'] + "log/dudes_db_check.time"

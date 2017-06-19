@@ -55,23 +55,23 @@ rule gottcha_db_profile:
 	shell: "zcat {input} | grep '>' | grep -o '^[^ ]*' | cut -d '|' -f 4 | sort | uniq > {output} 2> {log}"
 
 rule gottcha_db_check:
-	input: config['dbdir'] + "gottcha.dbaccession.out"
-			, db_path['gottcha'] + "variantSpeciesLookup.dmp"
-			, db_path['gottcha'] + "genomeVitals.dmp"
-			, db_path['gottcha'] + "familyLookupByGenus.dmp"
-			, db_path['gottcha'] + "speciesTreeGI.dmp"
-			, db_path['gottcha'] + "genusLookupBySpecies.dmp"
-			, db_path['gottcha'] + "orderLookupByFamily.dmp"
-			, db_path['gottcha'] + "variantStrainLookup.dmp"
-			, db_path['gottcha'] + "classLookupByOrder.dmp"
-			, db_path['gottcha'] + "taxLookupBySpecies.dmp"
-			, db_path['gottcha'] + "phylumLookupByClass.dmp"
-			, db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.amb"
-			, db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.ann"
-			, db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.bwt"
-			, db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.pac"
-			, db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.parsedGOTTCHA.dmp"
-			, db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.sa"
+	input: ancient(config['dbdir'] + "gottcha.dbaccession.out")
+			, ancient(db_path['gottcha'] + "variantSpeciesLookup.dmp")
+			, ancient(db_path['gottcha'] + "genomeVitals.dmp")
+			, ancient(db_path['gottcha'] + "familyLookupByGenus.dmp")
+			, ancient(db_path['gottcha'] + "speciesTreeGI.dmp")
+			, ancient(db_path['gottcha'] + "genusLookupBySpecies.dmp")
+			, ancient(db_path['gottcha'] + "orderLookupByFamily.dmp")
+			, ancient(db_path['gottcha'] + "variantStrainLookup.dmp")
+			, ancient(db_path['gottcha'] + "classLookupByOrder.dmp")
+			, ancient(db_path['gottcha'] + "taxLookupBySpecies.dmp")
+			, ancient(db_path['gottcha'] + "phylumLookupByClass.dmp")
+			, ancient(db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.amb")
+			, ancient(db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.ann")
+			, ancient(db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.bwt")
+			, ancient(db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.pac")
+			, ancient(db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.parsedGOTTCHA.dmp")
+			, ancient(db_path['gottcha'] + "GOTTCHA_BACTERIA_c4937_k24_u30.species.sa")
 	output: touch(config['dbdir'] + "gottcha_db_check.done")
 	log: config['dbdir'] + "log/gottcha_db_check.log"
 	benchmark: config['dbdir'] + "log/gottcha_db_check.time"

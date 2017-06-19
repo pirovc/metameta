@@ -15,7 +15,7 @@ default_val = {
 			   'mode': 'linear',
 			   'cutoff': 0.0001,
 			   'bins': 4,
-			   'reversed': 1,
+			   'ranks': 'species',
 			   'detailed': 0
 			   }	
 	

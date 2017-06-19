@@ -1,4 +1,4 @@
-version="1.0"
+version="1.1"
 
 # Load default values (when they are not set on the configfile.yaml)
 include: "scripts/default.sm"
@@ -16,7 +16,7 @@ for tool in config["tools"]:
 onstart:
     print("MetaMeta Pipeline v%s" % version)
     import os
-    os.makedirs(config["workdir"] + "/slurmlog",exist_ok=True)
+    os.makedirs(config["workdir"] + "/slurmlog", exist_ok=True)
 
 ############################################################################################## 
 
@@ -28,8 +28,8 @@ include: "scripts/clean_files.sm"
 ############################################################################################## 
 
 rule all:
-	input: expand("{sample}/metametamerge/final.metametamerge.profile.out",sample=config["samples"]) ## TARGET SAMPLES METAMETA
-
+	#input: expand("{sample}/metametamerge/final.metametamerge.profile.out",sample=config["samples"]) ## TARGET SAMPLES METAMETA
+	input: expand("{sample}/metametamerge/eval.png",sample=config["samples"]) ## TARGET SAMPLES metametamerge_plots
 include: ("scripts/metametamerge.sm")
 
 ############################################################################################## 

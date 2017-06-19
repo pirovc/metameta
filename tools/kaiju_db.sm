@@ -22,10 +22,10 @@ rule kaiju_db_profile:
 	shell: "zcat {input}/*.gz | grep '^VERSION' | tr -s ' ' | cut -d ' ' -f 2 > {output} 2> {log}"
 	
 rule kaiju_db_check:
-	input: config['dbdir'] + "kaiju.dbaccession.out"
-			, db_path['kaiju'] + "kaiju_db.fmi"
-			, db_path['kaiju'] + "names.dmp"
-			, db_path['kaiju'] + "nodes.dmp"
+	input: ancient(config['dbdir'] + "kaiju.dbaccession.out")
+			, ancient(db_path['kaiju'] + "kaiju_db.fmi")
+			, ancient(db_path['kaiju'] + "names.dmp")
+			, ancient(db_path['kaiju'] + "nodes.dmp")
 	output: touch(config['dbdir'] + "kaiju_db_check.done")
 	log: config['dbdir'] + "log/kaiju_db_check.log"
 	benchmark: config['dbdir'] + "log/kaiju_db_check.time"

@@ -55,11 +55,11 @@ rule kraken_db_profile:
 	shell: "cat {input}added/*.fna | grep '>' | grep -o '^[^ ]*' | cut -d '|' -f 4 > {output} 2> {log}"
 
 rule kraken_db_check:
-	input: config['dbdir'] + "kraken.dbaccession.out"
-			, db_path['kraken'] + "database.idx"
-			, db_path['kraken'] + "database.kdb"
-			, db_path['kraken'] + "taxonomy/nodes.dmp"
-			, db_path['kraken'] + "taxonomy/names.dmp"
+	input: ancient(config['dbdir'] + "kraken.dbaccession.out")
+			, ancient(db_path['kraken'] + "database.idx")
+			, ancient(db_path['kraken'] + "database.kdb")
+			, ancient(db_path['kraken'] + "taxonomy/nodes.dmp")
+			, ancient(db_path['kraken'] + "taxonomy/names.dmp")
 	output: touch(config['dbdir'] + "kraken_db_check.done")
 	log: config['dbdir'] + "log/kraken_db_check.log"
 	benchmark: config['dbdir'] + "log/kraken_db_check.time"
