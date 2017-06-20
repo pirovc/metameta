@@ -24,7 +24,7 @@ rule clark_db_1:
 rule clark_db_2:
 	# CLARK compiles the database on the first run -> use dummy .fq file to do it and delete results
 	input: db_path['clark'] + "targets.txt"
-			, srcdir("../scripts/dummy.fq")
+			, ancient(srcdir("../scripts/dummy.fq"))
 	output: db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.ky",
 			db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.lb",
 			db_path['clark'] + "bacteria_0/db_central_k31_t1461_s1610612741_m0.tsk.sz"

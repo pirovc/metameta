@@ -16,7 +16,8 @@ default_val = {
 			   'cutoff': 0.0001,
 			   'bins': 4,
 			   'ranks': 'species',
-			   'detailed': 0
+			   'detailed': 0,
+			   'verbose': 0
 			   }	
 	
 for key,value in default_val.items():
