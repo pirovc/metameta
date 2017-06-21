@@ -37,26 +37,26 @@ else:
 		print("---------------------------------------------------------------------------------------")
 		print("")
 		
-	onsuccess:
+	def onend(msg, log):
 		#Remove clusterlog folder (if empty)
 		shell("rm -d {config[workdir]}/clusterlog 2> /dev/null")
-		log_file = config["workdir"] + "/metameta_run.log"
-		print("")
-		print("---------------------------------------------------------------------------------------")
-		print("Finished successfuly. Check the log file for more information:\n", log_file)
-		print("---------------------------------------------------------------------------------------")
-		print("")
-
-	onerror:
-		#Remove clusterlog folder (if empty)
-		shell("rm -d {config[workdir]}/clusterlog 2> /dev/null")
-		log_file = config["workdir"] + "/metameta_run.log"
+		from datetime import datetime
+		dtnow = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+		log_file = config["workdir"] + "/metameta_" + dtnow + ".log"
 		shell("cp {log} {log_file}")
 		print("")
 		print("---------------------------------------------------------------------------------------")
-		print("An error has occured. Please check the log file for more information:\n", log_file)
+		print(msg)
+		print("Please check the main log file for more information:\n\t%s\nDetailed output and execution time for each rule can be found at:\n\t%s" % (log_file,config["workdir"] + "/SAMPLE_NAME/log/"))
 		print("---------------------------------------------------------------------------------------")
 		print("")
+	
+	onsuccess:
+		onend("MetaMeta finished successfuly", log)
+
+	onerror:
+		onend("An error has occured.", log)
+		
 			
 	############################################################################################## 
 
@@ -68,8 +68,8 @@ else:
 	############################################################################################## 
 
 	rule all:
-		#input: expand("{sample}/metametamerge/final.metametamerge.profile.out",sample=config["samples"]) ## TARGET SAMPLES METAMETA
-		input: expand("{sample}/metametamerge/eval.png",sample=config["samples"]) ## TARGET SAMPLES metametamerge_plots
+		input: expand("{sample}/metametamerge/final.metametamerge.profile.out",sample=config["samples"]) ## TARGET SAMPLES METAMETA
+		#input: expand("{sample}/metametamerge/eval.png",sample=config["samples"]) ## TARGET SAMPLES metametamerge_plots
 	include: ("scripts/metametamerge.sm")
 
 	############################################################################################## 

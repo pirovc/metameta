@@ -8,9 +8,10 @@ rule clark_db_1:
 		"""
 		# The script should be on set_targets.sh script folder (opt/clark/) to generate the database 
 		# with correct paths. Since there's not much control over conda file yet, the rule checks if 
-		# there's an environment for this rule (md5 of the .yaml file), otherwise looks for the files 
-		# on the activated environment path
+		# there's an environment for this rule (first 8 chards of the md5 of the environment .yaml file),
+		# otherwise looks for the files on the activated environment path
 		md5=($(md5sum "{params.srcdir}/../envs/clark.yaml"))
+		md5=${md5:0:8}
 		if [ -d ".snakemake/conda/${{md5}}" ]; then # Environment for rule was created
 			clark_opt_path=".snakemake/conda/${{md5}}/opt/clark/"
 		else

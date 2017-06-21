@@ -73,12 +73,12 @@ rule subsample_reads:
 		else: #Create links
 			# If no sub-sampling is requested, only single files are stored (_pp) and links are created to the tools
 			if gz:# ungzip
-				shell("gzip -dc "+input.fq1+" > {wildcards.sample}/reads/pp.1.fq > {log} 2>&1")
+				shell("gzip -dc "+input.fq1+" > {wildcards.sample}/reads/pp.1.fq 2> {log} ")
 			else:	
 				shell("ln -sfv `readlink -f "+input.fq1+"` {wildcards.sample}/reads/pp.1.fq > {log} 2>&1")
 			
 			if gz:# ungzip
-				shell("gzip -dc "+input.fq2+" > {wildcards.sample}/reads/pp.2.fq >> {log} 2>&1")
+				shell("gzip -dc "+input.fq2+" > {wildcards.sample}/reads/pp.2.fq 2>> {log}")
 			else:
 				shell("ln -sfv `readlink -f "+input.fq2+"` {wildcards.sample}/reads/pp.2.fq >> {log} 2>&1")
 

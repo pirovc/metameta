@@ -28,9 +28,9 @@ rule newtool_db_profile:
 
 # Check if all required files are present
 rule newtool_db_check:
-	input: config['dbdir'] + "newtool.dbaccession.out"
-			, db_path['newtool'] + "sequences.fasta"
-			, db_path['newtool'] + "database.index"
+	input: ancient(config['dbdir'] + "newtool.dbaccession.out")
+			, ancient(db_path['newtool'] + "sequences.fasta")
+			, ancient(db_path['newtool'] + "database.index")
 	output: touch(config['dbdir'] + "newtool_db_check.done")
 	log: config['dbdir'] + "log/newtool_db_check.log"
 	benchmark: config['dbdir'] + "log/newtool_db_check.time"

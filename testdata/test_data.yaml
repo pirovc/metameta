@@ -1,10 +1,7 @@
-# Output directory
 workdir: '/home/RKID1/pirov/jobs/metameta_data/results/'
-# Database directory
 dbdir: '/home/RKID1/pirov/jobs/metameta_data/databases/'
-
 gzipped: 1
-
+threads: 6
 samples:
   "metameta_test_data":
      fq1: "/home/RKID1/pirov/jobs/metameta/testdata/metameta_test_reads.1.fq.gz"
