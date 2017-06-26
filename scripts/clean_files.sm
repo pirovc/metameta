@@ -1,11 +1,13 @@
+# Clean files for the tool after every database is finished
 rule clean_files:
-	input: "{sample}/profiles/{tool}.profile.out"
+	input: expand("{{sample}}/profiles/{database}/{{tool}}.profile.out", database=config["databases"].keys()) ## TARGET DATABASE CLEAN FILES 
 	output: temp(touch("{sample}/{tool}_clean_files.done"))
 	log: "{sample}/log/{tool}_clean_files.log"
 	benchmark: "{sample}/log/{tool}_clean_files.time"
 	run:
 		if not config["keepfiles"]: shell("rm -rfv {wildcards.sample}/{wildcards.tool}/ > {log} 2>&1")
-		
+
+# Clean reads for the sample after every run is finished
 rule clean_reads:
 	input: expand("{{sample}}/{tool}_clean_files.done", tool=config["tools"]) ## TARGET TOOLS CLEAN FILES 
 	output: temp(touch("{sample}/clean_reads.done"))

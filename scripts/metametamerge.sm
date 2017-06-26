@@ -10,15 +10,15 @@ rule metametamerge_get_taxdump:
 		shell("tar -zxvf {output.taxdump} -C {config[dbdir]} names.dmp nodes.dmp merged.dmp >> {log} 2>&1")
 
 rule metametamerge:
-	input: tool_profiles = expand("{{sample}}/profiles/{tool}.profile.out", tool=config["tools"]), ## TARGET TOOLS METAMETA
+	input: tool_profiles = expand("{{sample}}/profiles/{{database}}/{tool}.profile.out", tool=config["tools"]), ## TARGET TOOLS METAMETA
 		db_profiles = [config["dbdir"] + tool + ".dbprofile.out" for tool in config["tools"]], ## TARGET TOOLS DB 
 		clean_reads = "{sample}/clean_reads.done",
 		names=config["dbdir"] + "names.dmp",
 		nodes=config["dbdir"] + "nodes.dmp",
 		merged=config["dbdir"] + "merged.dmp"
-	output: "{sample}/metametamerge/final.metametamerge.profile.out"
-	log: "{sample}/log/metametamerge.log"
-	benchmark: "{sample}/log/metametamerge.time"
+	output: "{sample}/metametamerge/{database}/final.metametamerge.profile.out"
+	log: "{sample}/log/{database}/metametamerge.log"
+	benchmark: "{sample}/log/{database}/metametamerge.time"
 	params: tool_identifier=','.join(config["tools"].keys()),
 			tool_method=','.join(config["tools"].values()),
 			detailed = "--detailed" if config["detailed"] else "",

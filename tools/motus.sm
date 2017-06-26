@@ -2,24 +2,24 @@ rule motus_run_1:
 	input:
 		fq1="{sample}/reads/motus.1.fq",
 		fq2="{sample}/reads/motus.2.fq",
-		dbcheck=config['dbdir'] + "motus_db_check.done"
-	output: "{sample}/motus/{sample}.species.abundances.gz"
-	log: "{sample}/log/motus_run_1.log"
-	benchmark: "{sample}/log/motus_run_1.time"
+		dbcheck=config['dbdir'] + "{database}/motus_db_check.done"
+	output: "{sample}/motus/{database}/{sample}.species.abundances.gz"
+	log: "{sample}/log/{database}/motus_run_1.log"
+	benchmark: "{sample}/log/{database}/motus_run_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/motus.yaml")
 	shell: 
 		"""
-		cd {wildcards.sample}/motus/
-		{tool_path[motus]}mOTUs.pl --processors={threads} ../../{input.fq1} ../../{input.fq2} --output-directory ./ > ../../{log} 2>&1
-		mv NCBI.species.abundances.gz ../../{output}
+		cd {wildcards.sample}/motus/{wildcards.database}/
+		{tool_path[motus]}mOTUs.pl --processors={threads} ../../../{input.fq1} ../../../{input.fq2} --output-directory ./ > ../../../{log} 2>&1
+		mv NCBI.species.abundances.gz ../../../{output}
 		"""
 
 rule motus_rpt:
-	input: "{sample}/motus/{sample}.species.abundances.gz"
-	output:	"{sample}/profiles/motus.profile.out"
-	log: "{sample}/log/motus_rpt.log"
-	benchmark: "{sample}/log/motus_rpt.time"
+	input: "{sample}/motus/{database}/{sample}.species.abundances.gz"
+	output:	"{sample}/profiles/{database}/motus.profile.out"
+	log: "{sample}/log/{database}/motus_rpt.log"
+	benchmark: "{sample}/log/{database}/motus_rpt.time"
 	shell:
 		"""
 		rm -f {output} {log}

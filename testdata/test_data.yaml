@@ -3,6 +3,45 @@ dbdir: '/home/RKID1/pirov/jobs/metameta_data/databases/'
 gzipped: 1
 threads: 6
 samples:
-  "metameta_test_data":
+  "metameta_test_data_with_dbs":
      fq1: "/home/RKID1/pirov/jobs/metameta/testdata/metameta_test_reads.1.fq.gz"
      fq2: "/home/RKID1/pirov/jobs/metameta/testdata/metameta_test_reads.2.fq.gz"
+
+# Alternative path for the tools (uses it instead of the default path)
+tool_alt_path:
+    "clark": ""
+    "dudes": ""
+    "gottcha": ""
+    "kaiju": ""
+    "kraken": ""
+    "motus": ""
+    "trimmomatic": ""
+    "spades": ""
+    "bowtie2": ""
+    "metametamerge": "/home/RKID1/pirov/jobs/metametamerge/"
+
+verbose: 1
+
+
+
+
+databases:
+  "archaea_bacteria": "v2"
+  "custom_name": "/folder/with/sequences/"
+  "custom_name_2": "/folder/with/sequences/"
+
+"archaea_bacteria":
+  "v1":
+    clark: "db_clark_v1"
+    dudes: "db_dudes_v1"
+    gottcha: "db_gottcha_v1"
+    kaiju: "db_kaiju_v1"
+    kraken: "db_kraken_v1"
+    motus: "db_motus_v1"
+  "v2":
+    clark: "db_clark_v2"
+    dudes: "db_dudes_v2"
+    gottcha: "db_gottcha_v2"
+    kaiju: "db_kaiju_v2"
+    kraken: "db_kraken_v2"
+    motus: "db_motus_v2"

@@ -1,7 +1,0 @@
-rule dudes_db_custom_1:
-	output: db_path['custom']
-	output: db_path['dudes'] + "ba_refseq_cg_20150326_av.tar.gz"
-	log: config['dbdir'] + "log/dudes_db_1.log"
-	benchmark: config['dbdir'] + "log/dudes_db_1.time"
-	run:
-		shell(download("https://www.dropbox.com/s/339sof2ffpxp08j/ba_refseq_cg_20150326_av.tar.gz?dl=1", output[0]) + " > {log} 2>&1")

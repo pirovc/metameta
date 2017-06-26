@@ -68,14 +68,18 @@ else:
 	############################################################################################## 
 
 	rule all:
-		input: expand("{sample}/metametamerge/final.metametamerge.profile.out",sample=config["samples"]) ## TARGET SAMPLES METAMETA
+		input: expand("{sample}/metametamerge/{database}/final.metametamerge.profile.out", sample=config["samples"], database=config["databases"].keys()) ## TARGET SAMPLES METAMETA
 		#input: expand("{sample}/metametamerge/eval.png",sample=config["samples"]) ## TARGET SAMPLES metametamerge_plots
 	include: ("scripts/metametamerge.sm")
 
 	############################################################################################## 
 
+	include: ("scripts/db.sm")
+	
 	for t in config["tools"]:
 		include: ("tools/"+t+"_db.sm")
 		include: ("tools/"+t+".sm")
 
 	############################################################################################## 
+
+print(config["databases"].keys())
