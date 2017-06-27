@@ -10,17 +10,20 @@ rule metametamerge_get_taxdump:
 		shell("tar -zxvf {output.taxdump} -C {config[dbdir]} names.dmp nodes.dmp merged.dmp >> {log} 2>&1")
 
 rule metametamerge:
-	input: tool_profiles = expand("{{sample}}/profiles/{{database}}/{tool}.profile.out", tool=config["tools"]), ## TARGET TOOLS METAMETA
-		db_profiles = [config["dbdir"] + tool + ".dbprofile.out" for tool in config["tools"]], ## TARGET TOOLS DB 
-		clean_reads = "{sample}/clean_reads.done",
+	input:  
+		#### config[wildcards.database] -> get only tools that are configure for each database
+		#### if tool in config["tools"] -> only if selected in the config file
+		tool_profiles = lambda wildcards: [wildcards.sample + "/profiles/" + wildcards.database + "/" + tool + ".profile.out" for tool in config[wildcards.database] if tool in config["tools"]], ## TARGET TOOLS PROFILE
+		db_profiles = lambda wildcards: [config["dbdir"] + wildcards.database + "/" + tool + ".dbprofile.out" for tool in config[wildcards.database] if tool in config["tools"]], ## TARGET TOOLS DBPROFILE
+		clean_files = lambda wildcards: [wildcards.sample + "/profiles/" + wildcards.database + "/" + tool + "_clean_files.done" for tool in config[wildcards.database] if tool in config["tools"]], ## TARGET TOOLS CLEAN FILES
 		names=config["dbdir"] + "names.dmp",
 		nodes=config["dbdir"] + "nodes.dmp",
 		merged=config["dbdir"] + "merged.dmp"
 	output: "{sample}/metametamerge/{database}/final.metametamerge.profile.out"
 	log: "{sample}/log/{database}/metametamerge.log"
 	benchmark: "{sample}/log/{database}/metametamerge.time"
-	params: tool_identifier=','.join(config["tools"].keys()),
-			tool_method=','.join(config["tools"].values()),
+	params: tool_identifier=lambda wildcards: ','.join([tool for tool in config[wildcards.database] if tool in config["tools"]]),	
+			tool_method=lambda wildcards: ','.join([config["tools"][tool] for tool in config[wildcards.database] if tool in config["tools"]]),
 			detailed = "--detailed" if config["detailed"] else "",
 			verbose = "--verbose" if config["verbose"] else ""
 	conda: srcdir("../envs/metametamerge.yaml")

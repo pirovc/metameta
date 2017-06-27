@@ -1,29 +1,56 @@
 # Rule order to get pre-defined databases first instead of trying to create it customized
-ruleorder: db_archaea_bacteria_check > db_custom_check
-
-rule db_custom_check:
-	output: touch(config['dbdir'] + "{database}/{tool}_db_check.done")
-	shell:
-		"""
-		echo ""
-		"""
+ruleorder: db_archaea_bacteria_check > 
+			clark_db_custom_check >
+			dudes_db_custom_check >
+			kaiju_db_custom_check >
+			kraken_db_custom_check >
+			
+ruleorder: db_archaea_bacteria_unpack > database_profile
 
 rule db_archaea_bacteria_download:
-	output: config['dbdir'] + "archaea_bacteria/{tool}.tar.gz"
+	output: temp(config['dbdir'] + "archaea_bacteria/{tool}.tar.gz")
 	log: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_download.log"
 	benchmark: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_download.time"
 	params: 
-		# Get URL for the database according to the user choice (v1 default)
-		url = lambda wildcards: config["archaea_bacteria"][config["databases"]["archaea_bacteria"]][wildcards.tool]
+		# Get URL for the database
+		url = lambda wildcards: config["archaea_bacteria"][wildcards.tool]
 	run:
-		shell(download({params.url}, output[0]) + " > {log} 2>&1")
+		shell(download((params.url), output[0]) + " > {log} 2>&1")
 
-rule db_archaea_bacteria_check:	
-	input: config['dbdir'] + "archaea_bacteria/{tool}.tar.gz"
-	output: touch(config['dbdir'] + "archaea_bacteria/{tool}_db_check.done")
-	log: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_check.log"
-	benchmark: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_check.time"
+rule db_archaea_bacteria_unpack:	
+	input: 
+		config['dbdir'] + "archaea_bacteria/{tool}.tar.gz"
+	output: 
+		db_folder = config['dbdir'] + "archaea_bacteria/{tool}_db/",
+		db_profile = config['dbdir'] + "archaea_bacteria/{tool}.dbprofile.out"
+	log: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_unpack.log"
+	benchmark: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_unpack.time"
 	shell: 
 		"""
-		tar zxfv {input} -C {config[dbdir]} + "archaea_bacteria/ > {log} 2>&1
+		tar zxfv {input} -C {config[dbdir]}archaea_bacteria/ > {log} 2>&1
+		"""
+
+rule db_archaea_bacteria_check:
+	input:
+		db_folder = config['dbdir'] + "archaea_bacteria/{tool}_db/",
+		db_profile = config['dbdir'] + "archaea_bacteria/{tool}.dbprofile.out",
+	output:
+		db_check = touch(config['dbdir'] + "archaea_bacteria/{tool}_db_check.done")
+		
+acc2tab_path=srcdir("acc2tab.bash")
+tab2count_path=srcdir("tab2count.bash")
+
+rule database_profile:
+	input: 
+		dbaccession = config["dbdir"] + "{database}/{tool}.dbaccession.out"
+	output: 
+		dbtax=config["dbdir"] + "{database}/{tool}.dbtax.out",
+		dbprofile=config["dbdir"] + "{database}/{tool}.dbprofile.out"
+	log: config["dbdir"] + "{database}/log/{tool}_database_profile.log"
+	benchmark: config["dbdir"] + "{database}/log/{tool}_database_profile.time"
+	threads: config["threads"]
+	shell:
+		"""
+		cat {input} | xargs --max-procs={threads} -I '{{}}' bash {acc2tab_path} '{{}}' > {output.dbtax} 2> {log}
+		{tab2count_path} {output.dbtax} > {output.dbprofile} 2>> {log}
 		"""

@@ -1,0 +1,9 @@
+rule dudes_db_custom_profile:
+	output:
+		db_accession = touch(config['dbdir'] + "{database}/dudes.dbaccession.out")
+		
+rule dudes_db_custom_check:
+	input:
+		db_accession = touch(config['dbdir'] + "{database}/dudes.dbaccession.out")
+	output: 
+		db_check = touch(config['dbdir'] + "{database}/dudes_db_check.done")

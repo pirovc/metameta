@@ -8,7 +8,7 @@ rule clark_run_1:
 	benchmark: "{sample}/log/{database}/clark_run_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/clark.yaml")
-	shell: "{tool_path[clark]}CLARK -T {db_path[clark]}targets.txt -D {db_path[clark]}bacteria_0/ -P {input.fq1} {input.fq2} -R {wildcards.sample}/clark/{wildcards.database}/{wildcards.sample}.results -n {threads} > {log} 2>&1"
+	shell: "{tool_path[clark]}CLARK -T {config[dbdir]}{wildcards.database}/clark_db/targets.txt -D {config[dbdir]}{wildcards.database}/clark_db/custom_0/ -P {input.fq1} {input.fq2} -R {wildcards.sample}/clark/{wildcards.database}/{wildcards.sample}.results -n {threads} > {log} 2>&1"
 
 rule clark_rpt:
 	input: "{sample}/clark/{database}/{sample}.results.csv"

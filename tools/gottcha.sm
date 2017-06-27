@@ -8,7 +8,7 @@ rule gottcha_run_1:
 	benchmark: "{sample}/log/{database}/gottcha_run_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/gottcha.yaml")	
-	shell: "{tool_path[gottcha]}gottcha.pl -i '{input.fq1},{input.fq2}' -d {db_path[gottcha]}GOTTCHA_BACTERIA_c4937_k24_u30.species -t {threads} -o {wildcards.sample}/gottcha/{wildcards.database}/ -p {wildcards.sample}.results > {log} 2>&1"
+	shell: "{tool_path[gottcha]}gottcha.pl -i '{input.fq1},{input.fq2}' -d {config[dbdir]}{wildcards.database}/gottcha_db/GOTTCHA_BACTERIA_c4937_k24_u30.species -t {threads} -o {wildcards.sample}/gottcha/{wildcards.database}/ -p {wildcards.sample}.results > {log} 2>&1"
 
 rule gottcha_rpt:
 	input: "{sample}/gottcha/{database}/{sample}.results.gottcha.tsv"

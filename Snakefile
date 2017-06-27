@@ -19,7 +19,6 @@ else:
 	db_path={}
 	tool_path={}
 	for tool in config["tools"]:
-		db_path[tool] = config["db_alt_path"][tool] if config["db_alt_path"][tool] else config["dbdir"] + tool + "_db/"
 		tool_path[tool] = config["tool_alt_path"][tool] if config["tool_alt_path"][tool] else ""
 
 	onstart:
@@ -60,26 +59,32 @@ else:
 			
 	############################################################################################## 
 
-	include: "scripts/util.py"
+	import os.path
+
+
+	include: "scripts/db.sm"
 	include: "scripts/preproc.sm"
-	include: "scripts/dbprofile.sm"
 	include: "scripts/clean_files.sm"
-
-	############################################################################################## 
-
-	rule all:
-		input: expand("{sample}/metametamerge/{database}/final.metametamerge.profile.out", sample=config["samples"], database=config["databases"].keys()) ## TARGET SAMPLES METAMETA
-		#input: expand("{sample}/metametamerge/eval.png",sample=config["samples"]) ## TARGET SAMPLES metametamerge_plots
-	include: ("scripts/metametamerge.sm")
-
-	############################################################################################## 
-
-	include: ("scripts/db.sm")
-	
+	include: "scripts/metametamerge.sm"
+	include: "scripts/util.py"
 	for t in config["tools"]:
-		include: ("tools/"+t+"_db.sm")
+		if os.path.isfile(srcdir("tools/"+t+"_db_custom.sm")):
+			include: "tools/"+t+"_db_custom.sm"
 		include: ("tools/"+t+".sm")
 
 	############################################################################################## 
 
-print(config["databases"].keys())
+	rule all:
+		input: 
+			clean_reads = expand("{sample}/clean_reads.done", sample=config["samples"]) ## TARGET SAMPLES CLEAN READS
+	
+	# Clean reads after every sample is finished
+	rule clean_reads:
+		input: final_profiles = expand("{{sample}}/metametamerge/{database}/final.metametamerge.profile.out", database=config["databases"])
+		output: temp(touch("{sample}/clean_reads.done"))
+		log: "{sample}/log/clean_reads.log"
+		benchmark: "{sample}/log/clean_reads.time"
+		run:
+			if not config["keepfiles"]: shell("rm -rfv {wildcards.sample}/reads/ > {log} 2>&1")
+
+	############################################################################################## 

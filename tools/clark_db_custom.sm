@@ -1,0 +1,9 @@
+rule clark_db_custom_profile:
+	output:
+		db_accession = touch(config['dbdir'] + "{database}/clark.dbaccession.out")
+		
+rule clark_db_custom_check:
+	input:
+		db_accession = touch(config['dbdir'] + "{database}/clark.dbaccession.out")
+	output: 
+		db_check = touch(config['dbdir'] + "{database}/clark_db_check.done")
