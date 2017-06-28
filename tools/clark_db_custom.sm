@@ -1,9 +1,73 @@
-rule clark_db_custom_profile:
-	output:
-		db_accession = touch(config['dbdir'] + "{database}/clark.dbaccession.out")
+rule clark_db_custom_1:
+	output: sep_seq_folder = temp(config['dbdir'] + "{database}/clark_db/Custom/")
+	params: seq_folder = lambda wildcards: config[wildcards.database]["clark"]
+	log: config['dbdir'] + "{database}/log/clark_db_custom_1.log"
+	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_1.time"
+	shell: 
+		"""
+		# Separate one file per sequence
+		mkdir -p {output.sep_seq_folder}
+		cat {params.seq_folder}/*.fna | awk -v sep_seq_folder='{output.sep_seq_folder}' '{{if (substr($0, 1, 1)==">") {{filename=(sep_seq_folder "/" substr($1,2) ".fna")}}; print $0 > filename}}'
+		"""
+
+rule clark_db_custom_2:
+	input: sep_seq_folder = config['dbdir'] + "{database}/clark_db/Custom/"
+	output: targets = config['dbdir'] + "{database}/clark_db/targets.txt"
+	log: config['dbdir'] + "{database}/log/clark_db_custom_2.log"
+	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_2.time"
+	conda: srcdir("../envs/clark.yaml")
+	params: srcdir = srcdir("")
+	shell: 
+		"""
+		# The script should be on set_targets.sh script folder (opt/clark/) to generate the database 
+		# with correct paths. Since there's not much control over conda file yet, the rule checks if 
+		# there's an environment for this rule (first 8 chards of the md5 of the environment .yaml file),
+		# otherwise looks for the files on the activated environment path
 		
+		# First check if there's a pre-defined alternate path to the tool
+		tap={config[tool_alt_path][clark]}
+		if [[ -n "${{tap}}" ]]; then
+			clark_opt_path="${{tap}}"
+		else
+			md5=($(md5sum "{params.srcdir}/../envs/clark.yaml"))
+			md5=${{md5:0:8}}
+			if [ -d ".snakemake/conda/${{md5}}" ]; then # Environment for rule was created
+				clark_opt_path=".snakemake/conda/${{md5}}/opt/clark/"
+			else
+				condadir=`conda env list | grep -o '\*.*' | grep -o '/.*'` # get active conda environment path
+				clark_opt_path="${{condadir}}/opt/clark/"
+			fi
+		fi
+		cd ${{clark_opt_path}}
+		./set_targets.sh {config[dbdir]}{wildcards.database}/clark_db/ custom > {log} 2>&1
+		# Remove custom_0 in case it exists to force execution of the next rule
+		rm -rfv {config[dbdir]}{wildcards.database}/clark_db/custom_0/ >> {log} 2>&1
+		"""	
+
+rule clark_db_custom_3:
+	input: sep_seq_folder = config['dbdir'] + "{database}/clark_db/Custom/",
+			targets = config['dbdir'] + "{database}/clark_db/targets.txt",
+			dummy_file = ancient(srcdir("../scripts/dummy.fq"))
+	output: db_folder = config['dbdir'] + "{database}/clark_db/custom_0/",
+			dummy_out = temp(config['dbdir'] + "{database}/clark_db/dummy_out.csv")
+	log: config['dbdir'] + "{database}/log/clark_db_custom_3.log"
+	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_3.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/clark.yaml")
+	# Use custom_0/ as input because db output files have variable names
+	shell: "{tool_path[clark]}CLARK -T {input.targets} -D {output.db_folder} -O {input.dummy_file} -R {config[dbdir]}{wildcards.database}/clark_db/dummy_out -n {threads} > {log} 2>&1"
+	
+rule clark_db_custom_profile:
+	output: temp(config['dbdir'] + "{database}/clark.dbaccession.out")
+	log: config['dbdir'] + "{database}/log/clark_db_custom_profile.log"
+	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_profile.time"
+	params: seq_folder = lambda wildcards: config[wildcards.database]["clark"]
+	shell: "grep -h '^>' {params.seq_folder}/*.fna | grep -o '[A-Z]*_[0-9]*\.[0-9]*' | sed 's/>//g' > {output} 2> {log}"
+	
 rule clark_db_custom_check:
-	input:
-		db_accession = touch(config['dbdir'] + "{database}/clark.dbaccession.out")
-	output: 
-		db_check = touch(config['dbdir'] + "{database}/clark_db_check.done")
+	input: ancient(config['dbdir'] + "{database}/clark.dbprofile.out"),
+			ancient(config['dbdir'] + "{database}/clark_db/custom_0/"),
+			ancient(config['dbdir'] + "{database}/clark_db/targets.txt")
+	output: db_check = temp(touch(config['dbdir'] + "{database}/clark_db_check.done"))
+	log: config['dbdir'] + "{database}/log/clark_db_custom_check.log"
+	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_check.time"

@@ -5,7 +5,7 @@ rule kraken_db_custom_1:
 	threads: config["threads"]
 	conda: srcdir("../envs/kraken.yaml")
 	params: seq_folder = lambda wildcards: config[wildcards.database]["kraken"]
-	shell: "ls -t {params.seq_folder}/*.fna | xargs --max-procs={threads} -I '{{}}' kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --add-to-library '{{}}' >> {log} 2>&1"
+	shell: "ls -t {params.seq_folder}/*.fna | xargs --max-procs={threads} -I '{{}}' {config[tool_alt_path][kraken]}kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --add-to-library '{{}}' >> {log} 2>&1"
 	
 rule kraken_db_custom_2:
 	output: config['dbdir'] + "{database}/kraken_db/taxonomy/nodes.dmp",
@@ -31,19 +31,17 @@ rule kraken_db_custom_3:
 
 rule kraken_db_custom_profile:
 	input: config['dbdir'] + "{database}/kraken_db/library/"
-	output: touch(config['dbdir'] + "{database}/kraken.dbaccession.out")
+	output: temp(config['dbdir'] + "{database}/kraken.dbaccession.out")
 	log: config['dbdir'] + "{database}/log/kraken_db_custom_profile.log"
 	benchmark: config['dbdir'] + "{database}/log/kraken_db_custom_profile.time"
 	shell: "cat {input}added/*.fna | grep '>' | grep -o '^[^ ]*' | cut -d '|' -f 4 > {output} 2> {log}"
 
 rule kraken_db_custom_check:
-	input: 
-		ancient(config['dbdir'] + "{database}/kraken.dbaccession.out"), 
-		ancient(config['dbdir'] + "{database}/kraken_db/database.idx"),
-		ancient(config['dbdir'] + "{database}/kraken_db/database.kdb"),
-		ancient(config['dbdir'] + "{database}/kraken_db/taxonomy/nodes.dmp"),
-		ancient(config['dbdir'] + "{database}/kraken_db/taxonomy/names.dmp")
-	output: 
-		db_check = touch(config['dbdir'] + "{database}/kraken_db_check.done")
+	input: ancient(config['dbdir'] + "{database}/kraken.dbprofile.out"), 
+			ancient(config['dbdir'] + "{database}/kraken_db/database.idx"),
+			ancient(config['dbdir'] + "{database}/kraken_db/database.kdb"),
+			ancient(config['dbdir'] + "{database}/kraken_db/taxonomy/nodes.dmp"),
+			ancient(config['dbdir'] + "{database}/kraken_db/taxonomy/names.dmp")
+	output: db_check = temp(touch(config['dbdir'] + "{database}/kraken_db_check.done"))
 	log: config['dbdir'] + "{database}/log/kraken_db_custom_check.log"
 	benchmark: config['dbdir'] + "{database}/log/kraken_db_custom_check.time"

@@ -3,8 +3,7 @@ ruleorder: db_archaea_bacteria_check >
 			clark_db_custom_check >
 			dudes_db_custom_check >
 			kaiju_db_custom_check >
-			kraken_db_custom_check >
-			
+			kraken_db_custom_check >	
 ruleorder: db_archaea_bacteria_unpack > database_profile
 
 rule db_archaea_bacteria_download:
@@ -31,26 +30,22 @@ rule db_archaea_bacteria_unpack:
 		"""
 
 rule db_archaea_bacteria_check:
-	input:
-		db_folder = config['dbdir'] + "archaea_bacteria/{tool}_db/",
-		db_profile = config['dbdir'] + "archaea_bacteria/{tool}.dbprofile.out",
-	output:
-		db_check = touch(config['dbdir'] + "archaea_bacteria/{tool}_db_check.done")
+	input: db_folder = ancient(config['dbdir'] + "archaea_bacteria/{tool}_db/"),
+			db_profile = ancient(config['dbdir'] + "archaea_bacteria/{tool}.dbprofile.out")
+	output: db_check = temp(touch(config['dbdir'] + "archaea_bacteria/{tool}_db_check.done"))
 		
+
 acc2tab_path=srcdir("acc2tab.bash")
 tab2count_path=srcdir("tab2count.bash")
-
 rule database_profile:
-	input: 
-		dbaccession = config["dbdir"] + "{database}/{tool}.dbaccession.out"
-	output: 
-		dbtax=config["dbdir"] + "{database}/{tool}.dbtax.out",
-		dbprofile=config["dbdir"] + "{database}/{tool}.dbprofile.out"
+	input: db_accession = config["dbdir"] + "{database}/{tool}.dbaccession.out"
+	output: db_tax=temp(config["dbdir"] + "{database}/{tool}.dbtax.out"),
+			db_profile=config["dbdir"] + "{database}/{tool}.dbprofile.out"
 	log: config["dbdir"] + "{database}/log/{tool}_database_profile.log"
 	benchmark: config["dbdir"] + "{database}/log/{tool}_database_profile.time"
 	threads: config["threads"]
 	shell:
 		"""
-		cat {input} | xargs --max-procs={threads} -I '{{}}' bash {acc2tab_path} '{{}}' > {output.dbtax} 2> {log}
-		{tab2count_path} {output.dbtax} > {output.dbprofile} 2>> {log}
+		cat {input.db_accession} | xargs --max-procs={threads} -I '{{}}' bash {acc2tab_path} '{{}}' > {output.db_tax} 2> {log}
+		{tab2count_path} {output.db_tax} > {output.db_profile} 2>> {log}
 		"""

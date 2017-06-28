@@ -4,7 +4,7 @@ rule kaiju_db_custom_1:
 	benchmark: config['dbdir'] + "{database}/log/kaiju_db_custom_1.time"
 	conda: srcdir("../envs/kaiju.yaml")
 	params: seq_folder = lambda wildcards: config[wildcards.database]["kaiju"]
-	shell: "gbk2faa.pl <(cat {params.seq_folder}/*.gbff) {output.faa} > {log} 2>&1"
+	shell: "{config[tool_alt_path][kaiju]}gbk2faa.pl <(cat {params.seq_folder}/*.gbff) {output.faa} > {log} 2>&1"
 
 rule kaiju_db_custom_2:
 	input: faa = config['dbdir'] + "{database}/kaiju_db/kaiju_db.faa"
@@ -13,7 +13,7 @@ rule kaiju_db_custom_2:
 	log: config['dbdir'] + "{database}/log/kaiju_db_custom_2.log"
 	benchmark: config['dbdir'] + "{database}/log/kaiju_db_custom_2.time"
 	conda: srcdir("../envs/kaiju.yaml")
-	shell: "mkbwt -n 5 -a ACDEFGHIKLMNPQRSTVWY -o {config[dbdir]}{wildcards.database}/kaiju_db/kaiju_db {input.faa} > {log} 2>&1"
+	shell: "{config[tool_alt_path][kaiju]}mkbwt -n 5 -a ACDEFGHIKLMNPQRSTVWY -o {config[dbdir]}{wildcards.database}/kaiju_db/kaiju_db {input.faa} > {log} 2>&1"
 
 rule kaiju_db_custom_3:
 	input: bwt = config['dbdir'] + "{database}/kaiju_db/kaiju_db.bwt",
@@ -22,7 +22,7 @@ rule kaiju_db_custom_3:
 	log: config['dbdir'] + "{database}/log/kaiju_db_custom_3.log"
 	benchmark: config['dbdir'] + "{database}/log/kaiju_db_custom_3.time"
 	conda: srcdir("../envs/kaiju.yaml")
-	shell: "mkfmi {config[dbdir]}{wildcards.database}/kaiju_db/kaiju_db > {log} 2>&1"
+	shell: "{config[tool_alt_path][kaiju]}mkfmi {config[dbdir]}{wildcards.database}/kaiju_db/kaiju_db > {log} 2>&1"
 
 rule kaiju_db_custom_4:
 	output: config['dbdir'] + "{database}/kaiju_db/nodes.dmp",
@@ -34,17 +34,18 @@ rule kaiju_db_custom_4:
 		shell("tar -zxvf {output.taxdump} -C {config[dbdir]}{wildcards.database}/kaiju_db/ nodes.dmp >> {log} 2>&1")
 	
 rule kaiju_db_custom_profile:
-	output: config['dbdir'] + "{database}/kaiju.dbaccession.out"
+	output: temp(config['dbdir'] + "{database}/kaiju.dbaccession.out")
 	log: config['dbdir'] + "{database}/log/kaiju_db_custom_profile.log"
 	benchmark: config['dbdir'] + "{database}/log/kaiju_db_custom_profile.time"
 	params: seq_folder = lambda wildcards: config[wildcards.database]["kaiju"]
-	# Recover all protein_id which contain translations
-	shell: "grep -e '/translation=' -e '/protein_id=' <(cat {params.seq_folder}/*.gbff) | grep -B 1 '/translation=' | grep '/protein_id=' | grep -o '\".*\"' | sed 's/\"//g' > {output} 2> {log}"
-
+	# Recover all protein_id which contain translations (need to change dbprofile to get from protein db instead of nuccore)
+	#shell: "grep -e '/translation=' -e '/protein_id=' <(cat {params.seq_folder}/*.gbff) | grep -B 1 '/translation=' | grep '/protein_id=' | grep -o '\".*\"' | sed 's/\"//g' > {output} 2> {log}"
+	shell: "grep -h '^VERSION' {params.seq_folder}/*.gbff | tr -s ' ' | cut -d ' ' -f 2 > {output} 2> {log}"
+	
 rule kaiju_db_custom_check:
-	input: config['dbdir'] + "{database}/kaiju.dbaccession.out",
+	input: ancient(config['dbdir'] + "{database}/kaiju.dbprofile.out"),
 			ancient(config['dbdir'] + "{database}/kaiju_db/kaiju_db.fmi"),
 			ancient(config['dbdir'] + "{database}/kaiju_db/nodes.dmp")
-	output: db_check = touch(config['dbdir'] + "{database}/kaiju_db_check.done")
+	output: db_check = temp(touch(config['dbdir'] + "{database}/kaiju_db_check.done"))
 	log: config['dbdir'] + "{database}/log/kaiju_db_custom_check.log"
 	benchmark: config['dbdir'] + "{database}/log/kaiju_db_custom_check.time"
