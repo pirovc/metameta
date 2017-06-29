@@ -13,8 +13,8 @@ MetaMeta:
 	
 	conda install -c bioconda metameta
 
-* Alternatively, install MetaMeta in a separated environment with the command: ``conda create -c bioconda -n metameta metameta=1.0`` and activate it with ``source activate metameta`` (to deactivate use ``source deactivate``).
-* This command will also install snakemake=3.9.0. All other tools are installed in their own environment automatically on the first run.
+* Alternatively, install MetaMeta in a separated environment with the command: ``conda create -c bioconda -n metameta metameta=1.1`` and activate it with ``source activate metameta`` (to deactivate use ``source deactivate``).
+* This command will also install snakemake=3.9.1. All other tools are installed in their own environment automatically on the first run (necessary to active the --use-conda parameter).
 
 Run:
 ----
@@ -41,12 +41,12 @@ Run MetaMeta:
 * The number of --cores is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter "threads"
 * On the first run MetaMeta will download and install the configured tools as well as the database files necessary for each tool.
 
-Run MetaMeta on cluster:
-------------------------	
+Run MetaMeta on a cluster environment:
+--------------------------------------	
 	
-The automatic integration of conda and Snakemake is still not available in cluster mode. It is then necessary to pre-install the necessary tools (recommended in a separated environment)
+The automatic integration of conda and Snakemake (v3.9.1) is still not available in cluster mode. It is then necessary to pre-install the necessary tools (recommended in a separated environment)
 	
-	conda create -c bioconda -n metameta metameta=1.0 spades=3.9.0 trimmomatic=0.36 jellyfish=1.1.11 bowtie2=2.2.8 clark=1.2.3 dudes=0.07 gottcha=1.0 kaiju=1.0 kraken=0.10.5beta motus=1.0 metametamerge=1.0
+	conda create -c bioconda -n metameta metameta=1.1 spades=3.9.0 trimmomatic=0.36 jellyfish=1.1.11 bowtie2=2.2.8 clark=1.2.3 dudes=0.07 gottcha=1.0 kaiju=1.0 kraken=0.10.5beta motus=1.0 metametamerge=1.1
 
 Make a copy of the configuration file (use example_complete.yaml for a complete set of parameters) and the cluster configuration file:
 
@@ -68,6 +68,21 @@ Activate the environment and execute MetaMeta (slurm example):
     
 * you can change the cluster commands and adapt them to your cluster system
 
+Custom databases:
+-----------------
+
+MetaMeta uses by default Archaea and Bacteria sequences as reference database (more info for each tool on Supplementary Material). It is also possible to have multiple custom databases by giving a set of reference sequence files, specified on the configuration file:
+
+databases:
+  - "archaea_bacteria"
+  - "custom_viral_db"
+
+"custom_viral_db":
+    clark: "sampledata/database/"
+    dudes: "sampledata/database/"
+    kaiju: "sampledata/database/"
+    kraken: "sampledata/database/kraken/"
+	
 Adding a new tool:
 ------------------
 

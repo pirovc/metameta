@@ -46,7 +46,11 @@ else:
 		print("")
 		print("---------------------------------------------------------------------------------------")
 		print(msg)
-		print("Please check the main log file for more information:\n\t%s\nDetailed output and execution time for each rule can be found at:\n\t%s" % (log_file,config["workdir"] + "/SAMPLE_NAME/log/"))
+		print("Please check the main log file for more information:")
+		print("\t" + log_file)
+		print("Detailed output and execution time for each rule can be found at:")
+		print("\t" + config["dbdir"] + "log/")
+		print("\t" + config["workdir"] + "SAMPLE_NAME/log/")
 		print("---------------------------------------------------------------------------------------")
 		print("")
 	

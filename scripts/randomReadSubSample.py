@@ -4,59 +4,14 @@ from itertools import islice
 import numpy as np
 import multiprocessing
 
-args = None
-temp_list = []
-main_file = None
-readgz = None
-ext = None
-lines = None
-
-def write_files(i):
-    global args
-    global temp_list
-    global main_file
-    global readgz
-    global lines
-    global ext
-    forward = i%2 == 0
-
-    if args.paired1_fasta_q_files and args.paired2_fasta_q_files:
-        if forward:
-            f = gzip.open(args.paired1_fasta_q_files, 'rt') if readgz else open(args.paired1_fasta_q_files,'r')
-        else:
-            f = gzip.open(args.paired2_fasta_q_files, 'rt') if readgz else open(args.paired2_fasta_q_files,'r')
-    else:
-        f = gzip.open(args.fasta_q_files, 'rt') if readgz else open(args.fasta_q_files,'r')
-
-    if args.paired1_fasta_q_files and args.paired2_fasta_q_files:
-        if forward:
-            f_name = args.output_prefix + "_" + str(i//2) + ".1" + ext
-            f_out = gzip.open(f_name, 'wt') if args.gzip_output else open(f_name, 'w')
-        else:
-            f_name = args.output_prefix + "_" + str(i//2) + ".2" + ext
-            f_out = gzip.open(f_name, 'wt') if args.gzip_output else open(f_name, 'w')
-    else:
-        f_name = args.output_prefix + "_" + str(i) + ext
-        f_out = gzip.open(f_name, 'wt') if args.gzip_output else open(f_name, 'w')
-
-    #first file
-    pointer_pos = 0
-    for read_pos in temp_list[i//2]:
-        f_out.write(''.join(list(islice(f, int((read_pos-pointer_pos)*lines), int((read_pos-pointer_pos+1)*lines)))))
-        pointer_pos = read_pos+1
-    f.close()
-    f_out.close()
-
-
-
 def main():
+
     global args
-    global temp_list
-    global main_file
     global readgz
     global ext
+    global temp_list
     global lines
-
+	
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', metavar='<fasta_q_files>', dest="fasta_q_files", help="fasta/fastq [.gz] single file")
     parser.add_argument('-f1', metavar='<paired1_fasta_q_files>', dest="paired1_fasta_q_files", help="first paired fasta/fastq [.gz] file")
@@ -127,15 +82,47 @@ def main():
             cont=0 #Go back to the start of the list for the cases that sample_number*sample_size > number of reads
     ## Add remainder to the last list (if using the whole set)
     if args.sample_size==1: temp_list[-1] = np.sort(np.concatenate((temp_list[-1],list(islice(seq_list, split_value*cont,None)))))
-
-    ############################### WRITE FILES
+    
+	# Add gzip to output
     if args.gzip_output: ext = ext + ".gz"
+	
+    # Write files in parallel
+	# Open pool
     pool_size = args.sample_number * 2 if args.paired1_fasta_q_files and args.paired2_fasta_q_files else args.sample_number
     pool = multiprocessing.Pool(pool_size)
     pool.map(write_files, list(range(pool_size)))
-
+	
     f.close()
     if args.paired1_fasta_q_files and args.paired2_fasta_q_files: f2.close()
+	
+def write_files(s):
+	forward = s%2 == 0
+	# Read input files
+	if args.paired1_fasta_q_files and args.paired2_fasta_q_files:
+		if forward:
+			file = gzip.open(args.paired1_fasta_q_files, 'rt') if readgz else open(args.paired1_fasta_q_files,'r')
+		else:
+			file = gzip.open(args.paired2_fasta_q_files, 'rt') if readgz else open(args.paired2_fasta_q_files,'r')
+	else:
+		file = gzip.open(args.fasta_q_files, 'rt') if readgz else open(args.fasta_q_files,'r')
+	# Open output files
+	if args.paired1_fasta_q_files and args.paired2_fasta_q_files:
+		if forward:
+			file_name = args.output_prefix + "_" + str(s//2) + ".1" + ext
+			file_out = gzip.open(file_name, 'wt') if args.gzip_output else open(file_name, 'w')
+		else:
+			file_name = args.output_prefix + "_" + str(s//2) + ".2" + ext
+			file_out = gzip.open(file_name, 'wt') if args.gzip_output else open(file_name, 'w')
+	else:
+		file_name = args.output_prefix + "_" + str(s) + ext
+		file_out = gzip.open(file_name, 'wt') if args.gzip_output else open(file_name, 'w')
 
+	pointer_pos = 0
+	for read_pos in temp_list[s//2]:
+		file_out.write(''.join(list(islice(file, int((read_pos-pointer_pos)*lines), int((read_pos-pointer_pos+1)*lines)))))
+		pointer_pos = read_pos+1
+	file.close()
+	file_out.close()
+	
 if __name__ == "__main__":
     main()

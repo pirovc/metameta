@@ -1,0 +1,31 @@
+workdir: 'sampledata/results/'
+dbdir: 'sampledata/database/'
+
+gzipped: 1
+threads: 6
+
+samples:
+  "sampledata":
+     fq1: "../files/samplereads_0.1.fq.gz"
+     fq2: "../files/samplereads_0.1.fq.gz"
+
+databases:
+  - "custom_viral_db"
+
+"custom_viral_db":
+    clark: "sampledata/database/"
+    dudes: "sampledata/database/"
+    kaiju: "sampledata/database/"
+    kraken: "sampledata/database/kraken/"
+
+tool_alt_path:
+    "clark": ""
+    "dudes": ""
+    "gottcha": ""
+    "kaiju": ""
+    "kraken": ""
+    "motus": ""
+    "trimmomatic": ""
+    "spades": ""
+    "bowtie2": ""
+    "metametamerge": "../../../metametamerge/"
