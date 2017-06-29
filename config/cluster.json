@@ -63,30 +63,50 @@
     "output": "clusterlog/database_profile.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "8G",
+    "mem": "4G",
     "time": "24:00:00"
   },
-  "clark_db_1": {
-    "job-name": "clark_db_1",
-    "output": "clusterlog/clark_db_1.%j.out",
+  "db_archaea_bacteria_download": {
+    "job-name": "db_archaea_bacteria_download",
+    "output": "clusterlog/db_archaea_bacteria_download.%j.out",
     "partition": "small",
     "time": "24:00:00"
   },
-  "clark_db_2": {
-    "job-name": "clark_db_2",
-    "output": "clusterlog/clark_db_2.%j.out",
+  "db_archaea_bacteria_unpack": {
+    "job-name": "db_archaea_bacteria_unpack",
+    "output": "clusterlog/db_archaea_bacteria_unpack.%j.out",
+    "partition": "small",
+    "time": "24:00:00"
+  },
+  "db_archaea_bacteria_check": {
+    "job-name": "db_archaea_bacteria_check",
+    "output": "clusterlog/db_archaea_bacteria_check.%j.out"
+  },
+  "clark_db_custom_1": {
+    "job-name": "clark_db_custom_1",
+    "output": "clusterlog/clark_db_custom_1.%j.out"
+  },
+  "clark_db_custom_2": {
+    "job-name": "clark_db_custom_2",
+    "output": "clusterlog/clark_db_custom_2.%j.out",
+    "partition": "small",
+    "time": "24:00:00"
+  },
+  "clark_db_custom_3": {
+    "job-name": "clark_db_custom_3",
+    "output": "clusterlog/clark_db_custom_3.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
     "mem": "256G",
     "time": "24:00:00"
   },
-  "clark_db_profile": {
-    "job-name": "clark_db_profile",
-    "output": "clusterlog/clark_db_profile.%j.out"
+  "clark_db_custom_profile": {
+    "job-name": "clark_db_custom_profile",
+    "output": "clusterlog/clark_db_custom_profile.%j.out"
   },
-  "clark_db_check": {
-    "job-name": "clark_db_check",
-    "output": "clusterlog/clark_db_check.%j.out"
+  "clark_db_custom_check": {
+    "job-name": "clark_db_custom_check",
+    "output": "clusterlog/clark_db_custom_check.%j.out"
   },
   "clark_run_1": {
     "job-name": "clark_run_1",
@@ -100,27 +120,39 @@
     "job-name": "clark_rpt",
     "output": "clusterlog/clark_rpt.%j.out"
   },
-  "dudes_db_1": {
-    "job-name": "dudes_db_1",
-    "output": "clusterlog/dudes_db_1.%j.out",
-    "partition": "small",
+  "dudes_db_custom_1": {
+    "job-name": "dudes_db_custom_1",
+    "output": "clusterlog/dudes_db_custom_1.%j.out",
+    "partition": "big",
+    "cpus-per-task": 12,
+    "mem": "128G",
     "time": "24:00:00"
   },
-  "dudes_db_2": {
-    "job-name": "dudes_db_2",
-    "output": "clusterlog/dudes_db_2.%j.out"
+  "dudes_db_custom_2": {
+    "job-name": "dudes_db_custom_2",
+    "output": "clusterlog/dudes_db_custom_2.%j.out",
+	"partition": "small",
+	"time": "24:00:00"
   },
-  "dudes_db_3": {
-    "job-name": "dudes_db_3",
-    "output": "clusterlog/dudes_db_3.%j.out"
+  "dudes_db_custom_3": {
+    "job-name": "dudes_db_custom_3",
+    "output": "clusterlog/dudes_db_custom_3.%j.out"
   },
-  "dudes_db_profile": {
-    "job-name": "dudes_db_profile",
-    "output": "clusterlog/dudes_db_profile.%j.out"
+  "dudes_db_custom_4": {
+    "job-name": "dudes_db_custom_4",
+    "output": "clusterlog/dudes_db_custom_4.%j.out"
+	"partition": "big",
+    "cpus-per-task": 12,
+    "mem": "32G",
+    "time": "24:00:00"
   },
-  "dudes_db_check": {
-    "job-name": "dudes_db_check",
-    "output": "clusterlog/dudes_db_check.%j.out"
+  "dudes_db_custom_profile": {
+    "job-name": "dudes_db_custom_profile",
+    "output": "clusterlog/dudes_db_custom_profile.%j.out"
+  },
+  "dudes_db_custom_check": {
+    "job-name": "dudes_db_custom_check",
+    "output": "clusterlog/dudes_db_custom_check.%j.out"
   },
   "dudes_run_1": {
     "job-name": "dudes_run_1",
@@ -142,42 +174,6 @@
     "job-name": "dudes_rpt",
     "output": "clusterlog/dudes_rpt.%j.out"
   },
-  "gottcha_db_1": {
-    "job-name": "gottcha_db_1",
-    "output": "clusterlog/gottcha_db_1.%j.out",
-    "partition": "small",
-    "time": "24:00:00"
-  },
-  "gottcha_db_2": {
-    "job-name": "gottcha_db_2",
-    "output": "clusterlog/gottcha_db_2.%j.out"
-  },
-  "gottcha_db_3": {
-    "job-name": "gottcha_db_3",
-    "output": "clusterlog/gottcha_db_3.%j.out",
-    "partition": "small",
-    "time": "24:00:00"
-  },
-  "gottcha_db_4": {
-    "job-name": "gottcha_db_4",
-    "output": "clusterlog/gottcha_db_4.%j.out"
-  },
-  "gottcha_db_5": {
-    "job-name": "gottcha_db_5",
-    "output": "clusterlog/gottcha_db_5.%j.out",
-    "partition": "small",
-    "time": "24:00:00"
-  },
-  "gottcha_db_profile": {
-    "job-name": "gottcha_db_profile",
-    "output": "clusterlog/gottcha_db_profile.%j.out",
-    "partition": "small",
-    "time": "24:00:00"
-  },
-  "gottcha_db_check": {
-    "job-name": "gottcha_db_check",
-    "output": "clusterlog/gottcha_db_check.%j.out"
-  },
   "gottcha_run_1": {
     "job-name": "gottcha_run_1",
     "output": "clusterlog/gottcha_run_1.%j.out",
@@ -190,21 +186,36 @@
     "job-name": "gottcha_rpt",
     "output": "clusterlog/gottcha_rpt.%j.out"
   },
-  "kaiju_db_1": {
-    "job-name": "kaiju_db_1",
-    "output": "clusterlog/kaiju_db_1.%j.out",
-    "partition": "big",
+  "kaiju_db_custom_1": {
+    "job-name": "kaiju_db_custom_1",
+    "output": "clusterlog/kaiju_db_custom_1.%j.out"
+  },
+  "kaiju_db_custom_2": {
+    "job-name": "kaiju_db_custom_2",
+    "output": "clusterlog/kaiju_db_custom_2.%j.out"
+	"partition": "big",
     "cpus-per-task": 12,
-    "mem": "128G",
+    "mem": "32G",
     "time": "24:00:00"
   },
-  "kaiju_db_profile": {
-    "job-name": "kaiju_db_profile",
-    "output": "clusterlog/kaiju_db_profile.%j.out"
+  "kaiju_db_custom_3": {
+    "job-name": "kaiju_db_custom_3",
+    "output": "clusterlog/kaiju_db_custom_3.%j.out"
+	"partition": "big",
+    "mem": "32G",
+    "time": "24:00:00"
   },
-  "kaiju_db_check": {
-    "job-name": "kaiju_db_check",
-    "output": "clusterlog/kaiju_db_check.%j.out"
+  "kaiju_db_custom_4": {
+    "job-name": "kaiju_db_custom_4",
+    "output": "clusterlog/kaiju_db_custom_4.%j.out"
+  },
+  "kaiju_db_custom_profile": {
+    "job-name": "kaiju_db_custom_profile",
+    "output": "clusterlog/kaiju_db_custom_profile.%j.out"
+  },
+  "kaiju_db_custom_check": {
+    "job-name": "kaiju_db_custom_check",
+    "output": "clusterlog/kaiju_db_custom_check.%j.out"
   },
   "kaiju_run_1": {
     "job-name": "kaiju_run_1",
@@ -218,43 +229,37 @@
     "job-name": "kaiju_rpt",
     "output": "clusterlog/kaiju_rpt.%j.out"
   },
-  "kraken_db_1": {
-    "job-name": "kraken_db_1",
-    "output": "clusterlog/kraken_db_1.%j.out",
-    "partition": "small",
-    "time": "24:00:00"
-  },
-  "kraken_db_2": {
-    "job-name": "kraken_db_2",
-    "output": "clusterlog/kraken_db_2.%j.out"
-  },
-  "kraken_db_3": {
-    "job-name": "kraken_db_3",
-    "output": "clusterlog/kraken_db_3.%j.out"
-  },
-  "kraken_db_4": {
-    "job-name": "kraken_db_4",
-    "output": "clusterlog/kraken_db_4.%j.out",
+  "kraken_db_custom_1": {
+    "job-name": "kraken_db_custom_1",
+    "output": "clusterlog/kraken_db_custom_1.%j.out",
     "partition": "small",
     "cpus-per-task": 12,
     "mem": "1G",
     "time": "24:00:00"
   },
-  "kraken_db_5": {
-    "job-name": "kraken_db_5",
-    "output": "clusterlog/kraken_db_5.%j.out",
+  "kraken_db_custom_2": {
+    "job-name": "kraken_db_custom_2",
+    "output": "clusterlog/kraken_db_custom_2.%j.out"
+  },
+  "kraken_db_custom_3": {
+    "job-name": "kraken_db_custom_3",
+    "output": "clusterlog/kraken_db_custom_3.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
     "mem": "128G",
     "time": "24:00:00"
   },
-  "kraken_db_profile": {
-    "job-name": "kraken_db_profile",
-    "output": "clusterlog/kraken_db_profile.%j.out"
+  "kraken_db_3": {
+    "job-name": "kraken_db_3",
+    "output": "clusterlog/kraken_db_3.%j.out"
   },
-  "kraken_db_check": {
-    "job-name": "kraken_db_check",
-    "output": "clusterlog/kraken_db_check.%j.out"
+  "kraken_db_custom_profile": {
+    "job-name": "kraken_db_custom_profile",
+    "output": "clusterlog/kraken_db_custom_profile.%j.out"
+  },
+  "kraken_db_custom_check": {
+    "job-name": "kraken_db_custom_check",
+    "output": "clusterlog/kraken_db_custom_check.%j.out"
   },
   "kraken_run_1": {
     "job-name": "kraken_run_1",
@@ -267,14 +272,6 @@
   "kraken_rpt": {
     "job-name": "kraken_rpt",
     "output": "clusterlog/kraken_rpt.%j.out"
-  },
-  "motus_db_profile": {
-    "job-name": "motus_db_profile",
-    "output": "clusterlog/motus_db_profile.%j.out"
-  },
-  "motus_db_check": {
-    "job-name": "motus_db_check",
-    "output": "clusterlog/motus_db_check.%j.out"
   },
   "motus_run_1": {
     "job-name": "motus_run_1",

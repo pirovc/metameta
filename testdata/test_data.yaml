@@ -1,6 +1,5 @@
 workdir: '/home/RKID1/pirov/jobs/metameta_data/results/'
 dbdir: '/home/RKID1/pirov/jobs/metameta_data/new_databases/'
-
 gzipped: 1
 threads: 6
 
@@ -8,14 +7,6 @@ samples:
   "metameta_test_data_with_dbs":
      fq1: "/home/RKID1/pirov/jobs/metameta/testdata/metameta_test_reads.1.fq.gz"
      fq2: "/home/RKID1/pirov/jobs/metameta/testdata/metameta_test_reads.2.fq.gz"
-
-tools:
-    "clark": "b"
-    "dudes": "p"
-    "gottcha": "p"
-    "kaiju": "b"
-    "kraken": "b"
-    "motus": "p"
 
 # Alternative path for the tools (uses it instead of the default path)
 tool_alt_path:
@@ -27,25 +18,16 @@ tool_alt_path:
     "motus": ""
     "trimmomatic": ""
     "spades": ""
-    "bowtie2": "/usr/bin/"
+    "bowtie2": ""
     "metametamerge": "/home/RKID1/pirov/jobs/metametamerge/"
 
 verbose: 1
 
 databases: 
   - "archaea_bacteria"
-  - "custom_viral_db"
 
 "custom_viral_db":
     clark: "/home/RKID1/pirov/jobs/metameta_data/test_custom_db/"
     dudes: "/home/RKID1/pirov/jobs/metameta_data/test_custom_db/"
     kaiju: "/home/RKID1/pirov/jobs/metameta_data/test_custom_db/"
     kraken: "/home/RKID1/pirov/jobs/metameta_data/test_custom_db/kraken/"
-
-"archaea_bacteria":
-    clark: "https://zenodo.org/record/820055/files/clark_bac_arc_v1.tar.gz"
-    dudes: "https://zenodo.org/record/820053/files/dudes_bac_arc_v1.tar.gz"
-    gottcha: "https://zenodo.org/record/819341/files/gottcha_bac_arc_v1.tar.gz"
-    kaiju: "https://zenodo.org/record/819425/files/kaiju_bac_arc_v1.tar.gz"
-    kraken: "https://zenodo.org/record/819363/files/kraken_bac_arc_v1.tar.gz"
-    motus: "https://zenodo.org/record/819365/files/motus_bac_arc_v1.tar.gz"
