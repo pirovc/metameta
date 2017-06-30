@@ -1,0 +1,8 @@
+# Clean reads after every sample is finished
+rule clean_reads:
+	input: final_profile = expand("{{sample}}/metametamerge/{database}/final.metametamerge.profile.out", database=config["databases"])
+	output: temp(touch("{sample}/clean_reads.done"))
+	log: "{sample}/log/clean_reads.log"
+	benchmark: "{sample}/log/clean_reads.time"
+	run:
+		if not config["keepfiles"]: shell("rm -rfv {wildcards.sample}/reads/ > {log} 2>&1")

@@ -15,12 +15,6 @@ else:
 	# Set snakemake main workdir variable
 	workdir: config["workdir"]
 
-	# Path definition for configured tools and dbs - for alternative paths use configuration file
-	db_path={}
-	tool_path={}
-	for tool in config["tools"]:
-		tool_path[tool] = config["tool_alt_path"][tool] if config["tool_alt_path"][tool] else ""
-
 	onstart:
 		import pprint, os
 		# create dir for log on cluster mode (script breaks without it)
@@ -37,8 +31,8 @@ else:
 		print("")
 		
 	def onend(msg, log):
-		#Remove clusterlog folder (if empty)
-		shell("rm -d {config[workdir]}/clusterlog 2> /dev/null")
+		#Remove clusterlog folder (if exists and empty)
+		shell('if [ -d "{config[workdir]}/clusterlog/" ]; then [ ! "$(ls -A {config[workdir]}/clusterlog/)" ] && rm -d {config[workdir]}/clusterlog/; fi')
 		from datetime import datetime
 		dtnow = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 		log_file = config["workdir"] + "/metameta_" + dtnow + ".log"
@@ -61,33 +55,24 @@ else:
 		onend("An error has occured.", log)
 		
 	############################################################################################## 
-
-	import os.path
-
-
 	include: "scripts/db.sm"
 	include: "scripts/preproc.sm"
 	include: "scripts/clean_files.sm"
+	include: "scripts/clean_reads.sm"
 	include: "scripts/metametamerge.sm"
+	include: "scripts/krona.sm"
 	include: "scripts/util.py"
+	include: "tools/clark_db_custom.sm"
+	include: "tools/dudes_db_custom.sm"
+	include: "tools/kaiju_db_custom.sm"
+	include: "tools/kraken_db_custom.sm"
 	for t in config["tools"]:
-		if os.path.isfile(srcdir("tools/"+t+"_db_custom.sm")):
-			include: "tools/"+t+"_db_custom.sm"
 		include: ("tools/"+t+".sm")
-
 	############################################################################################## 
 
 	rule all:
-		input: 
-			clean_reads = expand("{sample}/clean_reads.done", sample=config["samples"]) ## TARGET SAMPLES CLEAN READS
-	
-	# Clean reads after every sample is finished
-	rule clean_reads:
-		input: final_profiles = expand("{{sample}}/metametamerge/{database}/final.metametamerge.profile.out", database=config["databases"])
-		output: temp(touch("{sample}/clean_reads.done"))
-		log: "{sample}/log/clean_reads.log"
-		benchmark: "{sample}/log/clean_reads.time"
-		run:
-			if not config["keepfiles"]: shell("rm -rfv {wildcards.sample}/reads/ > {log} 2>&1")
-
+		input:
+			clean_reads =  expand("{sample}/clean_reads.done", sample=config["samples"]),
+			krona_html = expand("{sample}/metametamerge/{database}/final.metametamerge.profile.html", sample=config["samples"], database=config["databases"])
+			
 	############################################################################################## 

@@ -7,5 +7,5 @@ rule clean_files:
 		if not config["keepfiles"]: 
 			# Remove individual folder (sample/tool/database)
 			shell("rm -rfv {wildcards.sample}/{wildcards.tool}/{wildcards.database}/ > {log} 2>&1")
-			# Remove tool folder if there's no more data (sample/tool)
-			shell('[ ! "$(ls -A {wildcards.sample}/{wildcards.tool}/)" ] && rm -dv {wildcards.sample}/{wildcards.tool}/ >> {log} 2>&1')
+			# Remove tool folder if it existst and there's no more data (sample/tool)
+			shell('if [ -d "{wildcards.sample}/{wildcards.tool}/" ]; then [ ! "$(ls -A {wildcards.sample}/{wildcards.tool}/)" ] && rm -dv {wildcards.sample}/{wildcards.tool}/; fi>> {log} 2>&1')

@@ -1,0 +1,39 @@
+# Template for adding new tools to the MetaMeta pipeline
+# Replace all occurences of newtool with your tool identifier, newtool_db_command with the tool call, newtool_database.out with the database file (or prefix), newtool.yaml to integrate with conda
+
+# Parse sequences from custom folder and compiledb
+rule newtool_db_custom_1:
+	output: config['dbdir'] + "{database}/newtool_db/newtool_database.out"
+	params: seq_folder = lambda wildcards: config[wildcards.database]["newtool"]
+	log: config['dbdir'] + "{database}/log/newtool_db_custom_1.log"
+	benchmark: config['dbdir'] + "{database}/log/newtool_db_custom_1.time"
+	threads: config["threads"]
+	conda: srcdir("../envs/newtool.yaml")
+	shell: "{config[tool_alt_path][newtool]}newtool_db_command -i {params.seq_folder}/*.fna -o newtool_database.out -t {threads}"
+		
+# Download and unpack something
+rule newtool_db_custom_2:
+	output: external_file = temp(config['dbdir'] + "{database}/newtool_db/database.tar.gz"),
+			required_file = config['dbdir'] + "{database}/newtool_db/newtool_index.out
+	log: config['dbdir'] + "{database}/log/newtool_db_custom_2.log"
+	benchmark: config['dbdir'] + "{database}/log/newtool_db_custom_2.time"
+	run:
+		shell(download("http://www.files.com/database.tar.gz", output.external_file) + " > {log} 2>&1")
+		shell("tar -zxvf {output.external_file} -C {config[dbdir]}{wildcards.database}/newtool_db/ new_tool_index.out >> {log} 2>&1")
+	
+# Outputs a list with all accession version identifiers used (it generates the database profile)
+rule newtool_db_custom_profile:
+	output: temp(config['dbdir'] + "{database}/newtool.dbaccession.out")
+	log: config['dbdir'] + "{database}/log/newtool_db_custom_profile.log"
+	benchmark: config['dbdir'] + "{database}/log/newtool_db_custom_profile.time"
+	params: seq_folder = lambda wildcards: config[wildcards.database]["newtool"]
+	shell: "grep '^>' {params.seq_folder}/*.fna | sed 's/>//g' > {output} 2> {log}"
+
+# Check if all required files are present
+rule newtool_db_custom_check:
+	input: ancient(config['dbdir'] + "{database}/newtool.dbprofile.out"),
+			ancient(config['dbdir'] + "{database}/newtool_db/newtool_database.out"),
+			ancient(config['dbdir'] + "{database}/newtool_db/newtool_index.out")
+	output: db_check = temp(touch(config['dbdir'] + "{database}/newtool_db_check.done"))
+	log: config['dbdir'] + "{database}/log/newtool_db_custom_check.log"
+	benchmark: config['dbdir'] + "{database}/log/newtool_db_custom_check.time"

@@ -1,22 +1,23 @@
-# Template for adding new tools to MetaMeta pipeline
-# Replace all occurences of newtool with your tool identifier
+# Template for adding new tools to the MetaMeta pipeline
+# Replace all occurences of newtool with your tool identifier, newtool_command with the tool call, newtool_database.out with the database file (or prefix), newtool.yaml to integrate with conda
 
-# Run
+# Run tool
 rule newtool_run_1:
 	input:
 		fq1="{sample}/reads/newtool.1.fq",
 		fq2="{sample}/reads/newtool.2.fq",
-		dbcheck=config['dbdir'] + "newtool_db_check.done"
-	output:	"{sample}/newtool/{sample}.results.csv"
-	log: "{sample}/log/newtool_run_1.log"
-	benchmark: "{sample}/log/newtool_run_1.time"
+		dbcheck=config['dbdir'] + "{database}/newtool_db_check.done"
+	output:	"{sample}/newtool/{database}/{sample}.results.csv"
+	log: "{sample}/log/{database}/newtool_run_1.log"
+	benchmark: "{sample}/log/{database}/newtool_run_1.time"
 	threads: config["threads"]
-	shell: "{tool_path[newtool]}mycommand --database {db_path[newtool]}file.db --1 {input.fq1} --2 {input.fq2} --threads {threads} > {output} 2> {log}"
+	conda: srcdir("../envs/newtool.yaml")
+	shell: "{config[tool_alt_path][newtool]}newtool_command --database {config[dbdir]}{wildcards.database}/newtool_db/newtool_database.out --1 {input.fq1} --2 {input.fq2} --threads {threads} > {output} 2> {log}"
 
-# Generate report on supported formats
+# Generate output (check supported formats)
 rule newtool_rpt:
-	input: "{sample}/newtool/{sample}.results.csv"
-	output: "{sample}/profiles/newtool.profile.out"
-	log: "{sample}/log/newtool_rpt.log"
-	benchmark: "{sample}/log/newtool_rpt.time"
+	input: "{sample}/newtool/{database}/{sample}.results.csv"
+	output: "{sample}/profiles/{database}/newtool.profile.out"
+	log: "{sample}/log/{database}/newtool_rpt.log"
+	benchmark: "{sample}/log/{database}/newtool_rpt.time"
 	shell: "convert {input} > {output} 2> {log}"

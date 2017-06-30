@@ -17,7 +17,7 @@ rule dudes_run_2:
 	benchmark: "{sample}/log/{database}/dudes_run_2.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/dudes.yaml")
-	shell: "{tool_path[dudes]}DUDes.py -s {input} -d {config[dbdir]}{wildcards.database}/dudes_db/dudes_db.npz -t {threads} -a 0.00001 -o {wildcards.sample}/dudes/{wildcards.database}/{wildcards.sample}.results > {log} 2>&1"
+	shell: "{config[tool_alt_path][dudes]}DUDes.py -s {input} -d {config[dbdir]}{wildcards.database}/dudes_db/dudes_db.npz -t {threads} -a 0.00001 -o {wildcards.sample}/dudes/{wildcards.database}/{wildcards.sample}.results > {log} 2>&1"
 
 rule dudes_rpt:
 	input: "{sample}/dudes/{database}/{sample}.results.out"

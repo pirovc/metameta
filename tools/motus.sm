@@ -11,7 +11,7 @@ rule motus_run_1:
 	shell: 
 		"""
 		cd {wildcards.sample}/motus/{wildcards.database}/
-		{tool_path[motus]}mOTUs.pl --processors={threads} ../../../{input.fq1} ../../../{input.fq2} --output-directory ./ > ../../../{log} 2>&1
+		{config[tool_alt_path][motus]}mOTUs.pl --processors={threads} ../../../{input.fq1} ../../../{input.fq2} --output-directory ./ > ../../../{log} 2>&1
 		mv NCBI.species.abundances.gz ../../../{output}
 		"""
 

@@ -55,7 +55,7 @@ rule clark_db_custom_3:
 	threads: config["threads"]
 	conda: srcdir("../envs/clark.yaml")
 	# Use custom_0/ as input because db output files have variable names
-	shell: "{tool_path[clark]}CLARK -T {input.targets} -D {output.db_folder} -O {input.dummy_file} -R {config[dbdir]}{wildcards.database}/clark_db/dummy_out -n {threads} > {log} 2>&1"
+	shell: "{config[tool_alt_path][clark]}CLARK -T {input.targets} -D {output.db_folder} -O {input.dummy_file} -R {config[dbdir]}{wildcards.database}/clark_db/dummy_out -n {threads} > {log} 2>&1"
 	
 rule clark_db_custom_profile:
 	output: temp(config['dbdir'] + "{database}/clark.dbaccession.out")

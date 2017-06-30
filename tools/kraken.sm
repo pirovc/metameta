@@ -8,7 +8,7 @@ rule kraken_run_1:
 	benchmark: "{sample}/log/{database}/kraken_run_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/kraken.yaml")
-	shell: "{tool_path[kraken]}kraken --preload -db {config[dbdir]}{wildcards.database}/kraken_db/ --output {output} --threads {threads} --paired --fastq-input {input.fq1} {input.fq2} > {log} 2>&1"
+	shell: "{config[tool_alt_path][kraken]}kraken --preload -db {config[dbdir]}{wildcards.database}/kraken_db/ --output {output} --threads {threads} --paired --fastq-input {input.fq1} {input.fq2} > {log} 2>&1"
 
 rule kraken_rpt:
 	input: "{sample}/kraken/{database}/{sample}.results.out"

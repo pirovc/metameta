@@ -88,4 +88,5 @@ tool_alt_path:
     "trimmomatic": ""
     "spades": ""
     "bowtie2": ""
+    "krona": ""
     "metametamerge": ""

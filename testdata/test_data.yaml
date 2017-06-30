@@ -1,12 +1,20 @@
-workdir: '/home/pirov/NO_BACKUP/new_version/results/'
-dbdir: '/home/pirov/NO_BACKUP/new_version/databases/'
+workdir: '/home/RKID1/pirov/jobs/metameta_data/results/'
+dbdir: '/home/RKID1/pirov/jobs/metameta_data/new_databases/'
 gzipped: 1
 threads: 12
 
 samples:
   "metameta_test_data_with_dbs":
-     fq1: "/home/pirov/NO_BACKUP/new_version/metameta/testdata/metameta_test_reads.1.fq.gz"
-     fq2: "/home/pirov/NO_BACKUP/new_version/metameta/testdata/metameta_test_reads.2.fq.gz"
+     fq1: "/home/RKID1/pirov/jobs/metameta/testdata/metameta_test_reads.1.fq.gz"
+     fq2: "/home/RKID1/pirov/jobs/metameta/testdata/metameta_test_reads.2.fq.gz"
+  "ANOTHERSAMPLE":
+     fq1: "/home/RKID1/pirov/jobs/metameta/testdata/metameta_test_reads.1.fq.gz"
+     fq2: "/home/RKID1/pirov/jobs/metameta/testdata/metameta_test_reads.2.fq.gz"
+
+tools:
+    "dudes": "p"
+    "kaiju": "b"
+    "motus": "p"
 
 # Alternative path for the tools (uses it instead of the default path)
 tool_alt_path:
@@ -19,7 +27,8 @@ tool_alt_path:
     "trimmomatic": ""
     "spades": ""
     "bowtie2": ""
-    "metametamerge": "/home/pirov/NO_BACKUP/new_version/metametamerge/"
+    "krona": ""
+    "metametamerge": "/home/RKID1/pirov/jobs/metametamerge/"
 
 verbose: 1
 

@@ -13,9 +13,9 @@ databases:
   - "custom_viral_db"
 
 "custom_viral_db":
-    clark: "sampledata/database/"
-    dudes: "sampledata/database/"
-    kaiju: "sampledata/database/"
+    clark: "sampledata/database/clark_dudes/"
+    dudes: "sampledata/database/clark_dudes/"
+    kaiju: "sampledata/database/kaiju/"
     kraken: "sampledata/database/kraken/"
 
 tool_alt_path:

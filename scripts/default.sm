@@ -3,7 +3,7 @@ default_val = {
                'gzipped': 0,
                'keepfiles': 0,		   
 			   'tools': {"clark": "b", "dudes": "p", "gottcha": "p", "kaiju": "b", "kraken": "b", "motus": "p"},
-			   'tool_alt_path': {"clark": "", "dudes": "", "gottcha": "", "kaiju": "", "kraken": "", "motus": "", "trimmomatic": "", "spades": "", "bowtie2": "", "metametamerge": ""},
+			   'tool_alt_path': {"clark": "", "dudes": "", "gottcha": "", "kaiju": "", "kraken": "", "motus": "", "trimmomatic": "", "spades": "", "bowtie2": "", "krona": "", "metametamerge": ""},
 			   'trimming': 0,
 			   'desiredminlen': 70,
 			   'strictness': 0.8,

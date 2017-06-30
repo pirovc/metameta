@@ -8,7 +8,7 @@ rule kaiju_run_1:
 	benchmark: "{sample}/log/{database}/kaiju_run_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/kaiju.yaml")
-	shell: "{tool_path[kaiju]}kaiju -v -z {threads} -f {config[dbdir]}{wildcards.database}/kaiju_db/kaiju_db.fmi -t {config[dbdir]}{wildcards.database}/kaiju_db/nodes.dmp -i {input.fq1} -j {input.fq2} -o {output} > {log} 2>&1"
+	shell: "{config[tool_alt_path][kaiju]}kaiju -v -z {threads} -f {config[dbdir]}{wildcards.database}/kaiju_db/kaiju_db.fmi -t {config[dbdir]}{wildcards.database}/kaiju_db/nodes.dmp -i {input.fq1} -j {input.fq2} -o {output} > {log} 2>&1"
 
 rule kaiju_rpt:
 	input: "{sample}/kaiju/{database}/{sample}.results.out"
