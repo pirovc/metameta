@@ -9,14 +9,14 @@ subsample_path=srcdir("randomReadSubSample.py")
 
 gz = ".gz" if config["gzipped"] else ""
 
-#print(config["samples"])
+import os
 
 rule trim_reads:
 	input:
 		# from sample (target) to real read file names 
 		# Processed reads (targets) have the sample name as prefix, so it's necessary to retrieve the fq names from the config file
-		fq1=lambda wildcards: config["samples"][wildcards.sample]["fq1"],
-		fq2=lambda wildcards: config["samples"][wildcards.sample]["fq2"]
+		fq1=lambda wildcards: os.path.abspath(config["samples"][wildcards.sample]["fq1"]),
+		fq2=lambda wildcards: os.path.abspath(config["samples"][wildcards.sample]["fq2"])
 	output:
 		fq1="{sample}/reads/pre1.1.fq"+gz,
 		fq2="{sample}/reads/pre1.2.fq"+gz

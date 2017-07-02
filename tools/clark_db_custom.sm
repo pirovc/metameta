@@ -25,8 +25,8 @@ rule clark_db_custom_2:
 		# otherwise looks for the files on the activated environment path
 		
 		# First check if there's a pre-defined alternate path to the tool
-		tap={config[tool_alt_path][clark]}
-		if [[ -n "${{tap}}" ]]; then
+		tap="{config[tool_alt_path][clark]}"
+		if [[ "${{tap}}" != "" ]]; then
 			clark_opt_path="${{tap}}"
 		else
 			md5=($(md5sum "{params.srcdir}/../envs/clark.yaml"))
@@ -38,10 +38,14 @@ rule clark_db_custom_2:
 				clark_opt_path="${{condadir}}/opt/clark/"
 			fi
 		fi
+		# Get absolute paths in case they are relative
+		abs_log=$(readlink -e {log})
+		abs_db=$(readlink -e {config[dbdir]}{wildcards.database}/clark_db/)
+		echo ${{abs_log}} ${{abs_db}}
 		cd ${{clark_opt_path}}
-		./set_targets.sh {config[dbdir]}{wildcards.database}/clark_db/ custom > {log} 2>&1
+		./set_targets.sh ${{abs_db}} custom > ${{abs_log}} 2>&1
 		# Remove custom_0 in case it exists to force execution of the next rule
-		rm -rfv {config[dbdir]}{wildcards.database}/clark_db/custom_0/ >> {log} 2>&1
+		rm -rfv ${{abs_db}}/custom_0/ >> ${{abs_log}} 2>&1
 		"""	
 
 rule clark_db_custom_3:

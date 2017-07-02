@@ -18,7 +18,7 @@ else:
 	onstart:
 		import pprint, os
 		# create dir for log on cluster mode (script breaks without it)
-		shell("mkdir -p {config[workdir]}/clusterlog")
+		shell("mkdir -p clusterlog/")
 		print("")
 		print("---------------------------------------------------------------------------------------")
 		print("MetaMeta Pipeline v%s by Vitor C. Piro (vitorpiro@gmail.com, http://github.com/pirovc)" % version)
@@ -32,10 +32,10 @@ else:
 		
 	def onend(msg, log):
 		#Remove clusterlog folder (if exists and empty)
-		shell('if [ -d "{config[workdir]}/clusterlog/" ]; then [ ! "$(ls -A {config[workdir]}/clusterlog/)" ] && rm -d {config[workdir]}/clusterlog/; fi')
+		shell('if [ -d "clusterlog/" ]; then [ ! "$(ls -A clusterlog/)" ] && rm -d clusterlog/; fi')
 		from datetime import datetime
 		dtnow = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-		log_file = config["workdir"] + "/metameta_" + dtnow + ".log"
+		log_file = "metameta_" + dtnow + ".log"
 		shell("cp {log} {log_file}")
 		print("")
 		print("---------------------------------------------------------------------------------------")
