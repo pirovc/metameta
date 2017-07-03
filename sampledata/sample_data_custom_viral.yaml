@@ -1,14 +1,15 @@
-workdir: 'sampledata/results/'
+# Output and working directory (all other directories below - if not absolute - are relative to this one)
+workdir: "sampledata/results/"
 
-dbdir: '../database/'
-
-gzipped: 1
-threads: 2
+dbdir: "../databases/"
 
 samples:
-  "sampledata":
-     fq1: "../files/samplereads_0.1.fq.gz"
-     fq2: "../files/samplereads_0.2.fq.gz"
+  "sample_data_custom_viral":
+     fq1: "../files/reads/sample_data_custom_viral.1.fq.gz"
+     fq2: "../files/reads/sample_data_custom_viral.2.fq.gz"
+
+gzipped: 1
+threads: 6 
 
 databases:
   - "custom_viral_db"

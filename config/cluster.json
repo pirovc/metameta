@@ -4,9 +4,7 @@
     "nodes": 1,
     "cpus-per-task": 1,
     "mem": "300M",
-    "time": "00:30:00",
-    "mailtype": "all",
-    "mailuser": "yourmail@domain.com"
+    "time": "00:30:00"
   },
   "all": {
     "job-name": "all",

@@ -1,21 +1,18 @@
-# Output directory
+# Output and working directory (all other directories below, if not absolute, are relative to this one)
 workdir: "/home/user/folder/results/" 
 
 # Database output directory (Tip: create this folder in a common directory so it could be used for other runs as well as other users)
 dbdir: "/home/user/folder/databases/"
 
-# Sample (name and files)
+# Samples (name and files)
 samples:
   "sample_name_1":
-    fq1: "/home/user/folder/reads/file.1.fq"
-    fq2: "/home/user/folder/reads/file.2.fq"
+    fq1: "/home/user/folder/reads/file.1.fq.gz"
+    fq2: "/home/user/folder/reads/file.2.fq.gz"
   "sample_name_2":
-    fq1: "/home/user/folder/reads/more.1.fq"
-    fq2: "/home/user/folder/reads/more.2.fq"
+    fq1: "/home/user/folder/reads/single.fq.gz"
 
-################################################################
-
-# Configured tools (p=profiling, b=binning) from tools folder (tool.sm and tool_db.sm)
+# Tools ("p" -> profiling, "b" -> binning)
 tools:
     "clark": "b"
     "dudes": "p"
@@ -24,8 +21,20 @@ tools:
     "kraken": "b"
     "motus": "p"
 
+# Databases ("archaea_bacteria" is the default. Every other database should be described.)
+databases:
+  - "archaea_bacteria"
+  - "custom_database"
+
+# Path for reference sequences to build the "custom_database"
+"custom_database":
+    clark: "/path/reference/sequences/fna/"
+    dudes: "/path/reference/sequences/fna/"
+    kaiju: "/path/reference/sequences/gbff/"
+    kraken: "/path/reference/sequences/fna/"
+	
 ### MetaMeta Pipeline ### 
-# Number of threads for each tool (distributed among the number of cores defined by main parameter --cores)
+# Number of threads for each tool (distributed among the number of cores defined by main parameter --cores). Default: 1
 threads: 12
 # Gzipped input files (0: not gzipped / 1: gzipped). Default: 0
 gzipped: 0
@@ -64,18 +73,7 @@ ranks: 'species'
 # MetaMetaMerge detailed output. Generates detailed output for each taxon/tool and its normalized relative abundance estimation. It outputs 0 for tools which did not identified the taxon and -1 for tools without a taxon in the database. (0: off / 1: on). Default: 0
 detailed: 0
 # MetaMetaMerge verbose log output. (0: off / 1: on). Default: 0
-detailed: 0
-
-### MetaMeta paths ###
-# Alternative path for the databases (uses it instead of the default path)
-# Warning: when keepfiles=0 metameta will delete all files inside the database folder but the ones necessary for the tools to run.
-db_alt_path:
-    "clark": ""
-    "dudes": ""
-    "gottcha": ""
-    "kaiju": ""
-    "kraken": ""
-    "motus": ""
+verbose: 0
 
 # Alternative path for the tools (uses it instead of the default path)
 tool_alt_path:

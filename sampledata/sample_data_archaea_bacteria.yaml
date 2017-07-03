@@ -1,0 +1,26 @@
+# Output and working directory (all other directories below - if not absolute - are relative to this one)
+workdir: "sampledata/results/"
+
+dbdir: "../databases/"
+
+samples:
+  "sample_data_archaea_bacteria":
+     fq1: "../files/reads/sample_data_archaea_bacteria.1.fq.gz"
+     fq2: "../files/reads/sample_data_archaea_bacteria.2.fq.gz"
+
+gzipped: 1
+threads: 6 
+
+# Alternative path for the tools (uses it instead of the default path)
+tool_alt_path:
+    "clark": ""
+    "dudes": ""
+    "gottcha": ""
+    "kaiju": ""
+    "kraken": ""
+    "motus": ""
+    "trimmomatic": ""
+    "spades": ""
+    "bowtie2": ""
+    "krona": ""
+    "metametamerge": "../../../metametamerge/"

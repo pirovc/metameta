@@ -1,14 +1,14 @@
 rule kraken_run_1:
 	input:
 		fq1="{sample}/reads/kraken.1.fq",
-		fq2="{sample}/reads/kraken.2.fq",
 		dbcheck=config['dbdir'] + "{database}/kraken_db_check.done"
 	output:	"{sample}/kraken/{database}/{sample}.results.out"
 	log: "{sample}/log/{database}/kraken_run_1.log"
 	benchmark: "{sample}/log/{database}/kraken_run_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/kraken.yaml")
-	shell: "{config[tool_alt_path][kraken]}kraken --preload -db {config[dbdir]}{wildcards.database}/kraken_db/ --output {output} --threads {threads} --paired --fastq-input {input.fq1} {input.fq2} > {log} 2>&1"
+	params: reads_cmd = lambda wildcards: "--paired " + wildcards.sample + "/reads/kraken.1.fq " + wildcards.sample + "/reads/kraken.2.fq" if "fq2" in config["samples"][wildcards.sample] else wildcards.sample + "/reads/kraken.1.fq"
+	shell: "{config[tool_alt_path][kraken]}kraken --preload -db {config[dbdir]}{wildcards.database}/kraken_db/ --output {output} --threads {threads} --fastq-input {params.reads_cmd} > {log} 2>&1"
 
 rule kraken_rpt:
 	input: "{sample}/kraken/{database}/{sample}.results.out"

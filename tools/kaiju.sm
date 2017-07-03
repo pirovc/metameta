@@ -1,19 +1,20 @@
 rule kaiju_run_1:
 	input:
 		fq1="{sample}/reads/kaiju.1.fq",
-		fq2="{sample}/reads/kaiju.2.fq",
 		dbcheck=config['dbdir'] + "{database}/kaiju_db_check.done"
 	output: "{sample}/kaiju/{database}/{sample}.results.out"
 	log: "{sample}/log/{database}/kaiju_run_1.log"
 	benchmark: "{sample}/log/{database}/kaiju_run_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/kaiju.yaml")
-	shell: "{config[tool_alt_path][kaiju]}kaiju -v -z {threads} -f {config[dbdir]}{wildcards.database}/kaiju_db/kaiju_db.fmi -t {config[dbdir]}{wildcards.database}/kaiju_db/nodes.dmp -i {input.fq1} -j {input.fq2} -o {output} > {log} 2>&1"
+	params: reads_cmd = lambda wildcards: "-i " + wildcards.sample + "/reads/kaiju.1.fq -j " + wildcards.sample + "/reads/kaiju.2.fq" if "fq2" in config["samples"][wildcards.sample] else "-i " + wildcards.sample + "/reads/kaiju.1.fq"
+	shell: "{config[tool_alt_path][kaiju]}kaiju -v -z {threads} -f {config[dbdir]}{wildcards.database}/kaiju_db/kaiju_db.fmi -t {config[dbdir]}{wildcards.database}/kaiju_db/nodes.dmp {params.reads_cmd} -o {output} > {log} 2>&1"
 
 rule kaiju_rpt:
 	input: "{sample}/kaiju/{database}/{sample}.results.out"
 	output: "{sample}/profiles/{database}/kaiju.profile.out"
 	log: "{sample}/log/{database}/kaiju_rpt.log"
 	benchmark: "{sample}/log/{database}/kaiju_rpt.time"
-	shell: """awk '{{if($1=="C") print $2"\t"$3"\t"($4*3*2)}}' {input} > {output} 2> {log}"""
+	params: paired = lambda wildcards: 2 if "fq2" in config["samples"][wildcards.sample] else 1 #Check if it's paired-end (multiply by 2) or single end to calculate read length assignment
+	shell: """awk -v paired={params.paired} '{{if($1=="C") print $2"\t"$3"\t"($4*3*paired)}}' {input} > {output} 2> {log}"""
 

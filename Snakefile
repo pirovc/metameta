@@ -16,7 +16,7 @@ else:
 	workdir: config["workdir"]
 
 	onstart:
-		import pprint, os
+		import pprint
 		# create dir for log on cluster mode (script breaks without it)
 		shell("mkdir -p clusterlog/")
 		print("")
@@ -31,6 +31,7 @@ else:
 		print("")
 		
 	def onend(msg, log):
+		import os
 		#Remove clusterlog folder (if exists and empty)
 		shell('if [ -d "clusterlog/" ]; then [ ! "$(ls -A clusterlog/)" ] && rm -d clusterlog/; fi')
 		from datetime import datetime
@@ -41,10 +42,10 @@ else:
 		print("---------------------------------------------------------------------------------------")
 		print(msg)
 		print("Please check the main log file for more information:")
-		print("\t" + log_file)
+		print("\t" + os.path.abspath(config["workdir"]) + log_file)
 		print("Detailed output and execution time for each rule can be found at:")
-		print("\t" + config["dbdir"] + "log/")
-		print("\t" + config["workdir"] + "SAMPLE_NAME/log/")
+		print("\t" + os.path.abspath(config["dbdir"]) + "log/")
+		print("\t" + os.path.abspath(config["workdir"]) + "SAMPLE_NAME/log/")
 		print("---------------------------------------------------------------------------------------")
 		print("")
 	

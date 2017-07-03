@@ -1,14 +1,14 @@
 rule gottcha_run_1:
 	input:
 		fq1="{sample}/reads/gottcha.1.fq",
-		fq2="{sample}/reads/gottcha.2.fq",
 		dbcheck=config['dbdir'] + "{database}/gottcha_db_check.done"
 	output: "{sample}/gottcha/{database}/{sample}.results.gottcha.tsv"
 	log: "{sample}/log/{database}/gottcha_run_1.log"
 	benchmark: "{sample}/log/{database}/gottcha_run_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/gottcha.yaml")	
-	shell: "{config[tool_alt_path][gottcha]}gottcha.pl -i '{input.fq1},{input.fq2}' -d {config[dbdir]}{wildcards.database}/gottcha_db/GOTTCHA_BACTERIA_c4937_k24_u30.species -t {threads} -o {wildcards.sample}/gottcha/{wildcards.database}/ -p {wildcards.sample}.results > {log} 2>&1"
+	params: reads_cmd = lambda wildcards: wildcards.sample + "/reads/gottcha.1.fq," + wildcards.sample + "/reads/gottcha.2.fq" if "fq2" in config["samples"][wildcards.sample] else wildcards.sample + "/reads/gottcha.1.fq"
+	shell: "{config[tool_alt_path][gottcha]}gottcha.pl -i '{params.reads_cmd}' -d {config[dbdir]}{wildcards.database}/gottcha_db/GOTTCHA_BACTERIA_c4937_k24_u30.species -t {threads} -o {wildcards.sample}/gottcha/{wildcards.database}/ -p {wildcards.sample}.results > {log} 2>&1"
 
 rule gottcha_rpt:
 	input: "{sample}/gottcha/{database}/{sample}.results.gottcha.tsv"

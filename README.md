@@ -2,6 +2,14 @@
 
 Vitor C. Piro (vitorpiro@gmail.com)
 
+NEW:
+----
+
+v1.1)
+	Support single and paired-end reads
+	Support multiple and custom databases
+	Several bug fixes
+
 Install:
 --------
 Miniconda:
@@ -62,7 +70,7 @@ Activate the environment and execute MetaMeta (slurm example):
     
     source activate metameta # Activate MetaMeta environment
     
-    metameta --configfile yourconfig.yaml --keep-going -j 999 --cluster-config yourcluster.json --cluster "sbatch --job-name {cluster.job-name} --output {cluster.output} --partition {cluster.partition} --nodes {cluster.nodes} --cpus-per-task {cluster.cpus-per-task} --mem {cluster.mem} --time {cluster.time} --mail-type {cluster.mailtype} --mail-user {cluster.mailuser}"
+    metameta --configfile yourconfig.yaml --keep-going -j 999 --cluster-config yourcluster.json --cluster "sbatch --job-name {cluster.job-name} --output {cluster.output} --partition {cluster.partition} --nodes {cluster.nodes} --cpus-per-task {cluster.cpus-per-task} --mem {cluster.mem} --time {cluster.time}"
     
     source deactivate # Deactivate MetaMeta environment
     

@@ -1,14 +1,14 @@
 rule dudes_run_1:
 	input:
 		fq1="{sample}/reads/dudes.1.fq",
-		fq2="{sample}/reads/dudes.2.fq",
 		dbcheck=config['dbdir'] + "{database}/dudes_db_check.done"
 	output: "{sample}/dudes/{database}/{sample}.sam"
 	log: "{sample}/log/{database}/dudes_run_1.log"
 	benchmark: "{sample}/log/{database}/dudes_run_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/dudes.yaml")
-	shell: "{config[tool_alt_path][bowtie2]}bowtie2 -x {config[dbdir]}{wildcards.database}/dudes_db/dudes_db -p {threads}  --no-unal --very-fast -k 10 -1 {input.fq1} -2 {input.fq2} -S {output} > {log} 2>&1"
+	params: reads_cmd = lambda wildcards: "-1 " + wildcards.sample + "/reads/dudes.1.fq -2 " + wildcards.sample + "/reads/dudes.2.fq" if "fq2" in config["samples"][wildcards.sample] else "-U " + wildcards.sample + "/reads/dudes.1.fq"
+	shell: "{config[tool_alt_path][bowtie2]}bowtie2 -x {config[dbdir]}{wildcards.database}/dudes_db/dudes_db -p {threads}  --no-unal --very-fast -k 10 {params.reads_cmd} -S {output} > {log} 2>&1"
 
 rule dudes_run_2:
 	input: "{sample}/dudes/{database}/{sample}.sam"

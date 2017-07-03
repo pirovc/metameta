@@ -1,14 +1,14 @@
 rule clark_run_1:
 	input:
 		fq1="{sample}/reads/clark.1.fq",
-		fq2="{sample}/reads/clark.2.fq",
 		dbcheck=config['dbdir'] + "{database}/clark_db_check.done"
 	output:	"{sample}/clark/{database}/{sample}.results.csv"
 	log: "{sample}/log/{database}/clark_run_1.log"
 	benchmark: "{sample}/log/{database}/clark_run_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/clark.yaml")
-	shell: "{config[tool_alt_path][clark]}CLARK -T {config[dbdir]}{wildcards.database}/clark_db/targets.txt -D {config[dbdir]}{wildcards.database}/clark_db/custom_0/ -P {input.fq1} {input.fq2} -R {wildcards.sample}/clark/{wildcards.database}/{wildcards.sample}.results -n {threads} > {log} 2>&1"
+	params: reads_cmd = lambda wildcards: "-P " + wildcards.sample + "/reads/clark.1.fq " + wildcards.sample + "/reads/clark.2.fq" if "fq2" in config["samples"][wildcards.sample] else "-O " + wildcards.sample + "/reads/clark.1.fq"
+	shell: "{config[tool_alt_path][clark]}CLARK -T {config[dbdir]}{wildcards.database}/clark_db/targets.txt -D {config[dbdir]}{wildcards.database}/clark_db/custom_0/ {params.reads_cmd} -R {wildcards.sample}/clark/{wildcards.database}/{wildcards.sample}.results -n {threads} > {log} 2>&1"
 
 rule clark_rpt:
 	input: "{sample}/clark/{database}/{sample}.results.csv"
