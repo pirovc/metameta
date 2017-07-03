@@ -39,13 +39,12 @@ rule clark_db_custom_2:
 			fi
 		fi
 		# Get absolute paths in case they are relative
-		abs_log=$(readlink -e {log})
+		abs_log=$(readlink -e {config[dbdir]}{wildcards.database}/log/)
 		abs_db=$(readlink -e {config[dbdir]}{wildcards.database}/clark_db/)
-		echo ${{abs_log}} ${{abs_db}}
 		cd ${{clark_opt_path}}
-		./set_targets.sh ${{abs_db}} custom > ${{abs_log}} 2>&1
+		./set_targets.sh ${{abs_db}}/ custom > ${{abs_log}}/clark_db_custom_2.log 2>&1
 		# Remove custom_0 in case it exists to force execution of the next rule
-		rm -rfv ${{abs_db}}/custom_0/ >> ${{abs_log}} 2>&1
+		rm -rfv ${{abs_db}}/custom_0/ >> ${{abs_log}}/clark_db_custom_2.log 2>&1
 		"""	
 
 rule clark_db_custom_3:
