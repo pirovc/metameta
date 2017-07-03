@@ -33,7 +33,7 @@ else:
 	def onend(msg, log):
 		import os
 		#Remove clusterlog folder (if exists and empty)
-		shell('if [ -d "clusterlog/" ]; then [ ! "$(ls -A clusterlog/)" ] && rm -d clusterlog/; fi')
+		shell('if [ -d "clusterlog/" ]; then if [ ! "$(ls -A clusterlog/)" ]; then echo clusterlog/; fi; fi')
 		from datetime import datetime
 		dtnow = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 		log_file = "metameta_" + dtnow + ".log"
