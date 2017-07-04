@@ -44,26 +44,25 @@ Run MetaMeta:
     metameta --configfile yourconfig.yaml --use-conda --keep-going --cores 24
 
 * The number of --cores is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter "threads"
-* On the first run MetaMeta will download and install the configured tools as well as the database files necessary for each tool.
+* On the first run MetaMeta will download and install the configured tools as well as the database files (archaea and bacteria by default) necessary for each tool.
 
 Running sample data:
 --------------------
-Pre-configured Archaea and Bacteria database:
 
 	cd ~/miniconda3/opt/metameta/
+
+Pre-configured Archaea and Bacteria database:
 	
 	metameta --configfile sampledata/sample_data_archaea_bacteria.yaml --use-conda --keep-going --cores 24
 	
-	Krona output:
-	sampledata/results/sample_data_archaea_bacteria/metametamerge/archaea_bacteria/final.metametamerge.profile.html 
-	
-Custom database (viral, reference genomes):
-	
-	cd ~/miniconda3/opt/metameta/
-	
+Custom database (viral only reference genomes):
+		
 	metameta --configfile sampledata/sample_data_custom_viral.yaml --use-conda --keep-going --cores 24
 
+Results:
 
+	cd sampledata/results/ 
+	
 Running MetaMeta on a cluster environment:
 ------------------------------------------	
 	
@@ -211,8 +210,8 @@ MetaMeta can run several tools with several samples against several databases. T
 			...
 		LOG/
 
-(*) removed when keepfiles=0
-(**) only when running on cluster mode
+(\*) removed when keepfiles=0
+(\*\*) only when running on cluster mode
 
 Adding a new tool:
 ------------------
@@ -244,15 +243,15 @@ Example:
 
 MetaMeta pipeline uses Snakemake. To add a new tool to the pipeline it is necessary to create two main files described below. Replace 'newtool' with the tool identifier (lower case, no spaces, no special chars):
   
-    tools/newtool.sm -> specifies how to execute the tool
-      Rules:
-	    - newtool_run_1[..n] -> one or more rules necessary to run the tool
+	tools/newtool.sm -> specifies how to execute the tool
+		Rules:
+		- newtool_run_1[..n] -> one or more rules necessary to run the tool
 		- newtool_rpt -> final rule that should output a file newtool.profile.out in an accepted output format (described above)
 		
-    tools/newtool_db.sm -> specifies how to download/compile the standard database/references
-	  Rules:
-	    - newtool_db_1[..n] -> one or more rules necessary to download and compile the database.
-		- newtool_db_profile -> this rule generates automatically the database profile. It should have as an output a file (newtool.dbaccession.out) with the accession version identifier for all sequences used in the database.
-		- newtool_db_check -> rule to check the required database files. It should have as an input all mandatory files that should be present to the database work properly.
+	tools/newtool_db_custom.sm -> specifies how to download/compile the database/references
+		Rules:
+		- newtool_db_custom_1[..n] -> one or more rules necessary to compile the database.
+		- newtool_db_custom_profile -> this rule generates automatically the database profile. It should have as an output a file (newtool.dbaccession.out) with the accession version identifier for all sequences used in the database.
+		- newtool_db_custom_check -> rule to check the required database files. It should have as an input all mandatory files that should be present to the database work properly.
 
 * Template files can be found inside the folder tools/template. Once the two files are inside the tools folder, it is necessary to add the tool identifier to the YAML configuration file.
