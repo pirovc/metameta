@@ -47,6 +47,6 @@ rule kaiju_db_custom_check:
 	input: ancient(config['dbdir'] + "{database}/kaiju.dbprofile.out"),
 			ancient(config['dbdir'] + "{database}/kaiju_db/kaiju_db.fmi"),
 			ancient(config['dbdir'] + "{database}/kaiju_db/nodes.dmp")
-	output: db_check = temp(touch(config['dbdir'] + "{database}/kaiju_db_check.done"))
+	output: db_check = touch(config['dbdir'] + "{database}/kaiju_db_check.done")
 	log: config['dbdir'] + "{database}/log/kaiju_db_custom_check.log"
 	benchmark: config['dbdir'] + "{database}/log/kaiju_db_custom_check.time"

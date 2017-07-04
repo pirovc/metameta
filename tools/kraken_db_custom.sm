@@ -42,6 +42,6 @@ rule kraken_db_custom_check:
 			ancient(config['dbdir'] + "{database}/kraken_db/database.kdb"),
 			ancient(config['dbdir'] + "{database}/kraken_db/taxonomy/nodes.dmp"),
 			ancient(config['dbdir'] + "{database}/kraken_db/taxonomy/names.dmp")
-	output: db_check = temp(touch(config['dbdir'] + "{database}/kraken_db_check.done"))
+	output: db_check = touch(config['dbdir'] + "{database}/kraken_db_check.done")
 	log: config['dbdir'] + "{database}/log/kraken_db_custom_check.log"
 	benchmark: config['dbdir'] + "{database}/log/kraken_db_custom_check.time"

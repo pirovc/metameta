@@ -32,7 +32,7 @@ rule db_archaea_bacteria_unpack:
 rule db_archaea_bacteria_check:
 	input: db_folder = ancient(config['dbdir'] + "archaea_bacteria/{tool}_db/"),
 			db_profile = ancient(config['dbdir'] + "archaea_bacteria/{tool}.dbprofile.out")
-	output: db_check = temp(touch(config['dbdir'] + "archaea_bacteria/{tool}_db_check.done"))
+	output: db_check = touch(config['dbdir'] + "archaea_bacteria/{tool}_db_check.done")
 		
 
 acc2tab_path=srcdir("acc2tab.bash")

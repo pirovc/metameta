@@ -1,6 +1,6 @@
 rule clean_files:
 	input: "{sample}/profiles/{database}/{tool}.profile.out"
-	output: temp(touch("{sample}/profiles/{database}/{tool}_clean_files.done"))
+	output: touch("{sample}/profiles/{database}/{tool}_clean_files.done")
 	log: "{sample}/log/{database}/{tool}_clean_files.log"
 	benchmark: "{sample}/log/{database}/{tool}_clean_files.time"
 	run:

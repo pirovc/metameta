@@ -72,6 +72,6 @@ rule clark_db_custom_check:
 	input: ancient(config['dbdir'] + "{database}/clark.dbprofile.out"),
 			ancient(config['dbdir'] + "{database}/clark_db/custom_0/"),
 			ancient(config['dbdir'] + "{database}/clark_db/targets.txt")
-	output: db_check = temp(touch(config['dbdir'] + "{database}/clark_db_check.done"))
+	output: db_check = touch(config['dbdir'] + "{database}/clark_db_check.done")
 	log: config['dbdir'] + "{database}/log/clark_db_custom_check.log"
 	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_check.time"

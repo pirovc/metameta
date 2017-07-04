@@ -31,13 +31,14 @@ rule metametamerge:
 	shell: "python3 {config[tool_alt_path][metametamerge]}MetaMetaMerge.py --input-files {input.tool_profiles} --database-profiles {params.db_profiles} --tool-identifier '{params.tool_identifier}' --tool-method '{params.tool_method}' --names-file {input.names} --nodes-file {input.nodes} --merged-file {input.merged} --bins {config[bins]} --cutoff {config[cutoff]} --mode '{config[mode]}' --ranks '{config[ranks]}' --output-file {output.final_profile} {params.detailed} {params.verbose} --output-parsed-profiles > {log} 2>&1"
 
 rule metametamerge_plot:
-	input: p="{sample}/metametamerge/final.metametamerge.profile.out",
+	input: p="{sample}/metametamerge/{database}/final.metametamerge.profile.out",
 			names=config["dbdir"] + "names.dmp",
 			nodes=config["dbdir"] + "nodes.dmp",
 			merged=config["dbdir"] + "merged.dmp"
-	output: "{sample}/metametamerge/eval.png"
-	log: "{sample}/log/metametamerge_plot.log"
-	benchmark: "{sample}/log/metametamerge_plot.time"
-	params: s=lambda wildcards: wildcards.sample
+	output: "{sample}/metametamerge/{database}/eval.png"
+	log: "{sample}/log/{database}/metametamerge_plot.log"
+	benchmark: "{sample}/log/{database}/metametamerge_plot.time"
+	params: s=lambda wildcards: wildcards.sample,
+			d=lambda wildcards: wildcards.database,
 	run: 
-		shell("python3 " + config["tool_alt_path"]["metametamerge"] + "/plots.py -i " + ' '.join([params.s+"/metameta_"+t+".out" for t in sorted(config["tools"])]) +" {input.p} -t '"+','.join(sorted(config["tools"]))+",metametamerge' -c '"+','.join(['p']*(len(config["tools"])+1))+"' -n {input.names} -e {input.nodes} -m {input.merged} -g "+config["samples"][params.s]["gt"]+" -r species -o {output} > {log} 2>&1")
+		shell("python3 " + config["tool_alt_path"]["metametamerge"] + "/plots.py -i " + ' '.join([params.s+"/metametamerge/"+params.d+"/"+t+".parsed_profile.out" for t in sorted(config["tools"])]) +" {input.p} -t '"+','.join(sorted(config["tools"]))+",metametamerge' -c '"+','.join(['p']*(len(config["tools"])+1))+"' -n {input.names} -e {input.nodes} -m {input.merged} -g "+config["samples"][params.s]["gt"]+" -r species -o {output} > {log} 2>&1")

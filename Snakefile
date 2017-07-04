@@ -33,7 +33,7 @@ else:
 	def onend(msg, log):
 		import os
 		#Remove clusterlog folder (if exists and empty)
-		shell('if [ -d "clusterlog/" ]; then if [ ! "$(ls -A clusterlog/)" ]; then echo clusterlog/; fi; fi')
+		shell('if [ -d "clusterlog/" ]; then if [ ! "$(ls -A clusterlog/)" ]; then rm -d clusterlog/; fi; fi')
 		from datetime import datetime
 		dtnow = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 		log_file = "metameta_" + dtnow + ".log"
@@ -75,5 +75,4 @@ else:
 		input:
 			clean_reads =  expand("{sample}/clean_reads.done", sample=config["samples"]),
 			krona_html = expand("{sample}/metametamerge/{database}/final.metametamerge.profile.html", sample=config["samples"], database=config["databases"])
-			
 	############################################################################################## 

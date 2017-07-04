@@ -1,5 +1,6 @@
 rule krona:
-	input: final_profile = "{sample}/metametamerge/{database}/final.metametamerge.profile.out"
+	#input: final_profile = "{sample}/metametamerge/{database}/final.metametamerge.profile.out"
+	input: final_profile = "{sample}/metametamerge/{database}/eval.png"
 	output: "{sample}/metametamerge/{database}/final.metametamerge.profile.html"
 	log: "{sample}/log/{database}/krona.log"
 	benchmark: "{sample}/log/{database}/krona.time"
