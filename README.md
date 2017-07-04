@@ -4,11 +4,7 @@ Vitor C. Piro (vitorpiro@gmail.com)
 
 NEW:
 ----
-
-v1.1)
-	Support single and paired-end reads
-	Support multiple and custom databases
-	Several bug fixes
+v1.1) Support single and paired-end reads, multiple and custom databases, several bug fixes, krona integration
 
 Install:
 --------
@@ -22,7 +18,7 @@ MetaMeta:
 	conda install -c bioconda metameta
 
 * Alternatively, install MetaMeta in a separated environment with the command: ``conda create -c bioconda -n metameta metameta=1.1`` and activate it with ``source activate metameta`` (to deactivate use ``source deactivate``).
-* This command will also install snakemake=3.9.1. All other tools are installed in their own environment automatically on the first run (necessary to active the --use-conda parameter).
+* This command will also install snakemake=3.9.1. All other tools are installed in their own environment automatically on the first run (necessary to use the --use-conda parameter).
 
 Run:
 ----
@@ -36,6 +32,7 @@ Create a configuration file (yourconfig.yaml) with the required fields (workdir,
 	     fq1: "/home/user/folder/reads/file.1.fq"
 	     fq2: "/home/user/folder/reads/file.2.fq"
 
+* All paths set on this file are relative to the workdir (if not absolute)
 * Alternatively, make a copy of the configuration file for the complete set of parameters ``cp ~/miniconda3/opt/metameta/config/example_complete.yaml yourconfig.yaml``
 
 Check rules and output files:
@@ -49,8 +46,26 @@ Run MetaMeta:
 * The number of --cores is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter "threads"
 * On the first run MetaMeta will download and install the configured tools as well as the database files necessary for each tool.
 
-Run MetaMeta on a cluster environment:
---------------------------------------	
+Running sample data:
+--------------------
+Pre-configured Archaea and Bacteria database:
+
+	cd ~/miniconda3/opt/metameta/
+	
+	metameta --configfile sampledata/sample_data_archaea_bacteria.yaml --use-conda --keep-going --cores 24
+	
+	Krona output:
+	sampledata/results/sample_data_archaea_bacteria/metametamerge/archaea_bacteria/final.metametamerge.profile.html 
+	
+Custom database (viral, reference genomes):
+	
+	cd ~/miniconda3/opt/metameta/
+	
+	metameta --configfile sampledata/sample_data_custom_viral.yaml --use-conda --keep-going --cores 24
+
+
+Running MetaMeta on a cluster environment:
+------------------------------------------	
 	
 The automatic integration of conda and Snakemake (v3.9.1) is still not available in cluster mode. It is then necessary to pre-install the necessary tools (recommended in a separated environment)
 	
@@ -61,10 +76,7 @@ Make a copy of the configuration file (use example_complete.yaml for a complete 
 	cp ~/miniconda3/opt/metameta/config/example.yaml yourconfig.yaml
 	cp ~/miniconda3/opt/metameta/config/cluster.json yourcluster.json
 	
-Edit the file to set-up the working folders, threads, sample files, e-mail and cpu/memory for each rule:
-
-	vim yourconfig.yaml
-	vim yourcluster.json
+Edit those files to set-up the working directory, samples, threads and cpu/memory usage for each rule.
 	
 Activate the environment and execute MetaMeta (slurm example):	
     
@@ -74,23 +86,133 @@ Activate the environment and execute MetaMeta (slurm example):
     
     source deactivate # Deactivate MetaMeta environment
     
-* you can change the cluster commands and adapt them to your cluster system
+* you can change the cluster command (sbatch) and adapt them to your cluster system
 
 Custom databases:
 -----------------
 
-MetaMeta uses by default Archaea and Bacteria sequences as reference database (more info for each tool on Supplementary Material). It is also possible to have multiple custom databases by giving a set of reference sequence files, specified on the configuration file:
+MetaMeta uses by default Archaea and Bacteria sequences as reference database (more info for each tool on Supplementary Material). Additionaly MetaMeta allows the creation of custom database (currently for clark, dudes, kaiju and kraken).
+
+First select which databses should be used on the configuration file:
 
 databases:
   - "archaea_bacteria"
   - "custom_viral_db"
 
+* all samples will run agains the default "archaea_bacteria" database plus the "custom_viral_db"
+
+Second, create an entry with the path to the sequences that should be added to the custom database:
+  
 "custom_viral_db":
     clark: "sampledata/database/"
     dudes: "sampledata/database/"
     kaiju: "sampledata/database/"
     kraken: "sampledata/database/kraken/"
+
+* clark and dudes require one or more fasta files (extension .fna) with the accession.version identifier after the header ">" (e.g. ">NC_001998.1 Guinea pig Chlamydia phage, complete genome")
+* kaiju requires one or more GenBank flat file (extension .gbff)
+* kraken requires one or more fasta files (extension .fna) with the gi identifier on the header (e.g. ">gi|9632287|ref|NC_001998.1| Guinea pig Chlamydia phage, complete genome")
+
+Creating a custom database based on NCBI genomes:
+-------------------------------------------------
+
+It is possible to use To create a custom database based on one of the set of genomes from NCBI
+
+Download the genome_updater script:
+	git clone https://github.com/pirovc/genome_updater
 	
+Download the desired database:
+
+Example -> All fungi genomes available on refseq, fasta and GenBank format with 6 threads):
+	genome_updater.sh -d "refseq" -g "fungi" -f "genomic.fna.gz,genomic.gbff.gz" -t 6 -o fungi_genomes/
+	
+Extract files:
+
+	mkdir -p custom_fungi_db/clark_dudes/ custom_fungi_db/kaiju/ custom_fungi_db/kraken/
+
+clark and dudes:
+
+	zcat fungi_genomes/files/*.fna.gz > custom_fungi_db/clark_dudes/fungi_genomes.fna
+	
+kaiju:
+
+	zcat fungi_genomes/files/*.gbff.gz > custom_fungi_db/kaiju/fungi_genomes.gbff
+
+kraken (with header conversion to GI, old NCBI style):
+
+	zcat fungi_genomes/files/*.fna.gz | awk '{if(substr($0, 0, 1)==">"){sep=index($0," ");acc=substr($0,2,sep-2);header=substr($0,sep+1); cmd="wget -qO - \"http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id="acc"&rettype=gi\""; cmd | getline gi; close(cmd); print ">gi|" gi "|ref|" acc "| " header }else{ print $0 }}' > custom_fungi_db/kraken/fungi_genomes.fna
+	
+Add entry on the configuration file:
+
+databases:
+  - "new_custom_fungi_db"
+	
+Finally, add the path for each set of reference sequences on the configuration file:
+
+"new_custom_fungi_db":
+    clark: "custom_fungi_db/clark_dudes/"
+    dudes: "custom_fungi_db/clark_dudes/"
+    kaiju: "custom_fungi_db/kaiju/"
+    kraken: "custom_fungi_db/kraken/"	
+
+MetaMeta will compile a custom database for each tool on the first execution.
+
+Folder structure:
+-----------------
+
+MetaMeta can run several tools with several samples against several databases. The files on the working directory and database directory are organized in the structure below:
+
+WORKDIR:
+	SAMPLE_1/
+		TOOL_1/ (*)
+			DB_1/
+			DB_2/
+			...
+		TOOL_2/ (*)
+			...
+		PROFILES/
+			DB_1/
+				TOOL_1.profile.out
+				TOOL_2.profile.out
+				...
+			DB_2/
+				...
+		METAMETAMERGE/
+			DB_1/
+				FINAL_PROFILE.out
+				FINAL_PROFILE_KRONA.html
+			DB_2/
+				...
+		LOG/
+			DB_1/
+			DB_2/
+			...
+		READS/ (*)
+			TOOL_1.1.fq
+			TOOL_1.2.fq
+			TOOL_2.1.fq
+			TOOL_2.2.fq
+			...
+	SAMPLE_2/
+		...
+	CLUSTERLOG/ (**)
+
+DBDIR:
+	DB_1/
+		TOOL_1_DB/
+		TOOL_2_DB/
+		...
+		TOOL_1.dbprofile.out
+		TOOL_2.dbprofile.out
+		...
+		LOG/
+	DB_2/
+		...
+	LOG/
+
+(*) removed when keepfiles=0
+(**) only when running on cluster mode
+
 Adding a new tool:
 ------------------
 
