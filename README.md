@@ -91,27 +91,29 @@ Activate the environment and execute MetaMeta (slurm example):
 Custom databases:
 -----------------
 
-MetaMeta uses by default Archaea and Bacteria sequences as reference database (more info for each tool on Supplementary Material). Additionaly MetaMeta allows the creation of custom database (currently for clark, dudes, kaiju and kraken).
+MetaMeta uses by default Archaea and Bacteria sequences as reference database. Additionaly MetaMeta allows the creation of custom database (currently for clark, dudes, kaiju and kraken).
 
 First select which databses should be used on the configuration file:
 
-databases:
-  - "archaea_bacteria"
-  - "custom_viral_db"
+	databases:
+	  - "archaea_bacteria"
+	  - "custom_db"
 
-* all samples will run agains the default "archaea_bacteria" database plus the "custom_viral_db"
+* all samples will run agains the default "archaea_bacteria" and the new "custom_db"
 
 Second, create an entry with the path to the sequences that should be added to the custom database:
   
-"custom_viral_db":
-    clark: "sampledata/database/"
-    dudes: "sampledata/database/"
-    kaiju: "sampledata/database/"
-    kraken: "sampledata/database/kraken/"
+	"custom_db":
+	    clark: "sampledata/database/"
+	    dudes: "sampledata/database/"
+	    kaiju: "sampledata/database/"
+	    kraken: "sampledata/database/"
 
 * clark and dudes require one or more fasta files (extension .fna) with the accession.version identifier after the header ">" (e.g. ">NC_001998.1 Guinea pig Chlamydia phage, complete genome")
 * kaiju requires one or more GenBank flat file (extension .gbff)
 * kraken requires one or more fasta files (extension .fna) with the gi identifier on the header (e.g. ">gi|9632287|ref|NC_001998.1| Guinea pig Chlamydia phage, complete genome")
+
+MetaMeta will compile the "custom_db" on the first run and use it as a database.
 
 Creating a custom database based on NCBI genomes:
 -------------------------------------------------
@@ -119,11 +121,12 @@ Creating a custom database based on NCBI genomes:
 It is possible to use To create a custom database based on one of the set of genomes from NCBI
 
 Download the genome_updater script:
+	
 	git clone https://github.com/pirovc/genome_updater
 	
 Download the desired database:
-
 Example -> All fungi genomes available on refseq, fasta and GenBank format with 6 threads):
+	
 	genome_updater.sh -d "refseq" -g "fungi" -f "genomic.fna.gz,genomic.gbff.gz" -t 6 -o fungi_genomes/
 	
 Extract files:
@@ -144,71 +147,69 @@ kraken (with header conversion to GI, old NCBI style):
 	
 Add entry on the configuration file:
 
-databases:
-  - "new_custom_fungi_db"
+	databases:
+	  - "new_custom_fungi_db"
 	
 Finally, add the path for each set of reference sequences on the configuration file:
 
-"new_custom_fungi_db":
-    clark: "custom_fungi_db/clark_dudes/"
-    dudes: "custom_fungi_db/clark_dudes/"
-    kaiju: "custom_fungi_db/kaiju/"
-    kraken: "custom_fungi_db/kraken/"	
-
-MetaMeta will compile a custom database for each tool on the first execution.
+	"new_custom_fungi_db":
+	    clark: "custom_fungi_db/clark_dudes/"
+	    dudes: "custom_fungi_db/clark_dudes/"
+	    kaiju: "custom_fungi_db/kaiju/"
+	    kraken: "custom_fungi_db/kraken/"	
 
 Folder structure:
 -----------------
 
 MetaMeta can run several tools with several samples against several databases. The files on the working directory and database directory are organized in the structure below:
 
-WORKDIR:
-	SAMPLE_1/
-		TOOL_1/ (*)
-			DB_1/
-			DB_2/
-			...
-		TOOL_2/ (*)
-			...
-		PROFILES/
-			DB_1/
-				TOOL_1.profile.out
-				TOOL_2.profile.out
+	WORKDIR:
+		SAMPLE_1/
+			TOOL_1/ (*)
+				DB_1/
+				DB_2/
 				...
-			DB_2/
+			TOOL_2/ (*)
 				...
-		METAMETAMERGE/
-			DB_1/
-				FINAL_PROFILE.out
-				FINAL_PROFILE_KRONA.html
-			DB_2/
+			PROFILES/
+				DB_1/
+					TOOL_1.profile.out
+					TOOL_2.profile.out
+					...
+				DB_2/
+					...
+			METAMETAMERGE/
+				DB_1/
+					FINAL_PROFILE.out
+					FINAL_PROFILE_KRONA.html
+				DB_2/
+					...
+			LOG/
+				DB_1/
+				DB_2/
 				...
-		LOG/
-			DB_1/
-			DB_2/
+			READS/ (*)
+				TOOL_1.1.fq
+				TOOL_1.2.fq
+				TOOL_2.1.fq
+				TOOL_2.2.fq
+				...
+		SAMPLE_2/
 			...
-		READS/ (*)
-			TOOL_1.1.fq
-			TOOL_1.2.fq
-			TOOL_2.1.fq
-			TOOL_2.2.fq
-			...
-	SAMPLE_2/
-		...
-	CLUSTERLOG/ (**)
+		CLUSTERLOG/ (**)
 
-DBDIR:
-	DB_1/
-		TOOL_1_DB/
-		TOOL_2_DB/
-		...
-		TOOL_1.dbprofile.out
-		TOOL_2.dbprofile.out
-		...
+	DBDIR:
+		DB_1/
+			TOOL_1_DB/
+			TOOL_2_DB/
+			...
+			TOOL_1.dbprofile.out
+			TOOL_2.dbprofile.out
+			...
+			LOG/
+		DB_2/
+			...
 		LOG/
-	DB_2/
-		...
-	LOG/
 
 (*) removed when keepfiles=0
 (**) only when running on cluster mode
