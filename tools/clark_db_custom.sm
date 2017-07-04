@@ -12,7 +12,8 @@ rule clark_db_custom_1:
 
 rule clark_db_custom_2:
 	input: sep_seq_folder = config['dbdir'] + "{database}/clark_db/Custom/"
-	output: targets = config['dbdir'] + "{database}/clark_db/targets.txt"
+	output: targets = config['dbdir'] + "{database}/clark_db/targets.txt",
+		taxonomy = temp(config['dbdir'] + "{database}/clark_db/taxonomy/")
 	log: config['dbdir'] + "{database}/log/clark_db_custom_2.log"
 	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_2.time"
 	conda: srcdir("../envs/clark.yaml")

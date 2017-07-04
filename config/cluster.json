@@ -26,6 +26,12 @@
     "partition": "small",
     "mem": "16G"
   },
+  "krona": {
+    "job-name": "krona",
+    "output": "clusterlog/krona.%j.out",
+    "partition": "small",
+    "mem": "4G"
+  },
   "trim_reads": {
     "job-name": "trim_reads",
     "output": "clusterlog/trim_reads.%j.out",
