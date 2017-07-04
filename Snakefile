@@ -56,6 +56,7 @@ else:
 		onend("An error has occured.", log)
 		
 	############################################################################################## 
+	import glob, os
 	include: "scripts/db.sm"
 	include: "scripts/preproc.sm"
 	include: "scripts/clean_files.sm"
@@ -63,10 +64,13 @@ else:
 	include: "scripts/metametamerge.sm"
 	include: "scripts/krona.sm"
 	include: "scripts/util.py"
-	include: "tools/clark_db_custom.sm"
-	include: "tools/dudes_db_custom.sm"
-	include: "tools/kaiju_db_custom.sm"
-	include: "tools/kraken_db_custom.sm"
+	
+	# Include all db_custom.sm
+	for fn in glob.glob(srcdir("tools/*_db_custom.sm")):
+		if os.path.isfile(fn): 
+			include: fn
+			
+	# Include all selected tools
 	for t in config["tools"]:
 		include: ("tools/"+t+".sm")
 	############################################################################################## 
