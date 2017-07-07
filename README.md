@@ -117,21 +117,19 @@ MetaMeta will compile the "custom_db" on the first run and use it as a database.
 Creating a custom database based on NCBI genomes:
 -------------------------------------------------
 
-It is possible to use To create a custom database based on one of the set of genomes from NCBI
+It is possible to create a custom database based on the set of genomes from NCBI
 
 Download the genome_updater script:
 	
 	git clone https://github.com/pirovc/genome_updater
 	
 Download the desired database:
-Example -> All fungi genomes available on refseq, fasta and GenBank format with 6 threads):
+Example -> All fungi genomes available on refseq, fasta and GenBank formats with 6 threads:
 	
-	genome_updater.sh -d "refseq" -g "fungi" -f "genomic.fna.gz,genomic.gbff.gz" -t 6 -o fungi_genomes/
+	./genome_updater.sh -d "refseq" -g "fungi" -f "genomic.fna.gz,genomic.gbff.gz" -t 6 -o fungi_genomes/
+	mkdir -p custom_fungi_db/clark_dudes/ custom_fungi_db/kaiju/ custom_fungi_db/kraken/
 	
 Extract files:
-
-	mkdir -p custom_fungi_db/clark_dudes/ custom_fungi_db/kaiju/ custom_fungi_db/kraken/
-
 clark and dudes:
 
 	zcat fungi_genomes/files/*.fna.gz > custom_fungi_db/clark_dudes/fungi_genomes.fna
@@ -157,7 +155,7 @@ Finally, add the path for each set of reference sequences on the configuration f
 	    kaiju: "custom_fungi_db/kaiju/"
 	    kraken: "custom_fungi_db/kraken/"	
 
-On the first run MetaMeta will compile the database for each tool.
+On the first run MetaMeta will compile the "new_custom_fungi_db" database for each configured tool.
 
 Folder structure:
 -----------------
