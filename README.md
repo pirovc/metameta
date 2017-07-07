@@ -4,7 +4,7 @@ Vitor C. Piro (vitorpiro@gmail.com)
 
 NEW:
 ----
-v1.1) Support single and paired-end reads, multiple and custom databases, several bug fixes, krona integration
+v1.1) Support single and paired-end reads, multiple and custom databases, krona integration
 
 Install:
 --------

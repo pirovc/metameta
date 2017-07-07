@@ -1,6 +1,5 @@
 # Output and working directory (all other directories below - if not absolute - are relative to this one)
 workdir: "sampledata/results/"
-
 dbdir: "../databases/"
 
 samples:
@@ -9,7 +8,7 @@ samples:
      fq2: "../files/reads/sample_data_custom_viral.2.fq.gz"
 
 gzipped: 1
-threads: 6 
+threads: 1
 
 databases:
   - "custom_viral_db"
@@ -20,15 +19,3 @@ databases:
     kaiju: "../files/kaiju/"
     kraken: "../files/kraken/"
 
-tool_alt_path:
-    "clark": ""
-    "dudes": ""
-    "gottcha": ""
-    "kaiju": ""
-    "kraken": ""
-    "motus": ""
-    "trimmomatic": ""
-    "spades": ""
-    "bowtie2": ""
-    "krona": ""
-    "metametamerge": "../../../metametamerge/"

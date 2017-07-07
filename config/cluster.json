@@ -14,12 +14,6 @@
     "job-name": "metameta_get_taxdump",
     "output": "clusterlog/metameta_get_taxdump.%j.out"
   },
-  "metametamerge_plot": {
-    "job-name": "metameta_plot",
-    "output": "clusterlog/metameta_plot.%j.out",
-    "partition": "small",
-    "mem": "2G"
-  },
   "metametamerge": {
     "job-name": "metametamerge",
     "output": "clusterlog/metametamerge.%j.out",

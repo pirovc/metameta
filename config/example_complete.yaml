@@ -31,11 +31,11 @@ databases:
     clark: "/path/reference/sequences/fna/"
     dudes: "/path/reference/sequences/fna/"
     kaiju: "/path/reference/sequences/gbff/"
-    kraken: "/path/reference/sequences/fna/"
+    kraken: "/path/reference/sequences/fna_gi/"
 	
 ### MetaMeta Pipeline ### 
 # Number of threads for each tool (distributed among the number of cores defined by main parameter --cores). Default: 1
-threads: 12
+threads: 1
 # Gzipped input files (0: not gzipped / 1: gzipped). Default: 0
 gzipped: 0
 # Keep intermediate files (database, reads and output) (0: do not keep files / 1: keep all files). Default: 0
@@ -67,7 +67,7 @@ mode: 'linear'
 # MetaMetaMerge minimum abundance or Maximum results for each taxonomic level (0: off / 0-1: minimum relative abundance / >=1: maximum number of identifications). Default: 0.0001
 cutoff: 0.0001
 # MetaMetaMerge number of bins. Default: 4
-bins: 3
+bins: 4
 # MetaMetaMerge ranks option. Generates the merged output based only on specified ranks and estimate upper levels (0: off / 1: on). Default: 1
 ranks: 'species'
 # MetaMetaMerge detailed output. Generates detailed output for each taxon/tool and its normalized relative abundance estimation. It outputs 0 for tools which did not identified the taxon and -1 for tools without a taxon in the database. (0: off / 1: on). Default: 0
