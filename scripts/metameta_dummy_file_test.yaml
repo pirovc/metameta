@@ -1,6 +1,0 @@
-workdir: "./"
-dbdir: "./"
-samples:
-  "metameta_dummy_file_test":
-     fq1: "metameta_dummy_file_test"
-     fq2: "metameta_dummy_file_test"
