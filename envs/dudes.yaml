@@ -5,4 +5,4 @@ channels:
  - conda-forge
 dependencies:
  - bowtie2=2.3.0
- - dudes=0.7
+ - dudes=0.07
