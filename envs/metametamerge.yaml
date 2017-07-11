@@ -4,4 +4,4 @@ channels:
  - defaults
  - conda-forge
 dependencies:
- - metametamerge=1.0
+ - metametamerge=1.1
