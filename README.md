@@ -43,7 +43,7 @@ Check rules and output files:
 	
 Run MetaMeta:
 
-    metameta --configfile yourconfig.yaml --use-conda --keep-going --cores 24
+	metameta --configfile yourconfig.yaml --use-conda --keep-going --cores 24
 
 * The number of --cores is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter "threads"
 * On the first run MetaMeta will download and install the configured tools as well as the database files (archaea and bacteria by default) necessary for each tool.
@@ -52,7 +52,8 @@ Running sample data:
 --------------------
 
 	cd ~/miniconda3/opt/metameta/
-
+	(or using environments: cd ~/miniconda3/envs/metameta/opt/metameta/)
+	
 Pre-configured Archaea and Bacteria database:
 	
 	./metameta --configfile sampledata/sample_data_archaea_bacteria.yaml --use-conda --keep-going --cores 6
@@ -70,12 +71,12 @@ Running MetaMeta on a cluster environment:
 	
 The automatic integration of conda and Snakemake (v3.9.1) is still not available in cluster mode. It is then necessary to pre-install the necessary tools (recommended in a separated environment)
 	
-	conda create -c bioconda -n metameta metameta=1.1 metametamerge=1.1 krona=2.7 spades=3.9.0 trimmomatic=0.36 jellyfish=1.1.11 bowtie2=2.3.0 clark=1.2.3 dudes=0.07 gottcha=1.0 kaiju=1.0 kraken=0.10.5beta motus=1.0
+	conda create -c bioconda -n metameta metameta=1.1 bowtie2=2.3.0 clark=1.2.3 dudes=0.07 gottcha=1.0 jellyfish=1.1.11 kaiju=1.0 kraken=0.10.5beta krona=2.7 metametamerge=1.1 motus=1.0 spades=3.9.0 trimmomatic=0.36
 
 Make a copy of the configuration file and the cluster configuration file:
 
-	cp ~/miniconda3/opt/metameta/config/example_complete.yaml yourconfig.yaml
-	cp ~/miniconda3/opt/metameta/config/cluster.json yourcluster.json
+	cp ~/miniconda3/envs/metameta/opt/metameta/config/example_complete.yaml yourconfig.yaml
+	cp ~/miniconda3/envs/metameta/opt/metameta/config/cluster.json yourcluster.json
 	
 Edit those files to set-up the working directory, samples, threads and cpu/memory usage for each rule.
 	
