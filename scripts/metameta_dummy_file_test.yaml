@@ -1,6 +1,6 @@
 workdir: "./"
-dbdir: "./"
+dbdir: "databases/"
 samples:
   "metameta_dummy_file_test":
-     fq1: "metameta_dummy_file_test"
-     fq2: "metameta_dummy_file_test"
+     fq1: "scripts/dummy.fq"
+     fq2: "scripts/dummy.fq"
