@@ -16,5 +16,5 @@ rule kaiju_rpt:
 	log: "{sample}/log/{database}/kaiju_rpt.log"
 	benchmark: "{sample}/log/{database}/kaiju_rpt.time"
 	params: paired = lambda wildcards: 2 if "fq2" in config["samples"][wildcards.sample] else 1 #Check if it's paired-end (multiply by 2) or single end to calculate read length assignment
-	shell: """awk -v paired={params.paired} '{{if($1=="C") print $2"\t"$3"\t"($4*3*paired)}}' {input} > {output} 2> {log}"""
+	shell: """awk -F "\t" -v paired={params.paired} '{{if($1=="C") print $2"\t"$3"\t"($4*3*paired)}}' {input} > {output} 2> {log}"""
 

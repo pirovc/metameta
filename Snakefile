@@ -1,4 +1,4 @@
-version="1.1"
+version="1.2.1"
 
 # Check for required parameters
 if "samples" not in config:
@@ -42,10 +42,10 @@ else:
 		print("---------------------------------------------------------------------------------------")
 		print(msg)
 		print("Please check the main log file for more information:")
-		print("\t" + os.path.abspath(config["workdir"]) + log_file)
+		print("\t" + os.path.abspath(config["workdir"]) + "/" + log_file)
 		print("Detailed output and execution time for each rule can be found at:")
-		print("\t" + os.path.abspath(config["dbdir"]) + "log/")
-		print("\t" + os.path.abspath(config["workdir"]) + "SAMPLE_NAME/log/")
+		print("\t" + os.path.abspath(config["dbdir"]) + "/log/")
+		print("\t" + os.path.abspath(config["workdir"]) + "/SAMPLE_NAME/log/")
 		print("---------------------------------------------------------------------------------------")
 		print("")
 	

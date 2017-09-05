@@ -15,4 +15,4 @@ rule kraken_rpt:
 	output: "{sample}/profiles/{database}/kraken.profile.out"
 	log: "{sample}/log/{database}/kraken_rpt.log"
 	benchmark: "{sample}/log/{database}/kraken_rpt.time"
-	shell: """awk '{{if($1=="C") print $2"\t"$3"\t"$4}}' {input} > {output} 2> {log}"""
+	shell: """awk -F "\t" '{{if($1=="C") print $2"\t"$3"\t"$4}}' {input} > {output} 2> {log}"""
