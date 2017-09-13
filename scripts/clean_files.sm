@@ -8,4 +8,4 @@ rule clean_files:
 			# Remove individual folder (sample/tool/database)
 			shell("rm -rfv {wildcards.sample}/{wildcards.tool}/{wildcards.database}/ > {log} 2>&1")
 			# Remove tool folder if it existst and there's no more data (sample/tool)
-			shell('if [ -d "{wildcards.sample}/{wildcards.tool}/" ]; then if [ ! "$(ls -A {wildcards.sample}/{wildcards.tool}/)" ]; then rm -dv {wildcards.sample}/{wildcards.tool}/; fi; fi >> {log} 2>&1')
+			shell('if [ -d "{wildcards.sample}/{wildcards.tool}/" ]; then if [ ! "$(ls -A {wildcards.sample}/{wildcards.tool}/)" ]; then rm -rv {wildcards.sample}/{wildcards.tool}/ >> {log} 2>&1; fi; fi')
