@@ -161,6 +161,14 @@ Finally, add the path for each set of reference sequences on the configuration f
 
 On the first run MetaMeta will compile the "new_custom_fungi_db" database for each configured tool.
 
+
+Merging final results:
+----------------------
+
+To merge results from diverse samples into one final file:
+
+	~/miniconda3/envs/metameta/opt/metameta/scripts/merge_final_profiles.sh workingdir/samples_*/metametamerge/database/final.metametamerge.profile.out
+
 Folder structure:
 -----------------
 
