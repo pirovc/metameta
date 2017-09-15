@@ -1,4 +1,4 @@
-version="1.1"
+version="1.1.1"
 
 # Check for required parameters
 if "samples" not in config:
@@ -33,7 +33,7 @@ else:
 	def onend(msg, log):
 		import os
 		#Remove clusterlog folder (if exists and empty)
-		shell('if [ -d "clusterlog/" ]; then if [ ! "$(ls -A clusterlog/)" ]; then rm -d clusterlog/; fi; fi')
+		shell('if [ -d "clusterlog/" ]; then if [ ! "$(ls -A clusterlog/)" ]; then rm -rf clusterlog/; fi; fi')
 		from datetime import datetime
 		dtnow = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 		log_file = "metameta_" + dtnow + ".log"
@@ -42,10 +42,10 @@ else:
 		print("---------------------------------------------------------------------------------------")
 		print(msg)
 		print("Please check the main log file for more information:")
-		print("\t" + os.path.abspath(config["workdir"]) + log_file)
+		print("\t" + os.path.abspath(config["workdir"]) + "/" + log_file)
 		print("Detailed output and execution time for each rule can be found at:")
-		print("\t" + os.path.abspath(config["dbdir"]) + "log/")
-		print("\t" + os.path.abspath(config["workdir"]) + "SAMPLE_NAME/log/")
+		print("\t" + os.path.abspath(config["dbdir"]) + "/log/")
+		print("\t" + os.path.abspath(config["workdir"]) + "/SAMPLE_NAME/log/")
 		print("---------------------------------------------------------------------------------------")
 		print("")
 	

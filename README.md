@@ -6,6 +6,7 @@ Vitor C. Piro (vitorpiro@gmail.com)
 
 NEW:
 ----
+v1.1.1) Bug fixes parsing output files for kraken and kaiju
 v1.1) Support single and paired-end reads, multiple and custom databases, krona integration
 
 Install:
@@ -143,7 +144,7 @@ kaiju:
 
 kraken (with header conversion to GI, old NCBI style):
 
-	zcat fungi_genomes/files/*.fna.gz | awk '{if(substr($0, 0, 1)==">"){sep=index($0," ");acc=substr($0,2,sep-2);header=substr($0,sep+1); cmd="wget -qO - \"http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id="acc"&rettype=gi\""; cmd | getline gi; close(cmd); print ">gi|" gi "|ref|" acc "| " header }else{ print $0 }}' > custom_fungi_db/kraken/fungi_genomes.fna
+	zcat fungi_genomes/files/*.fna.gz | awk '{if(substr($0, 0, 1)==">"){sep=index($0," ");acc=substr($0,2,sep-2);header=substr($0,sep+1); cmd="wget -qO - \"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id="acc"&rettype=gi\""; cmd | getline gi; close(cmd); print ">gi|" gi "|ref|" acc "| " header }else{ print $0 }}' > custom_fungi_db/kraken/fungi_genomes.fna
 	
 Add entry on the configuration file:
 
@@ -159,6 +160,15 @@ Finally, add the path for each set of reference sequences on the configuration f
 	    kraken: "custom_fungi_db/kraken/"	
 
 On the first run MetaMeta will compile the "new_custom_fungi_db" database for each configured tool.
+
+
+Merging final results:
+----------------------
+
+To merge final results from many samples into one final tabular file (BioBoxes format):
+
+	(script location: ~/miniconda3/opt/metameta/scripts/ or using environments: ~/miniconda3/envs/metameta/opt/metameta/scripts/)
+	./merge_final_profiles.sh workdir/samples_*/metametamerge/database/final.metametamerge.profile.out
 
 Folder structure:
 -----------------
