@@ -165,9 +165,10 @@ On the first run MetaMeta will compile the "new_custom_fungi_db" database for ea
 Merging final results:
 ----------------------
 
-To merge results from diverse samples into one final file:
+To merge final results from many samples into one final tabular file (BioBoxes format):
 
-	~/miniconda3/envs/metameta/opt/metameta/scripts/merge_final_profiles.sh workingdir/samples_*/metametamerge/database/final.metametamerge.profile.out
+	(script location: ~/miniconda3/opt/metameta/scripts/ or using environments: ~/miniconda3/envs/metameta/opt/metameta/scripts/)
+	./merge_final_profiles.sh workdir/samples_*/metametamerge/database/final.metametamerge.profile.out
 
 Folder structure:
 -----------------
