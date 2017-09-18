@@ -4,4 +4,4 @@ channels:
  - defaults
  - conda-forge
 dependencies:
- - kaiju=1.0
+ - kaiju=1.4.5

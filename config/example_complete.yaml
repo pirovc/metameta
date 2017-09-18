@@ -32,7 +32,7 @@ databases:
     dudes: "/path/reference/sequences/fna/"
     kaiju: "/path/reference/sequences/gbff/"
     kraken: "/path/reference/sequences/fna_gi/"
-	
+
 ### MetaMeta Pipeline ### 
 # Number of threads for each tool (distributed among the number of cores defined by main parameter --cores). Default: 1
 threads: 1
