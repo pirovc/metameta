@@ -3,7 +3,7 @@ ruleorder: db_archaea_bacteria_check >
 			clark_db_custom_check >
 			dudes_db_custom_check >
 			kaiju_db_custom_check >
-			kraken_db_custom_check >	
+			kraken_db_custom_check 	
 ruleorder: db_archaea_bacteria_unpack > database_profile
 
 rule db_archaea_bacteria_download:

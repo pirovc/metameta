@@ -24,4 +24,5 @@ if [ "$1" == "" -o "$1" == "-h" -o \( "$1" != "--configfile" -a "$1" != "--help"
   exit 0
 fi
 
-snakemake -s Snakefile "$@"
+#snakemake -s Snakefile "$@"
+snakemake -s /home/pirov/metameta/Snakefile "$@"

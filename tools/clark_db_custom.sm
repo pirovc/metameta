@@ -62,11 +62,12 @@ rule clark_db_custom_3:
 	shell: "{config[tool_alt_path][clark]}CLARK -T {input.targets} -D {output.db_folder} -O {input.dummy_file} -R {config[dbdir]}{wildcards.database}/clark_db/dummy_out -n {threads} > {log} 2>&1"
 	
 rule clark_db_custom_profile:
+	input: targets = config['dbdir'] + "{database}/clark_db/targets.txt"
 	output: temp(config['dbdir'] + "{database}/clark.dbaccession.out")
 	log: config['dbdir'] + "{database}/log/clark_db_custom_profile.log"
 	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_profile.time"
 	params: seq_folder = lambda wildcards: config[wildcards.database]["clark"]
-	shell: "grep -h '^>' {params.seq_folder}/*.fna | grep -o '[A-Z]*_[0-9]*\.[0-9]*' | sed 's/>//g' > {output} 2> {log}"
+	shell: "sed 's/.*\///g' {input.targets} | cut -f 1 | sed 's/.fna//g' > {output} 2> {log}"
 	
 rule clark_db_custom_check:
 	input: ancient(config['dbdir'] + "{database}/clark.dbprofile.out"),

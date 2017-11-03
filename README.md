@@ -4,11 +4,6 @@ Vitor C. Piro (vitorpiro@gmail.com)
 
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/metameta/README.html)
 
-NEW:
-----
-v1.1.1) Bug fixes parsing output files for kraken and kaiju
-v1.1) Support single and paired-end reads, multiple and custom databases, krona integration
-
 Install:
 --------
 Miniconda:
@@ -20,7 +15,7 @@ MetaMeta:
 	
 	conda install -c bioconda metameta
 
-* Alternatively, install MetaMeta in a separated environment with the command: ``conda create -c bioconda -n metameta metameta=1.1`` and activate it with ``source activate metameta`` (to deactivate use ``source deactivate``).
+* Alternatively, install MetaMeta in a separated environment with the command: ``conda create -c bioconda -n metameta metameta=1.1.2`` and activate it with ``source activate metameta`` (to deactivate use ``source deactivate``).
 * This command will also install snakemake=3.9.1. All other tools are installed in their own environment automatically on the first run (necessary to use the --use-conda parameter).
 
 Run:
@@ -72,7 +67,7 @@ Running MetaMeta on a cluster environment:
 	
 The automatic integration of conda and Snakemake (v3.9.1) is still not available in cluster mode. It is then necessary to pre-install the necessary tools (recommended in a separated environment)
 	
-	conda create -c bioconda -n metameta metameta=1.1 bowtie2=2.3.0 clark=1.2.3 dudes=0.07 gottcha=1.0 jellyfish=1.1.11 kaiju=1.0 kraken=0.10.5beta krona=2.7 metametamerge=1.1 motus=1.0 spades=3.9.0 trimmomatic=0.36
+	conda create -c bioconda -n metameta metameta=1.1.2 bowtie2=2.3.0 clark=1.2.3 dudes=0.07 gottcha=1.0 jellyfish=1.1.11 kaiju=1.0 kraken=0.10.5beta krona=2.7 metametamerge=1.1 motus=1.0 spades=3.9.0 trimmomatic=0.36
 
 Make a copy of the configuration file and the cluster configuration file:
 
@@ -268,3 +263,9 @@ MetaMeta pipeline uses Snakemake. To add a new tool to the pipeline it is necess
 		- newtool_db_custom_check -> rule to check the required database files. It should have as an input all mandatory files that should be present to the database work properly.
 
 * Template files can be found inside the folder tools/template. Once the two files are inside the tools folder, it is necessary to add the tool identifier to the YAML configuration file.
+
+NEW:
+----
+v1.1.2) Bug fixes on custom database creation and database profile generation. Updated kaiju 1.0 -> 1.4.5, dudes 0.07 -> 0.08.
+v1.1.1) Bug fixes parsing output files for kraken and kaiju
+v1.1) Support single and paired-end reads, multiple and custom databases, krona integration

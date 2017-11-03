@@ -78,5 +78,5 @@ else:
 	rule all:
 		input:
 			clean_reads =  expand("{sample}/clean_reads.done", sample=config["samples"]),
-			krona_html = expand("{sample}/metametamerge/{database}/final.metametamerge.profile.html", sample=config["samples"], database=config["databases"])
+			krona_html = expand("{sample}/metametamerge/{database}/final.metametamerge.profile.html", sample=config["samples"], database=config["databases"]) # TARGET SAMPLES AND DATABASES
 	############################################################################################## 

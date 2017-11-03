@@ -27,7 +27,11 @@ rule kraken_db_custom_3:
 	benchmark: config['dbdir'] + "{database}/log/kraken_db_custom_3.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/kraken.yaml")
-	shell: "{config[tool_alt_path][kraken]}kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --build --threads {threads} > {log} 2>&1"
+	shell: 
+		"""
+		{config[tool_alt_path][kraken]}kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --build --threads {threads} > {log} 2>&1
+		{config[tool_alt_path][kraken]}kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --clean >> {log} 2>&1
+		"""
 
 rule kraken_db_custom_profile:
 	input: config['dbdir'] + "{database}/kraken_db/library/"
