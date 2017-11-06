@@ -3,20 +3,18 @@ ruleorder: db_archaea_bacteria_check >
 			clark_db_custom_check >
 			dudes_db_custom_check >
 			kaiju_db_custom_check >
-			kraken_db_custom_check 	
+			kraken_db_custom_check
 ruleorder: db_archaea_bacteria_unpack > database_profile
 
 rule db_archaea_bacteria_download:
 	output: temp(config['dbdir'] + "archaea_bacteria/{tool}.tar.gz")
 	log: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_download.log"
 	benchmark: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_download.time"
-	params: 
-		# Get URL for the database
-		url = lambda wildcards: config["archaea_bacteria"][wildcards.tool]
+	params: url = lambda wildcards: config["archaea_bacteria"][wildcards.tool] # Get URL for the database
 	run:
 		shell(download((params.url), output[0]) + " > {log} 2>&1")
 
-rule db_archaea_bacteria_unpack:	
+rule db_archaea_bacteria_unpack:
 	input: 
 		config['dbdir'] + "archaea_bacteria/{tool}.tar.gz"
 	output: 

@@ -1,4 +1,4 @@
-version="1.1.1"
+version="1.2.0"
 
 # Check for required parameters
 if "samples" not in config:
@@ -56,27 +56,32 @@ else:
 		onend("An error has occured.", log)
 		
 	############################################################################################## 
-	import glob, os
+	include: "scripts/util.py"
 	include: "scripts/db.sm"
 	include: "scripts/preproc.sm"
 	include: "scripts/clean_files.sm"
 	include: "scripts/clean_reads.sm"
 	include: "scripts/metametamerge.sm"
 	include: "scripts/krona.sm"
-	include: "scripts/util.py"
 	
-	# Include all db_custom.sm
-	for fn in glob.glob(srcdir("tools/*_db_custom.sm")):
-		if os.path.isfile(fn): 
-			include: fn
-			
+	# Add empty path for custom databases if user did not (to set targets later on metametamerge rule)
+	# It's also allows to delete the custom database definition after building it
+	for db in config["databases"]:
+		if db not in config: config[db] = {} # Add database definition if user did not
+		for tool in config["tools"]: # For all active tools
+			if has_custom_db(tool) and tool not in config[db]: #If has custom scripts and it's not yet configured
+				config[db][tool] = ""
+
 	# Include all selected tools
-	for t in config["tools"]:
-		include: ("tools/"+t+".sm")
+	for tool in config["tools"]:
+		if has_custom_db(tool): 
+			include: ("tools/"+tool+"_db_custom.sm")
+		include: ("tools/"+tool+".sm")
+		
 	############################################################################################## 
 
 	rule all:
 		input:
-			clean_reads =  expand("{sample}/clean_reads.done", sample=config["samples"]),
-			krona_html = expand("{sample}/metametamerge/{database}/final.metametamerge.profile.html", sample=config["samples"], database=config["databases"]) # TARGET SAMPLES AND DATABASES
+			clean_reads =  expand("{sample}/clean_reads.done", sample=config["samples"]), #TARGET SAMPLE {sample}/clean_reads.done
+			krona_html = expand("{sample}/metametamerge/{database}/final.metametamerge.profile.html", sample=config["samples"], database=config["databases"]) # TARGET SAMPLE AND DATABASE {sample}/metametamerge/{database}/final.metametamerge.profile.html
 	############################################################################################## 

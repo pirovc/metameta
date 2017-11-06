@@ -3,3 +3,6 @@ def download(link,output):
 	cmd = "curl -L -o " + output + " " + link
 	#print(cmd)
 	return(cmd)
+def has_custom_db(tool):
+	import os
+	return True if os.path.isfile(srcdir("tools/"+tool+"_db_custom.sm")) else False

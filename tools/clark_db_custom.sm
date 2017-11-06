@@ -1,13 +1,17 @@
 rule clark_db_custom_1:
 	output: sep_seq_folder = temp(config['dbdir'] + "{database}/clark_db/Custom/")
-	params: seq_folder = lambda wildcards: config[wildcards.database]["clark"]
 	log: config['dbdir'] + "{database}/log/clark_db_custom_1.log"
 	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_1.time"
+	params: seq_folder = lambda wildcards: config[wildcards.database]["clark"] if wildcards.database in config and "clark" in config[wildcards.database] else ""
 	shell: 
 		"""
-		# Separate one file per sequence
-		mkdir -p {output.sep_seq_folder}
-		cat {params.seq_folder}/*.fna | awk -v sep_seq_folder='{output.sep_seq_folder}' '{{if (substr($0, 1, 1)==">") {{filename=(sep_seq_folder "/" substr($1,2) ".fna")}}; print $0 > filename}}'
+		if [ -d "{params.seq_folder}" ]; then
+			# Separate one file per sequence
+			mkdir -p {output.sep_seq_folder}
+			cat {params.seq_folder}/*.fna | awk -v sep_seq_folder='{output.sep_seq_folder}' '{{if (substr($0, 1, 1)==">") {{filename=(sep_seq_folder "/" substr($1,2) ".fna")}}; print $0 > filename}}'
+		else
+			echo "Custom database ({wildcards.database}) -> '{params.seq_folder}': No such file or directory" > {log}
+		fi
 		"""
 
 rule clark_db_custom_2:
@@ -66,8 +70,15 @@ rule clark_db_custom_profile:
 	output: temp(config['dbdir'] + "{database}/clark.dbaccession.out")
 	log: config['dbdir'] + "{database}/log/clark_db_custom_profile.log"
 	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_profile.time"
-	params: seq_folder = lambda wildcards: config[wildcards.database]["clark"]
-	shell: "sed 's/.*\///g' {input.targets} | cut -f 1 | sed 's/.fna//g' > {output} 2> {log}"
+	params: seq_folder = lambda wildcards: config[wildcards.database]["clark"] if wildcards.database in config and "clark" in config[wildcards.database] else ""
+	shell: 
+		"""
+		if [ -d "{params.seq_folder}" ]; then
+			sed 's/.*\///g' {input.targets} | cut -f 1 | sed 's/.fna//g' > {output} 2> {log}
+		else
+			echo "Custom database ({wildcards.database}) -> '{params.seq_folder}': No such file or directory" > {log}
+		fi
+		"""
 	
 rule clark_db_custom_check:
 	input: ancient(config['dbdir'] + "{database}/clark.dbprofile.out"),

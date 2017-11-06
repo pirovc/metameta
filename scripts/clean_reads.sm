@@ -1,6 +1,6 @@
 # Clean reads after every sample is finished
 rule clean_reads:
-	input: final_profile = expand("{{sample}}/metametamerge/{database}/final.metametamerge.profile.out", database=config["databases"])
+	input: final_profile = expand("{{sample}}/metametamerge/{database}/final.metametamerge.profile.out", database=config["databases"]) #TARGET DATABASE {sample}/clean_reads.done
 	output: touch("{sample}/clean_reads.done")
 	log: "{sample}/log/clean_reads.log"
 	benchmark: "{sample}/log/clean_reads.time"

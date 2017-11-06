@@ -20,7 +20,7 @@ default_val = {
 			   'databases': ['archaea_bacteria'],
 			   'archaea_bacteria': {"clark": "https://zenodo.org/record/820055/files/clark_bac_arc_v1.tar.gz", "dudes": "https://zenodo.org/record/820053/files/dudes_bac_arc_v1.tar.gz", "gottcha": "https://zenodo.org/record/819341/files/gottcha_bac_arc_v1.tar.gz", "kaiju": "https://zenodo.org/record/819425/files/kaiju_bac_arc_v1.tar.gz", "kraken": "https://zenodo.org/record/819363/files/kraken_bac_arc_v1.tar.gz", "motus": "https://zenodo.org/record/819365/files/motus_bac_arc_v1.tar.gz"}
 			   }	
-	
+
 for key,value in default_val.items():
 	if key not in config:
 		config[key] = value

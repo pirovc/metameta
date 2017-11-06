@@ -5,15 +5,19 @@ rule dudes_db_custom_1:
 			config['dbdir'] + "{database}/dudes_db/dudes_db.4.bt2l",
 			config['dbdir'] + "{database}/dudes_db/dudes_db.rev.1.bt2l",
 			config['dbdir'] + "{database}/dudes_db/dudes_db.rev.2.bt2l"
-	params: seq_folder = lambda wildcards: config[wildcards.database]["dudes"] if wildcards.database in config and "dudes" in config[wildcards.database] else None
+	params: seq_folder = lambda wildcards: config[wildcards.database]["dudes"] if wildcards.database in config and "dudes" in config[wildcards.database] else ""
 	threads: config["threads"]
 	log: config['dbdir'] + "{database}/log/dudes_db_custom_1.log"
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_1.time"
 	conda: srcdir("../envs/dudes.yaml")
 	shell: 
 		"""
-		csfiles=`ls -dm {params.seq_folder}/*.fna | sed -e 's/, /,/g' | tr -d '\\n'`
-		{config[tool_alt_path][bowtie2]}bowtie2-build ${{csfiles}} {config[dbdir]}{wildcards.database}/dudes_db/dudes_db --threads {threads} --large-index > {log} 2>&1
+		if [ -d "{params.seq_folder}" ]; then
+			csfiles=`ls -dm {params.seq_folder}/*.fna | sed -e 's/, /,/g' | tr -d '\\n'`
+			{config[tool_alt_path][bowtie2]}bowtie2-build ${{csfiles}} {config[dbdir]}{wildcards.database}/dudes_db/dudes_db --threads {threads} --large-index > {log} 2>&1
+		else
+			echo "Custom database ({wildcards.database}) -> '{params.seq_folder}': No such file or directory" > {log}
+		fi
 		"""
 
 rule dudes_db_custom_2:
@@ -40,8 +44,15 @@ rule dudes_db_custom_3:
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_4.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/dudes.yaml")
-	params: seq_folder = lambda wildcards: config[wildcards.database]["dudes"] if wildcards.database in config and "dudes" in config[wildcards.database] else None
-	shell: "{config[tool_alt_path][dudes]}DUDesDB.py -m 'av' -f {params.seq_folder}/*.fna -n {input.nodes} -a {input.names} -g {input.nucl_gb} {input.nucl_wgs} -t {threads} -o {config[dbdir]}{wildcards.database}/dudes_db/dudes_db >> {log} 2>&1"
+	params: seq_folder = lambda wildcards: config[wildcards.database]["dudes"] if wildcards.database in config and "dudes" in config[wildcards.database] else ""
+	shell: 
+		"""
+		if [ -d "{params.seq_folder}" ]; then
+			{config[tool_alt_path][dudes]}DUDesDB.py -m 'av' -f {params.seq_folder}/*.fna -n {input.nodes} -a {input.names} -g {input.nucl_gb} {input.nucl_wgs} -t {threads} -o {config[dbdir]}{wildcards.database}/dudes_db/dudes_db >> {log} 2>&1
+		else
+			echo "Custom database ({wildcards.database}) -> '{params.seq_folder}': No such file or directory" > {log}
+		fi
+		"""
 
 rule dudes_db_custom_profile:
 	input: npz = config['dbdir'] + "{database}/dudes_db/dudes_db.npz"
