@@ -44,6 +44,27 @@ Run MetaMeta:
 * The number of --cores is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter "threads"
 * On the first run MetaMeta will download and install the configured tools as well as the database files (archaea and bacteria by default) necessary for each tool.
 
+Pre-configured databases:
+-------------------------
+
+Available databases:
+
+	| Info 	| Date | metameta database name |
+	| --- | --- | --- |
+	| Archaea + Bacteria - RefSeq Complete Genomes | 2015-03 | "archaea_bacteria_201503" |
+	| Archaea + Bacteria - RefSeq Complete Genomes | 2017-09 | "archaea_bacteria_201709" |
+	| Fungal + Viral - RefSeq Complete Genomes | 2017-09 | "fungal_viral_201709" |
+
+
+Database availability per tool:
+
+	| db 	| clark	| dudes	| gottcha | kaiju | kraken | motus |
+	| --- | --- | --- | --- | --- | --- | --- |
+	| "archaea_bacteria_201503" | [Yes]() | [Yes]() | [Yes]() | [Yes]() | [Yes]() | [Yes]() |
+	| "archaea_bacteria_201709" | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
+	| "fungal_viral_201709" | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
+
+
 Running sample data:
 --------------------
 
@@ -68,6 +89,7 @@ Running MetaMeta on a cluster environment:
 The automatic integration of conda and Snakemake (v3.9.1) is still not available in cluster mode. It is then necessary to pre-install the necessary tools (recommended in a separated environment)
 	
 	conda create -c bioconda -n metameta metameta=1.1.2 bowtie2=2.3.0 clark=1.2.3 dudes=0.07 gottcha=1.0 jellyfish=1.1.11 kaiju=1.0 kraken=0.10.5beta krona=2.7 metametamerge=1.1 motus=1.0 spades=3.9.0 trimmomatic=0.36
+	conda create -c bioconda -n metameta metameta=1.1.2 $(for f in *.yaml; do sed '1,/dependencies:/d; s/ - //g' $f;done | paste -d" " -s -)
 
 Make a copy of the configuration file and the cluster configuration file:
 
