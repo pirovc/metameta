@@ -49,20 +49,20 @@ Pre-configured databases:
 
 Available databases:
 
-	| Info 	| Date | metameta database name |
-	| --- | --- | --- |
-	| Archaea + Bacteria - RefSeq Complete Genomes | 2015-03 | "archaea_bacteria_201503" |
-	| Archaea + Bacteria - RefSeq Complete Genomes | 2017-09 | "archaea_bacteria_201709" |
-	| Fungal + Viral - RefSeq Complete Genomes | 2017-09 | "fungal_viral_201709" |
+| Info | Date | metameta database name |
+| --- | --- | --- |
+| Archaea + Bacteria - RefSeq Complete Genomes | 2015-03 | "archaea_bacteria_201503" |
+| Archaea + Bacteria - RefSeq Complete Genomes | 2017-09 | "archaea_bacteria_201709" |
+| Fungal + Viral - RefSeq Complete Genomes | 2017-09 | "fungal_viral_201709" |
 
 
 Database availability per tool:
 
-	| db 	| clark	| dudes	| gottcha | kaiju | kraken | motus |
-	| --- | --- | --- | --- | --- | --- | --- |
-	| "archaea_bacteria_201503" | [Yes]() | [Yes]() | [Yes]() | [Yes]() | [Yes]() | [Yes]() |
-	| "archaea_bacteria_201709" | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
-	| "fungal_viral_201709" | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
+| database | clark | dudes | gottcha | kaiju | kraken | motus |
+| --- | --- | --- | --- | --- | --- | --- |
+| "archaea_bacteria_201503" | [Yes](https://zenodo.org/record/820055) | [Yes](https://zenodo.org/record/820053) | [Yes](https://zenodo.org/record/819341) | [Yes](https://zenodo.org/record/819425) | [Yes](https://zenodo.org/record/819363) | [Yes](https://zenodo.org/record/819365) |
+| "archaea_bacteria_201709" | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
+| "fungal_viral_201709" | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
 
 
 Running sample data:
