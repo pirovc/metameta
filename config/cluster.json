@@ -133,10 +133,6 @@
     "time": "24:00:00"
   },
   "dudes_db_custom_3": {
-    "job-name": "dudes_db_custom_3",
-    "output": "clusterlog/dudes_db_custom_3.%j.out"
-  },
-  "dudes_db_custom_4": {
     "job-name": "dudes_db_custom_4",
     "output": "clusterlog/dudes_db_custom_4.%j.out",
     "partition": "big",

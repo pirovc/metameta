@@ -1,7 +1,4 @@
 channels:
  - bioconda
- - r
- - defaults
- - conda-forge
 dependencies:
  - spades=3.9.0

@@ -1,37 +1,35 @@
 # Rule order to get pre-defined databases first instead of trying to create it customized
-ruleorder: db_archaea_bacteria_check > 
+ruleorder: preconfigdb_check > 
 			clark_db_custom_check >
 			dudes_db_custom_check >
 			kaiju_db_custom_check >
 			kraken_db_custom_check
-ruleorder: db_archaea_bacteria_unpack > database_profile
+ruleorder: preconfigdb_unpack > database_profile
 
-rule db_archaea_bacteria_download:
-	output: temp(config['dbdir'] + "archaea_bacteria/{tool}.tar.gz")
-	log: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_download.log"
-	benchmark: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_download.time"
-	params: url = lambda wildcards: config["archaea_bacteria"][wildcards.tool] # Get URL for the database
+rule preconfigdb_download:
+	output: temp(config['dbdir'] + "{preconfigdb}/{tool}.tar.gz")
+	log: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_download.log"
+	benchmark: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_download.time"
+	params: url = lambda wildcards: config[wildcards.preconfigdb][wildcards.tool] # Get URL for the database
 	run:
 		shell(download((params.url), output[0]) + " > {log} 2>&1")
 
-rule db_archaea_bacteria_unpack:
-	input: 
-		config['dbdir'] + "archaea_bacteria/{tool}.tar.gz"
-	output: 
-		db_folder = config['dbdir'] + "archaea_bacteria/{tool}_db/",
-		db_profile = config['dbdir'] + "archaea_bacteria/{tool}.dbprofile.out"
-	log: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_unpack.log"
-	benchmark: config['dbdir'] + "archaea_bacteria/log/{tool}_db_archaea_bacteria_unpack.time"
+rule preconfigdb_unpack:
+	input: config['dbdir'] + "{preconfigdb}/{tool}.tar.gz"
+	output: db_folder = config['dbdir'] + "{preconfigdb}/{tool}_db/",
+		db_profile = config['dbdir'] + "{preconfigdb}/{tool}.dbprofile.out"
+	log: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_unpack.log"
+	benchmark: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_unpack.time"
 	shell: 
 		"""
-		tar zxfv {input} -C {config[dbdir]}archaea_bacteria/ > {log} 2>&1
+		tar zxfv {input} -C {config[dbdir]}{wildcards.preconfigdb}/ > {log} 2>&1
 		"""
 
-rule db_archaea_bacteria_check:
-	input: db_folder = ancient(config['dbdir'] + "archaea_bacteria/{tool}_db/"),
-			db_profile = ancient(config['dbdir'] + "archaea_bacteria/{tool}.dbprofile.out")
-	output: db_check = touch(config['dbdir'] + "archaea_bacteria/{tool}_db_check.done")
-		
+rule preconfigdb_check:
+	input: lambda wildcards: [config["dbdir"] + preconfigdb + "/" + wildcards.tool + "_db/" for preconfigdb in config["preconfigdbs"] if preconfigdb in config["databases"]],
+ 			lambda wildcards: [config["dbdir"] + preconfigdb + "/" + wildcards.tool + ".dbprofile.out" for preconfigdb in config["preconfigdbs"] if preconfigdb in config["databases"]]
+	output:	db_check = touch(config['dbdir'] + "{preconfigdb}/{tool}_db_check.done")
+
 
 acc2tab_path=srcdir("acc2tab.bash")
 tab2count_path=srcdir("tab2count.bash")

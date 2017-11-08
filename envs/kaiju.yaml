@@ -1,7 +1,4 @@
 channels:
  - bioconda
- - r
- - defaults
- - conda-forge
 dependencies:
  - kaiju=1.4.5

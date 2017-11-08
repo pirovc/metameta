@@ -12,6 +12,7 @@ else:
 	# Load default values (when they are not set on the configfile.yaml)
 	include: "scripts/default.sm"
 
+	print(config["databases"])
 	# Set snakemake main workdir variable
 	workdir: config["workdir"]
 
