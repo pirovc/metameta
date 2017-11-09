@@ -51,18 +51,18 @@ Available databases:
 
 | Info | Date | metameta database name |
 | --- | --- | --- |
-| Archaea + Bacteria - RefSeq Complete Genomes | 2015-03 | "archaea_bacteria_201503" |
-| Archaea + Bacteria - RefSeq Complete Genomes | 2017-09 | "archaea_bacteria_201709" |
-| Fungal + Viral - RefSeq Complete Genomes | 2017-09 | "fungal_viral_201709" |
+| Archaea + Bacteria - RefSeq Complete Genomes | 2015-03 | `archaea_bacteria_201503` |
+| Archaea + Bacteria - RefSeq Complete Genomes | 2017-09 | `archaea_bacteria_201709` |
+| Fungal + Viral - RefSeq Complete Genomes | 2017-09 | `fungal_viral_201709` |
 
 
 Database availability per tool:
 
 | database | clark | dudes | gottcha | kaiju | kraken | motus |
 | --- | --- | --- | --- | --- | --- | --- |
-| "archaea_bacteria_201503" | [Yes](https://zenodo.org/record/820055) | [Yes](https://zenodo.org/record/820053) | [Yes](https://zenodo.org/record/819341) | [Yes](https://zenodo.org/record/819425) | [Yes](https://zenodo.org/record/819363) | [Yes](https://zenodo.org/record/819365) |
-| "archaea_bacteria_201709" | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
-| "fungal_viral_201709" | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
+| `archaea_bacteria_201503` | [Yes](https://zenodo.org/record/820055) | [Yes](https://zenodo.org/record/820053) | [Yes](https://zenodo.org/record/819341) | [Yes](https://zenodo.org/record/819425) | [Yes](https://zenodo.org/record/819363) | [Yes](https://zenodo.org/record/819365) |
+| `archaea_bacteria_201709` | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
+| `fungal_viral_201709` | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
 
 
 Running sample data:
@@ -288,6 +288,13 @@ MetaMeta pipeline uses Snakemake. To add a new tool to the pipeline it is necess
 
 NEW:
 ----
-v1.1.2) Bug fixes on custom database creation and database profile generation. Updated kaiju 1.0 -> 1.4.5, dudes 0.07 -> 0.08.
+v1.2.0) 
+- Updated to Snakemake 4.3.0 (from 3.9.1)
+- Bug fixes on custom database creation and database profile generation. 
+- Updated tools: kaiju 1.0 -> 1.4.5, dudes 0.07 -> 0.08, spades 3.9.0 -> 3.11.1
+- Addition of new pre-configured databases: fungal_viral_201709
+
 v1.1.1) Bug fixes parsing output files for kraken and kaiju
+
 v1.1) Support single and paired-end reads, multiple and custom databases, krona integration
+

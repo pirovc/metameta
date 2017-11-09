@@ -1,3 +1,15 @@
+def target_clean_files(wildcards):
+	if wildcards.database in preconfigdbs:
+		return [wildcards.sample + "/profiles/" + wildcards.database + "/" + tool + "_clean_files.done" for tool in preconfigdbs[wildcards.database] if tool in config["tools"]]
+	elif wildcards.database in customdbs:
+		return [wildcards.sample + "/profiles/" + wildcards.database + "/" + tool + "_clean_files.done" for tool in customdbs[wildcards.database] if tool in config["tools"]]
+		
+def target_tools(wildcards):
+	if wildcards.database in preconfigdbs:
+		return [tool for tool in preconfigdbs[wildcards.database] if tool in config["tools"]]
+	elif wildcards.database in customdbs:
+		return [tool for tool in customdbs[wildcards.database] if tool in config["tools"]]
+		
 rule metametamerge_get_taxdump:
 	output: taxdump=temp(config["dbdir"] + "taxdump.tar.gz")
 			, names=config["dbdir"] + "names.dmp"
@@ -11,15 +23,15 @@ rule metametamerge_get_taxdump:
 
 rule metametamerge:
 	input:  
-		clean_files = lambda wildcards: [wildcards.sample + "/profiles/" + wildcards.database + "/" + tool + "_clean_files.done" for tool in config[wildcards.database] if tool in config["tools"]], ## TARGET TOOLS
+		clean_files = target_clean_files, ## TARGET TOOLS
 		names=config["dbdir"] + "names.dmp", nodes=config["dbdir"] + "nodes.dmp", merged=config["dbdir"] + "merged.dmp"
 	output: final_profile = "{sample}/metametamerge/{database}/final.metametamerge.profile.out"
 	log: "{sample}/log/{database}/metametamerge.log"
 	benchmark: "{sample}/log/{database}/metametamerge.time"
-	params: tool_profiles = lambda wildcards: [wildcards.sample + "/profiles/" + wildcards.database + "/" + tool + ".profile.out" for tool in config[wildcards.database] if tool in config["tools"]],
-			db_profiles = lambda wildcards: [config["dbdir"] + wildcards.database + "/" + tool + ".dbprofile.out" for tool in config[wildcards.database] if tool in config["tools"]],
-			tool_identifier=lambda wildcards: ','.join([tool for tool in config[wildcards.database] if tool in config["tools"]]),	
-			tool_method=lambda wildcards: ','.join([config["tools"][tool] for tool in config[wildcards.database] if tool in config["tools"]]),
+	params: tool_profiles = lambda wildcards: [wildcards.sample + "/profiles/" + wildcards.database + "/" + tool + ".profile.out" for tool in target_tools(wildcards)],
+			db_profiles = lambda wildcards: [config["dbdir"] + wildcards.database + "/" + tool + ".dbprofile.out" for tool in target_tools(wildcards)],
+			tool_identifier=lambda wildcards: ','.join([tool for tool in target_tools(wildcards)]),	
+			tool_method=lambda wildcards: ','.join([tool for tool in target_tools(wildcards)]),
 			detailed = "--detailed" if config["detailed"] else "",
 			verbose = "--verbose" if config["verbose"] else ""
 	conda: srcdir("../envs/metametamerge.yaml")

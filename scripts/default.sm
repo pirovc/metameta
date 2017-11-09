@@ -17,13 +17,55 @@ default_val = {
 			   'ranks': 'species',
 			   'detailed': 0,
 			   'verbose': 0,
-			   'preconfigdbs': ["archaea_bacteria_201503", "archaea_bacteria_201709"],
 			   'databases': ['archaea_bacteria_201503'],
-			   'archaea_bacteria_201503': {"clark": "https://zenodo.org/record/820055/files/clark_bac_arc_v1.tar.gz", "dudes": "https://zenodo.org/record/820053/files/dudes_bac_arc_v1.tar.gz", "gottcha": "https://zenodo.org/record/819341/files/gottcha_bac_arc_v1.tar.gz", "kaiju": "https://zenodo.org/record/819425/files/kaiju_bac_arc_v1.tar.gz", "kraken": "https://zenodo.org/record/819363/files/kraken_bac_arc_v1.tar.gz", "motus": "https://zenodo.org/record/819365/files/motus_bac_arc_v1.tar.gz"}
 			   }	
 
+preconfigdbs = {'archaea_bacteria_201503': {
+					"clark": "https://zenodo.org/record/820055/files/clark_bac_arc_v1.tar.gz", 
+					"dudes": "https://zenodo.org/record/820053/files/dudes_bac_arc_v1.tar.gz", 
+					"gottcha": "https://zenodo.org/record/819341/files/gottcha_bac_arc_v1.tar.gz", 
+					"kaiju": "https://zenodo.org/record/819425/files/kaiju_bac_arc_v1.tar.gz", 
+					"kraken": "https://zenodo.org/record/819363/files/kraken_bac_arc_v1.tar.gz", 
+					"motus": "https://zenodo.org/record/819365/files/motus_bac_arc_v1.tar.gz"
+				},
+			   'fungi_viral_201709': {
+			   		"clark": "x", 
+			   		"dudes": "x", 
+			   		"kaiju": "x", 
+			   		"kraken": "x"
+			   	}
+}
+
+
+# A pre-configured database name cannot be used as a key in the config.yaml file
+for preconfigdb in preconfigdbs.keys():
+	if preconfigdb in config:
+		raise Exception("Database name " + preconfigdb + " is already taken for pre-configured databases and cannot be used to create custom databases")
+
+# Set default values for parameters not set on config.yaml
 for key,value in default_val.items():
 	if key not in config:
 		config[key] = value
 
-		
+# Add empty path for custom databases if user did not (to set targets later on metametamerge rule)
+# It's also allows to delete the custom database definition after building it
+customdbs = {}
+for db in config["databases"]:
+	if db not in preconfigdbs:
+		if db not in customdbs: customdbs[db] = {} # Add database definition if user did not
+		for tool in config["tools"]: # For all active tools
+			if has_custom_db(tool) and tool not in customdbs[db]: #If has custom scripts and it's not yet configured
+				customdbs[db][tool] = ""
+
+import pprint
+for k,v in sorted(config.items()):
+	print(" - " + k + ": ", end='')
+	pprint.pprint(v)
+print("preconfigdbs")	
+for k,v in sorted(preconfigdbs.items()):
+	print(" - " + k + ": ", end='')
+	pprint.pprint(v)
+print("customdbs")	
+for k,v in sorted(customdbs.items()):
+	print(" - " + k + ": ", end='')
+	pprint.pprint(v)

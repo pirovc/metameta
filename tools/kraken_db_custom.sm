@@ -4,7 +4,7 @@ rule kraken_db_custom_1:
 	benchmark: config['dbdir'] + "{database}/log/kraken_db_custom_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/kraken.yaml")
-	params: seq_folder = lambda wildcards: config[wildcards.database]["kraken"] if wildcards.database in config and "kraken" in config[wildcards.database] else ""
+	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["kraken"] if wildcards.database in customdbs and "kraken" in customdbs[wildcards.database] else ""
 	shell: 
 		"""
 		if [ -d "{params.seq_folder}" ]; then

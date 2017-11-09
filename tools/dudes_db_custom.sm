@@ -5,7 +5,7 @@ rule dudes_db_custom_1:
 			config['dbdir'] + "{database}/dudes_db/dudes_db.4.bt2l",
 			config['dbdir'] + "{database}/dudes_db/dudes_db.rev.1.bt2l",
 			config['dbdir'] + "{database}/dudes_db/dudes_db.rev.2.bt2l"
-	params: seq_folder = lambda wildcards: config[wildcards.database]["dudes"] if wildcards.database in config and "dudes" in config[wildcards.database] else ""
+	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["dudes"] if wildcards.database in customdbs and "dudes" in customdbs[wildcards.database] else ""
 	threads: config["threads"]
 	log: config['dbdir'] + "{database}/log/dudes_db_custom_1.log"
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_1.time"
@@ -44,7 +44,7 @@ rule dudes_db_custom_3:
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_4.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/dudes.yaml")
-	params: seq_folder = lambda wildcards: config[wildcards.database]["dudes"] if wildcards.database in config and "dudes" in config[wildcards.database] else ""
+	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["dudes"] if wildcards.database in customdbs and "dudes" in customdbs[wildcards.database] else ""
 	shell: 
 		"""
 		if [ -d "{params.seq_folder}" ]; then

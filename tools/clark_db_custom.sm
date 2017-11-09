@@ -2,7 +2,7 @@ rule clark_db_custom_1:
 	output: sep_seq_folder = temp(config['dbdir'] + "{database}/clark_db/Custom/")
 	log: config['dbdir'] + "{database}/log/clark_db_custom_1.log"
 	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_1.time"
-	params: seq_folder = lambda wildcards: config[wildcards.database]["clark"] if wildcards.database in config and "clark" in config[wildcards.database] else ""
+	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["clark"] if wildcards.database in customdbs and "clark" in customdbs[wildcards.database] else ""
 	shell: 
 		"""
 		if [ -d "{params.seq_folder}" ]; then
@@ -70,11 +70,11 @@ rule clark_db_custom_profile:
 	output: temp(config['dbdir'] + "{database}/clark.dbaccession.out")
 	log: config['dbdir'] + "{database}/log/clark_db_custom_profile.log"
 	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_profile.time"
-	params: seq_folder = lambda wildcards: config[wildcards.database]["clark"] if wildcards.database in config and "clark" in config[wildcards.database] else ""
+	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["clark"] if wildcards.database in customdbs and "clark" in customdbs[wildcards.database] else ""
 	shell: 
 		"""
 		if [ -d "{params.seq_folder}" ]; then
-			sed 's/.*\///g' {input.targets} | cut -f 1 | sed 's/.fna//g' > {output} 2> {log}
+			cut -f 1 {input.targets} | sed 's/.*\///g; s/.fna//g' > {output} 2> {log}
 		else
 			echo "Custom database ({wildcards.database}) -> '{params.seq_folder}': No such file or directory" > {log}
 		fi

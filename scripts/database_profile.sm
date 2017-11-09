@@ -1,0 +1,14 @@
+acc2tab_path=srcdir("acc2tab.bash")
+tab2count_path=srcdir("tab2count.bash")
+rule database_profile:
+	input: db_accession = config["dbdir"] + "{database}/{tool}.dbaccession.out"
+	output: db_tax=temp(config["dbdir"] + "{database}/{tool}.dbtax.out"),
+			db_profile=config["dbdir"] + "{database}/{tool}.dbprofile.out"
+	log: config["dbdir"] + "{database}/log/{tool}_database_profile.log"
+	benchmark: config["dbdir"] + "{database}/log/{tool}_database_profile.time"
+	threads: config["threads"]
+	shell:
+		"""
+		cat {input.db_accession} | xargs --max-procs={threads} -I '{{}}' bash {acc2tab_path} '{{}}' > {output.db_tax} 2> {log}
+		{tab2count_path} {output.db_tax} > {output.db_profile} 2>> {log}
+		"""

@@ -8,11 +8,11 @@ elif "workdir" not in config:
 elif "dbdir" not in config:
 	print("No database directory defined on the configuration file")
 else:
+	include: "scripts/util.py"
 
 	# Load default values (when they are not set on the configfile.yaml)
 	include: "scripts/default.sm"
 
-	print(config["databases"])
 	# Set snakemake main workdir variable
 	workdir: config["workdir"]
 
@@ -57,22 +57,14 @@ else:
 		onend("An error has occured.", log)
 		
 	############################################################################################## 
-	include: "scripts/util.py"
-	include: "scripts/db.sm"
+	include: "scripts/database_profile.sm"
+	include: "scripts/preconfigdb.sm"
 	include: "scripts/preproc.sm"
 	include: "scripts/clean_files.sm"
 	include: "scripts/clean_reads.sm"
 	include: "scripts/metametamerge.sm"
 	include: "scripts/krona.sm"
 	
-	# Add empty path for custom databases if user did not (to set targets later on metametamerge rule)
-	# It's also allows to delete the custom database definition after building it
-	for db in config["databases"]:
-		if db not in config: config[db] = {} # Add database definition if user did not
-		for tool in config["tools"]: # For all active tools
-			if has_custom_db(tool) and tool not in config[db]: #If has custom scripts and it's not yet configured
-				config[db][tool] = ""
-
 	# Include all selected tools
 	for tool in config["tools"]:
 		if has_custom_db(tool): 

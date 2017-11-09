@@ -3,7 +3,7 @@ rule kaiju_db_custom_1:
 	log: config['dbdir'] + "{database}/log/kaiju_db_custom_1.log"
 	benchmark: config['dbdir'] + "{database}/log/kaiju_db_custom_1.time"
 	conda: srcdir("../envs/kaiju.yaml")
-	params: seq_folder = lambda wildcards: config[wildcards.database]["kaiju"] if wildcards.database in config and "kaiju" in config[wildcards.database] else ""
+	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["kaiju"] if wildcards.database in customdbs and "kaiju" in customdbs[wildcards.database] else ""
 	shell: 
 		"""
 		if [ -d "{params.seq_folder}" ]; then
@@ -45,7 +45,7 @@ rule kaiju_db_custom_profile:
 	output: temp(config['dbdir'] + "{database}/kaiju.dbaccession.out")
 	log: config['dbdir'] + "{database}/log/kaiju_db_custom_profile.log"
 	benchmark: config['dbdir'] + "{database}/log/kaiju_db_custom_profile.time"
-	params: seq_folder = lambda wildcards: config[wildcards.database]["kaiju"] if wildcards.database in config and "kaiju" in config[wildcards.database] else ""
+	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["kaiju"] if wildcards.database in customdbs and "kaiju" in customdbs[wildcards.database] else ""
 	# Recover all protein_id which contain translations (need to change dbprofile to get from protein db instead of nuccore)
 	#shell: "grep -e '/translation=' -e '/protein_id=' <(cat {params.seq_folder}/*.gbff) | grep -B 1 '/translation=' | grep '/protein_id=' | grep -o '\".*\"' | sed 's/\"//g' > {output} 2> {log}"
 	shell: 
