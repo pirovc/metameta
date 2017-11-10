@@ -52,10 +52,13 @@ for key,value in default_val.items():
 customdbs = {}
 for db in config["databases"]:
 	if db not in preconfigdbs:
-		if db not in customdbs: customdbs[db] = {} # Add database definition if user did not
+		customdbs[db] = {}
 		for tool in config["tools"]: # For all active tools
-			if has_custom_db(tool) and tool not in customdbs[db]: #If has custom scripts and it's not yet configured
-				customdbs[db][tool] = ""
+			if has_custom_db(tool):
+				if tool in config[db]:
+					customdbs[db][tool] = config[db][tool]
+				else:
+					customdbs[db][tool] = ""
 
 # import pprint
 # for k,v in sorted(config.items()):

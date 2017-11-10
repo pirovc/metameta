@@ -16,7 +16,7 @@ MetaMeta:
 	conda install -c bioconda metameta
 
 * Alternatively, install MetaMeta in a separated environment with the command: ``conda create -c bioconda -n metameta metameta=1.1.2`` and activate it with ``source activate metameta`` (to deactivate use ``source deactivate``).
-* This command will also install snakemake=3.9.1. All other tools are installed in their own environment automatically on the first run (necessary to use the --use-conda parameter).
+* This command will also install snakemake=4.3.0. All other tools are installed in their own environment automatically on the first run (necessary to use the --use-conda parameter).
 
 Run:
 ----
@@ -26,7 +26,7 @@ Create a configuration file (yourconfig.yaml) with the required fields (workdir,
 	workdir: "/home/user/folder/results/"
 	dbdir: "/home/user/folder/databases/"
 	samples:
-	  "sample_name_1":
+	  sample_name_1:
 	     fq1: "/home/user/folder/reads/file.1.fq"
 	     fq2: "/home/user/folder/reads/file.2.fq"
 
@@ -42,7 +42,7 @@ Run MetaMeta:
 	metameta --configfile yourconfig.yaml --use-conda --keep-going --cores 24
 
 * The number of --cores is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter "threads"
-* On the first run MetaMeta will download and install the configured tools as well as the database files (archaea and bacteria by default) necessary for each tool.
+* On the first run MetaMeta will download and install the configured tools as well as the database files (`archaea_bacteria_201503` by default - see below) necessary for each tool.
 
 Pre-configured databases:
 -------------------------
@@ -52,7 +52,6 @@ Available databases:
 | Info | Date | metameta database name |
 | --- | --- | --- |
 | Archaea + Bacteria - RefSeq Complete Genomes | 2015-03 | `archaea_bacteria_201503` |
-| Archaea + Bacteria - RefSeq Complete Genomes | 2017-09 | `archaea_bacteria_201709` |
 | Fungal + Viral - RefSeq Complete Genomes | 2017-09 | `fungal_viral_201709` |
 
 
@@ -61,7 +60,6 @@ Database availability per tool:
 | database | clark | dudes | gottcha | kaiju | kraken | motus |
 | --- | --- | --- | --- | --- | --- | --- |
 | `archaea_bacteria_201503` | [Yes](https://zenodo.org/record/820055) | [Yes](https://zenodo.org/record/820053) | [Yes](https://zenodo.org/record/819341) | [Yes](https://zenodo.org/record/819425) | [Yes](https://zenodo.org/record/819363) | [Yes](https://zenodo.org/record/819365) |
-| `archaea_bacteria_201709` | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
 | `fungal_viral_201709` | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
 
 
@@ -75,7 +73,7 @@ Pre-configured Archaea and Bacteria database:
 	
 	./metameta --configfile sampledata/sample_data_archaea_bacteria.yaml --use-conda --keep-going --cores 6
 	
-Custom database (viral only reference genomes):
+Custom database (some viral reference genomes):
 		
 	./metameta --configfile sampledata/sample_data_custom_viral.yaml --use-conda --keep-going --cores 6
 
@@ -111,19 +109,19 @@ Activate the environment and execute MetaMeta (slurm example):
 Custom databases:
 -----------------
 
-MetaMeta uses by default Archaea and Bacteria sequences as reference database. Additionaly MetaMeta allows the creation of custom database (currently for clark, dudes, kaiju and kraken).
+MetaMeta uses by default Archaea and Bacteria sequences as reference database. Additionaly MetaMeta allows the creation of custom database (check "Pre-configured databases" section).
 
 First select which databses should be used on the configuration file:
 
 	databases:
-	  - "archaea_bacteria"
-	  - "custom_db"
+	  - archaea_bacteria_201503
+	  - custom_db
 
-* all samples will run agains the default "archaea_bacteria" and the new "custom_db"
+* all samples will run agains the "archaea_bacteria_201503" and the new "custom_db" databases
 
 Second, create an entry with the path to the sequences that should be added to the custom database:
   
-	"custom_db":
+	custom_db:
 	    clark: "sampledata/database/"
 	    dudes: "sampledata/database/"
 	    kaiju: "sampledata/database/"
@@ -133,7 +131,7 @@ Second, create an entry with the path to the sequences that should be added to t
 * kaiju requires one or more GenBank flat file (extension .gbff)
 * kraken requires one or more fasta files (extension .fna) with the gi identifier on the header (e.g. ">gi|9632287|ref|NC_001998.1| Guinea pig Chlamydia phage, complete genome")
 
-MetaMeta will compile the "custom_db" on the first run and use it as a database.
+MetaMeta will compile the "custom_db" on the first run and use it as a database. After finished it is possible to delete de database definition from the configuration file for the following runs.
 
 Creating a custom database based on NCBI genomes:
 -------------------------------------------------
@@ -166,23 +164,23 @@ kraken (with header conversion to GI, old NCBI style):
 Add entry on the configuration file:
 
 	databases:
-	  - "new_custom_fungi_db"
+	  - new_custom_fungi_db
 	
 Finally, add the path for each set of reference sequences on the configuration file:
 
-	"new_custom_fungi_db":
+	new_custom_fungi_db:
 	    clark: "custom_fungi_db/clark_dudes/"
 	    dudes: "custom_fungi_db/clark_dudes/"
 	    kaiju: "custom_fungi_db/kaiju/"
 	    kraken: "custom_fungi_db/kraken/"	
 
-On the first run MetaMeta will compile the "new_custom_fungi_db" database for each configured tool.
+On the first run MetaMeta will compile the "new_custom_fungi_db" database for each configured tool. After finished it is possible to delete de database definition from the configuration file for the following runs.
 
 
 Merging final results:
 ----------------------
 
-To merge final results from many samples into one final tabular file (BioBoxes format):
+To merge final results from many samples into one final tabular file:
 
 	(script location: ~/miniconda3/opt/metameta/scripts/ or using environments: ~/miniconda3/envs/metameta/opt/metameta/scripts/)
 	./merge_final_profiles.sh workdir/samples_*/metametamerge/database/final.metametamerge.profile.out

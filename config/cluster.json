@@ -64,21 +64,21 @@
     "mem": "4G",
     "time": "24:00:00"
   },
-  "db_archaea_bacteria_download": {
-    "job-name": "db_archaea_bacteria_download",
-    "output": "clusterlog/db_archaea_bacteria_download.%j.out",
+  "preconfigdb_download": {
+    "job-name": "preconfigdb_download",
+    "output": "clusterlog/preconfigdb_download.%j.out",
     "partition": "small",
     "time": "24:00:00"
   },
-  "db_archaea_bacteria_unpack": {
-    "job-name": "db_archaea_bacteria_unpack",
-    "output": "clusterlog/db_archaea_bacteria_unpack.%j.out",
+  "preconfigdb_unpack": {
+    "job-name": "preconfigdb_unpack",
+    "output": "clusterlog/preconfigdb_unpack.%j.out",
     "partition": "small",
     "time": "24:00:00"
   },
-  "db_archaea_bacteria_check": {
-    "job-name": "db_archaea_bacteria_check",
-    "output": "clusterlog/db_archaea_bacteria_check.%j.out"
+  "preconfigdb_check": {
+    "job-name": "preconfigdb_check",
+    "output": "clusterlog/preconfigdb_check.%j.out"
   },
   "clark_db_custom_1": {
     "job-name": "clark_db_custom_1",

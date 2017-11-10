@@ -13,6 +13,6 @@ rule krona:
 			cut -f 2,4,5 ${{f}} | grep "^${{last_rank:1:${{#last_rank}}}}" | cut -f 2,3 | awk -F "\t" '{{; split($1,names,"|"); printf $2"\t"; for(n in names){{printf names[n]=="" ? "NA\t" : names[n]"\t"}}; print ""}}' > ${{f}}_krona 2>> {log} 
 		done
 		{config[tool_alt_path][krona]}ktImportText -o {output} $(ls -d {wildcards.sample}/metametamerge/{wildcards.database}/*_krona) >> {log} 2>&1
-		rm -v {wildcards.sample}/metametamerge/{wildcards.database}/*.parsed_profile.out >> {log} 2>&1
-		rm -v {wildcards.sample}/metametamerge/{wildcards.database}/*_krona >> {log} 2>&1
+		#rm -v {wildcards.sample}/metametamerge/{wildcards.database}/*.parsed_profile.out >> {log} 2>&1
+		#rm -v {wildcards.sample}/metametamerge/{wildcards.database}/*_krona >> {log} 2>&1
 		"""

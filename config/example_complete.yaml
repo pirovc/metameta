@@ -6,28 +6,28 @@ dbdir: "/home/user/folder/databases/"
 
 # Samples (name and files)
 samples:
-  "sample_name_1":
+  sample_name_1:
     fq1: "/home/user/folder/reads/file.1.fq.gz"
     fq2: "/home/user/folder/reads/file.2.fq.gz"
-  "sample_name_2":
+  sample_name_2:
     fq1: "/home/user/folder/reads/single.fq.gz"
 
 # Tools ("p" -> profiling, "b" -> binning)
 tools:
-    "clark": "b"
-    "dudes": "p"
-    "gottcha": "p"
-    "kaiju": "b"
-    "kraken": "b"
-    "motus": "p"
+    clark: b
+    dudes: p
+    gottcha: p
+    kaiju: b
+    kraken: b
+    motus: p
 
-# Databases ("archaea_bacteria" is the default. Every other database should be described.)
+# Databases ("archaea_bacteria_201503" is the default.)
 databases:
-  - "archaea_bacteria"
-  - "custom_database"
+  - archaea_bacteria_201503
+  - custom_database
 
 # Path for reference sequences to build the "custom_database"
-"custom_database":
+custom_database:
     clark: "/path/reference/sequences/fna/"
     dudes: "/path/reference/sequences/fna/"
     kaiju: "/path/reference/sequences/gbff/"
@@ -63,13 +63,13 @@ replacement: 0
 
 ### MetaMetaMerge ###
 # MetaMetaMerge mode (precise, very-precise, linear, sensitive, very-sensitive). Default: linear
-mode: 'linear'
+mode: linear
 # MetaMetaMerge minimum abundance or Maximum results for each taxonomic level (0: off / 0-1: minimum relative abundance / >=1: maximum number of identifications). Default: 0.0001
 cutoff: 0.0001
 # MetaMetaMerge number of bins. Default: 4
 bins: 4
 # MetaMetaMerge ranks option. Generates the merged output based only on specified ranks and estimate upper levels (0: off / 1: on). Default: 1
-ranks: 'species'
+ranks: species
 # MetaMetaMerge detailed output. Generates detailed output for each taxon/tool and its normalized relative abundance estimation. It outputs 0 for tools which did not identified the taxon and -1 for tools without a taxon in the database. (0: off / 1: on). Default: 0
 detailed: 0
 # MetaMetaMerge verbose log output. (0: off / 1: on). Default: 0
@@ -77,14 +77,14 @@ verbose: 0
 
 # Alternative path for the tools (uses it instead of the default path)
 tool_alt_path:
-    "clark": ""
-    "dudes": ""
-    "gottcha": ""
-    "kaiju": ""
-    "kraken": ""
-    "motus": ""
-    "trimmomatic": ""
-    "spades": ""
-    "bowtie2": ""
-    "krona": ""
-    "metametamerge": ""
+    clark: ""
+    dudes: ""
+    gottcha: ""
+    kaiju: ""
+    kraken: ""
+    motus: ""
+    trimmomatic: ""
+    spades: ""
+    bowtie2: ""
+    krona: ""
+    metametamerge: ""
