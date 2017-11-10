@@ -3,7 +3,7 @@ workdir: "sampledata/results/"
 dbdir: "../databases/"
 
 samples:
-  "sample_data_archaea_bacteria":
+  sample_data_archaea_bacteria:
      fq1: "../files/reads/sample_data_archaea_bacteria.1.fq.gz"
      fq2: "../files/reads/sample_data_archaea_bacteria.2.fq.gz"
 

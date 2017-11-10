@@ -35,7 +35,7 @@ rule clark_db_custom_2:
 			clark_opt_path="${{tap}}"
 		else
 			md5=($(md5sum "{params.srcdir}/../envs/clark.yaml"))
-			md5=${{md5:0:8}}
+			#md5=${{md5:0:8}} -> snakemake 4.3.0 uses the full md5
 			if [ -d ".snakemake/conda/${{md5}}" ]; then # Environment for rule was created
 				clark_opt_path=".snakemake/conda/${{md5}}/opt/clark/"
 			else

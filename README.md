@@ -18,10 +18,10 @@ MetaMeta:
 
 * All other tools and dependencies are installed in their own environment automatically on the first run (necessary to use the --use-conda parameter). 
 
-* Alternatively, install MetaMeta in a separated environment (named "metametaenv") with the command: 
+Alternatively, install MetaMeta in a separated environment (named "metametaenv") with the command: 
 
-	conda create -c bioconda -n metametaenv metameta=1.2.0
-	source activate metametaenv #Command to activate the environment. To deactivate use "source deactivate"
+	conda create -c bioconda -n metametaenv metameta=1.2.0	
+	source activate metametaenv # Command to activate the environment. To deactivate use "source deactivate"
 
 Run:
 ----
@@ -46,7 +46,7 @@ Run MetaMeta:
 	metameta --configfile yourconfig.yaml --use-conda --keep-going --cores 24
 
 * Alternatively, make a copy of the configuration file for the complete set of parameters ``cp ~/miniconda3/opt/metameta/config/example_complete.yaml yourconfig.yaml``
-* The number of --cores is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter "threads"
+* The number of `--cores` is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter `threads`
 * On the first run MetaMeta will download and install the configured tools as well as the database files (`archaea_bacteria_201503` by default - see below) necessary for each tool.
 
 Pre-configured databases:
