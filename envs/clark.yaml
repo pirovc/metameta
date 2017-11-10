@@ -1,4 +1,5 @@
-channels:
+  channels:
  - bioconda
 dependencies:
  - clark=1.2.3
+ 

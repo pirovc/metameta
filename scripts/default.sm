@@ -55,7 +55,7 @@ for db in config["databases"]:
 		customdbs[db] = {}
 		for tool in config["tools"]: # For all active tools
 			if has_custom_db(tool):
-				if tool in config[db]:
+				if db in config and tool in config[db]:
 					customdbs[db][tool] = config[db][tool]
 				else:
 					customdbs[db][tool] = ""
