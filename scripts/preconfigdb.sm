@@ -10,7 +10,7 @@ rule preconfigdb_download:
 	output: temp(config['dbdir'] + "{preconfigdb}/{tool}.tar.gz")
 	log: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_download.log"
 	benchmark: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_download.time"
-	params: url = lambda wildcards: config[wildcards.preconfigdb][wildcards.tool] # Get URL for the database
+	params: url = lambda wildcards: preconfigdbs[wildcards.preconfigdb][wildcards.tool] # Get URL for the database
 	run:
 		shell(download((params.url), output[0]) + " > {log} 2>&1")
 

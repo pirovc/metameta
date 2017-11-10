@@ -47,8 +47,8 @@ for key,value in default_val.items():
 	if key not in config:
 		config[key] = value
 
-# Add empty path for custom databases if user did not (to set targets later on metametamerge rule)
-# It's also allows to delete the custom database definition after building it
+# Add empty path for custom databases if it's not set on the config.yaml (
+# This is necessary to set targets metametamerge rule and to allow to delete the custom database definition after building it
 customdbs = {}
 for db in config["databases"]:
 	if db not in preconfigdbs:
@@ -57,15 +57,15 @@ for db in config["databases"]:
 			if has_custom_db(tool) and tool not in customdbs[db]: #If has custom scripts and it's not yet configured
 				customdbs[db][tool] = ""
 
-import pprint
-for k,v in sorted(config.items()):
-	print(" - " + k + ": ", end='')
-	pprint.pprint(v)
-print("preconfigdbs")	
-for k,v in sorted(preconfigdbs.items()):
-	print(" - " + k + ": ", end='')
-	pprint.pprint(v)
-print("customdbs")	
-for k,v in sorted(customdbs.items()):
-	print(" - " + k + ": ", end='')
-	pprint.pprint(v)
+# import pprint
+# for k,v in sorted(config.items()):
+# 	print(" - " + k + ": ", end='')
+# 	pprint.pprint(v)
+# print("preconfigdbs")	
+# for k,v in sorted(preconfigdbs.items()):
+# 	print(" - " + k + ": ", end='')
+# 	pprint.pprint(v)
+# print("customdbs")	
+# for k,v in sorted(customdbs.items()):
+# 	print(" - " + k + ": ", end='')
+# 	pprint.pprint(v)
