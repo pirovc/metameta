@@ -40,8 +40,8 @@ rule dudes_db_custom_3:
 			nucl_gb = config['dbdir'] + "{database}/dudes_db/nucl_gb.accession2taxid.gz",
 			nucl_wgs = config['dbdir'] + "{database}/dudes_db/nucl_wgs.accession2taxid.gz"
 	output: npz = config['dbdir'] + "{database}/dudes_db/dudes_db.npz"
-	log: config['dbdir'] + "{database}/log/dudes_db_custom_4.log"
-	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_4.time"
+	log: config['dbdir'] + "{database}/log/dudes_db_custom_3.log"
+	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_3.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/dudes.yaml")
 	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["dudes"] if wildcards.database in customdbs and "dudes" in customdbs[wildcards.database] else ""
@@ -59,7 +59,7 @@ rule dudes_db_custom_profile:
 	output: temp(config['dbdir'] + "{database}/dudes.dbaccession.out")
 	log: config['dbdir'] + "{database}/log/dudes_db_custom_profile.log"
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_profile.time"
-	shell: """python3 -c 'import numpy as np; npzfile = np.load("{input.npz}"); print("\n".join(npzfile["refids_lookup"].item().keys()))' | sed 's/>//g' > {output} 2> {log}"""
+	shell: """python3 -c 'import numpy as np; npzfile = np.load("{input.npz}"); print("\\n".join(npzfile["refids_lookup"].item().keys()))' | sed 's/>//g' > {output} 2> {log}"""
 
 rule dudes_db_custom_check:
 	input: ancient(config['dbdir'] + "{database}/dudes.dbprofile.out"),
