@@ -16,7 +16,7 @@ MetaMeta:
 	
 	conda install -c bioconda metameta=1.2.0
 
-* All other tools and dependencies are installed in their own environment automatically on the first run (necessary to use the --use-conda parameter). 
+* All other tools and dependencies are installed in their own environment automatically on the first run (with `--use-conda` parameter active). 
 
 Alternatively, install MetaMeta in a separated environment (named "metametaenv") with the command: 
 
@@ -175,7 +175,7 @@ On the first run MetaMeta will compile the "new_custom_fungi_db" database for ea
 Pre-install a complete environment:
 -----------------------------------
 
-	wget https://github.com/pirovc/metameta/blob/master/envs/metameta_complete.yaml
+	wget https://raw.githubusercontent.com/pirovc/metameta/master/envs/metameta_complete.yaml
 	conda env create -f metameta_complete.yaml
 	source activate metametaenv_complete
 
