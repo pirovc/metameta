@@ -29,10 +29,10 @@ preconfigdbs = {'archaea_bacteria_201503': {
 					"motus": "https://zenodo.org/record/819365/files/motus_bac_arc_v1.tar.gz"
 				},
 			   'fungi_viral_201709': {
-			   		"clark": "x", 
-			   		"dudes": "x", 
-			   		"kaiju": "x", 
-			   		"kraken": "x"
+			   		"clark": "https://zenodo.org/record/1044318/files/clark_fun-vir_refseq-cg_201709.tar.gz", 
+			   		"dudes": "https://zenodo.org/record/1044328/files/dudes_fun-vir_refseq-cg_201709.tar.gz", 
+			   		"kaiju": "https://zenodo.org/record/1044326/files/kaiju_fun-vir_refseq-cg_201709.tar.gz", 
+			   		"kraken": "https://zenodo.org/record/1044330/files/kraken_fun-vir_refseq-cg_201709.tar.gz"
 			   	}
 }
 

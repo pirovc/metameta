@@ -8,15 +8,20 @@ Install:
 --------
 Miniconda:
 
-    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh; chmod +x Miniconda3-latest-Linux-x86_64.sh
-    ./Miniconda3-latest-Linux-x86_64.sh 
+    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh # Download conda installer
+    chmod +x Miniconda3-latest-Linux-x86_64.sh 	# Set permissions
+    ./Miniconda3-latest-Linux-x86_64.sh 		# Execute. Make sure to "yes" to add the conda to your PATH
 
 MetaMeta:
 	
-	conda install -c bioconda metameta
+	conda install -c bioconda metameta=1.2.0
 
-* Alternatively, install MetaMeta in a separated environment with the command: ``conda create -c bioconda -n metameta metameta=1.1.2`` and activate it with ``source activate metameta`` (to deactivate use ``source deactivate``).
-* This command will also install snakemake=4.3.0. All other tools are installed in their own environment automatically on the first run (necessary to use the --use-conda parameter).
+* All other tools and dependencies are installed in their own environment automatically on the first run (necessary to use the --use-conda parameter). 
+
+* Alternatively, install MetaMeta in a separated environment (named "metametaenv") with the command: 
+
+	conda create -c bioconda -n metametaenv metameta=1.2.0
+	source activate metametaenv #Command to activate the environment. To deactivate use "source deactivate"
 
 Run:
 ----
@@ -31,7 +36,6 @@ Create a configuration file (yourconfig.yaml) with the required fields (workdir,
 	     fq2: "/home/user/folder/reads/file.2.fq"
 
 * All paths set on this file are relative to the workdir (if not absolute)
-* Alternatively, make a copy of the configuration file for the complete set of parameters ``cp ~/miniconda3/opt/metameta/config/example_complete.yaml yourconfig.yaml``
 
 Check rules and output files:
 	
@@ -41,6 +45,7 @@ Run MetaMeta:
 
 	metameta --configfile yourconfig.yaml --use-conda --keep-going --cores 24
 
+* Alternatively, make a copy of the configuration file for the complete set of parameters ``cp ~/miniconda3/opt/metameta/config/example_complete.yaml yourconfig.yaml``
 * The number of --cores is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter "threads"
 * On the first run MetaMeta will download and install the configured tools as well as the database files (`archaea_bacteria_201503` by default - see below) necessary for each tool.
 
@@ -60,14 +65,14 @@ Database availability per tool:
 | database | clark | dudes | gottcha | kaiju | kraken | motus |
 | --- | --- | --- | --- | --- | --- | --- |
 | `archaea_bacteria_201503` | [Yes](https://zenodo.org/record/820055) | [Yes](https://zenodo.org/record/820053) | [Yes](https://zenodo.org/record/819341) | [Yes](https://zenodo.org/record/819425) | [Yes](https://zenodo.org/record/819363) | [Yes](https://zenodo.org/record/819365) |
-| `fungal_viral_201709` | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | No |
+| `fungal_viral_201709` | [Yes](https://zenodo.org/record/1044318) | [Yes](https://zenodo.org/record/1044328) | No | [Yes](https://zenodo.org/record/1044326) | [Yes](https://zenodo.org/record/1044330) | No |
 
 
 Running sample data:
 --------------------
 
 	cd ~/miniconda3/opt/metameta/
-	(or using environments: cd ~/miniconda3/envs/metameta/opt/metameta/)
+	(or using environments: cd ~/miniconda3/envs/metametaenv/opt/metameta/)
 	
 Pre-configured Archaea and Bacteria database:
 	
@@ -84,27 +89,18 @@ Results:
 Running MetaMeta on a cluster environment:
 ------------------------------------------	
 	
-The automatic integration of conda and Snakemake (v3.9.1) is still not available in cluster mode. It is then necessary to pre-install the necessary tools (recommended in a separated environment)
-	
-	conda create -c bioconda -n metameta metameta=1.1.2 bowtie2=2.3.0 clark=1.2.3 dudes=0.07 gottcha=1.0 jellyfish=1.1.11 kaiju=1.0 kraken=0.10.5beta krona=2.7 metametamerge=1.1 motus=1.0 spades=3.9.0 trimmomatic=0.36
-	conda create -c bioconda -n metameta metameta=1.1.2 $(for f in *.yaml; do sed '1,/dependencies:/d; s/ - //g' $f;done | paste -d" " -s -)
-
 Make a copy of the configuration file and the cluster configuration file:
 
-	cp ~/miniconda3/envs/metameta/opt/metameta/config/example_complete.yaml yourconfig.yaml
-	cp ~/miniconda3/envs/metameta/opt/metameta/config/cluster.json yourcluster.json
+	cp ~/miniconda3/opt/metameta/config/example_complete.yaml yourconfig.yaml
+	cp ~/miniconda3/opt/metameta/config/cluster.json yourcluster.json
 	
 Edit those files to set-up the working directory, samples, threads and cpu/memory usage for each rule.
 	
-Activate the environment and execute MetaMeta (slurm example):	
-    
-    source activate metameta # Activate MetaMeta environment
-    
-    metameta --configfile yourconfig.yaml --keep-going -j 999 --cluster-config yourcluster.json --cluster "sbatch --job-name {cluster.job-name} --output {cluster.output} --partition {cluster.partition} --nodes {cluster.nodes} --cpus-per-task {cluster.cpus-per-task} --mem {cluster.mem} --time {cluster.time}"
-    
-    source deactivate # Deactivate MetaMeta environment
-    
-* you can change the cluster command (sbatch) and adapt them to your cluster system
+Run MetaMeta (slurm example):	
+
+    metameta --configfile yourconfig.yaml --keep-going --use-conda -j 999 --cluster-config yourcluster.json --cluster "sbatch --job-name {cluster.job-name} --output {cluster.output} --partition {cluster.partition} --nodes {cluster.nodes} --cpus-per-task {cluster.cpus-per-task} --mem {cluster.mem} --time {cluster.time}"
+
+* you can change the cluster command (`sbatch`) and adapt them to your cluster system.
 
 Custom databases:
 -----------------
@@ -176,6 +172,12 @@ Finally, add the path for each set of reference sequences on the configuration f
 
 On the first run MetaMeta will compile the "new_custom_fungi_db" database for each configured tool. After finished it is possible to delete de database definition from the configuration file for the following runs.
 
+Pre-install a complete environment:
+-----------------------------------
+
+	wget https://github.com/pirovc/metameta/blob/master/envs/metameta_complete.yaml
+	conda env create -f metameta_complete.yaml
+	source activate metametaenv_complete
 
 Merging final results:
 ----------------------
@@ -283,6 +285,7 @@ MetaMeta pipeline uses Snakemake. To add a new tool to the pipeline it is necess
 		- newtool_db_custom_check -> rule to check the required database files. It should have as an input all mandatory files that should be present to the database work properly.
 
 * Template files can be found inside the folder tools/template. Once the two files are inside the tools folder, it is necessary to add the tool identifier to the YAML configuration file.
+
 
 NEW:
 ----
