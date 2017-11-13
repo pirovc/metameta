@@ -14,16 +14,22 @@ rule trim_reads:
 	params: 
 		input_fq2 = lambda wildcards: os.path.abspath(config["samples"][wildcards.sample]["fq2"]) if "fq2" in config["samples"][wildcards.sample] else "",
 		output_fq2 = lambda wildcards: wildcards.sample + "/reads/pre1.2.fq"+gz
-	run:		
-		if config["trimming"]:
-			if params.input_fq2:
-				shell("{config[tool_alt_path][trimmomatic]}trimmomatic PE -threads {threads} {input.fq1} {params.input_fq2} {output.fq1} {wildcards.sample}/reads/unpaired.1.fq"+gz+" {params.output_fq2} {wildcards.sample}/reads/unpaired.2.fq"+gz+" AVGQUAL:2 LEADING:3 TRAILING:3 MAXINFO:" + str(config["desiredminlen"]) + ":" + str(config["strictness"]) + " > {log} 2>&1")
-				shell("rm -rfv {wildcards.sample}/reads/unpaired.1.fq"+gz+" {wildcards.sample}/reads/unpaired.2.fq"+gz+" >> {log} 2>&1")
-			else:
-				shell("{config[tool_alt_path][trimmomatic]}trimmomatic SE -threads {threads} {input.fq1} {output.fq1} AVGQUAL:2 LEADING:3 TRAILING:3 MAXINFO:" + str(config["desiredminlen"]) + ":" + str(config["strictness"]) + " > {log} 2>&1")
-		else:
-			shell("ln -sfv {input.fq1} {output.fq1} > {log} 2>&1")
-			if params.input_fq2: shell("ln -sfv {params.input_fq2} {params.output_fq2} >> {log} 2>&1")
+	shell:
+		"""
+		if [ "{config[trimming]}" != "0" ]; then
+			if [ ! -z "{params.input_fq2}" ]; then
+				{config[tool_alt_path][trimmomatic]}trimmomatic PE -threads {threads} {input.fq1} {params.input_fq2} {output.fq1} {wildcards.sample}/reads/unpaired.1.fq{gz} {params.output_fq2} {wildcards.sample}/reads/unpaired.2.fq{gz} AVGQUAL:2 LEADING:3 TRAILING:3 MAXINFO:{config[desiredminlen]}:{config[strictness]} > {log} 2>&1
+				rm -rfv {wildcards.sample}/reads/unpaired.1.fq{gz} {wildcards.sample}/reads/unpaired.2.fq{gz} >> {log} 2>&1
+			else
+				{config[tool_alt_path][trimmomatic]}trimmomatic SE -threads {threads} {input.fq1} {output.fq1} AVGQUAL:2 LEADING:3 TRAILING:3 MAXINFO:{config[desiredminlen]}:{config[strictness]} > {log} 2>&1
+			fi
+		else
+			ln -sfv {input.fq1} {output.fq1} > {log} 2>&1
+			if [ ! -z "{params.input_fq2}" ]; then
+				ln -sfv {params.input_fq2} {params.output_fq2} >> {log} 2>&1
+			fi
+		fi
+		"""
 
 rule errorcorr_reads:
 	input: fq1="{sample}/reads/pre1.1.fq"+gz
@@ -34,29 +40,34 @@ rule errorcorr_reads:
 	conda: srcdir("../envs/spades.yaml")
 	params: 
 		input_fq2 = lambda wildcards: wildcards.sample + "/reads/pre1.2.fq"+gz if "fq2" in config["samples"][wildcards.sample] else "",
-		output_fq2 = lambda wildcards: wildcards.sample + "/reads/pre2.2.fq"+gz
-	run:
-		if config["errorcorr"]:
-			errorcorr_gz = " --disable-gzip-output " if not gz else ""
-			ext_spades = ".fq" if gz else "" #extension for moving files from spades folder
-			if params.input_fq2:
-				shell("{config[tool_alt_path][spades]}spades.py -1 {input.fq1} -2 {params.input_fq2} --only-error-correction --meta -o {wildcards.sample}/reads/spades/ -t {threads} "+errorcorr_gz+" > {log} 2>&1")
-				shell("mv -v {wildcards.sample}/reads/spades/corrected/pre1.2"+ext_spades+".00.0_0.cor.fastq"+gz+" {params.output_fq2} >> {log} 2>&1")
-			else:
-				shell("{config[tool_alt_path][spades]}spades.py -s {input.fq1} --only-error-correction --meta -o {wildcards.sample}/reads/spades/ -t {threads} "+errorcorr_gz+" > {log} 2>&1")
-			shell("mv -v {wildcards.sample}/reads/spades/corrected/pre1.1"+ext_spades+".00.0_0.cor.fastq"+gz+" {output.fq1} >> {log} 2>&1")
-			shell("rm -rfv {wildcards.sample}/reads/spades/ >> {log} 2>&1")
-		else: #Create links
-			shell("ln -sfv `readlink -f {input.fq1}` {output.fq1} > {log} 2>&1")
-			if params.input_fq2: shell("ln -sfv `readlink -f {params.input_fq2}` {params.output_fq2} >> {log} 2>&1")
+		output_fq2 = lambda wildcards: wildcards.sample + "/reads/pre2.2.fq"+gz,
+		errorcorr_gz = " --disable-gzip-output " if not gz else "",
+		ext_spades = ".fq" if gz else ""
+	shell:
+		"""
+		if [ "{config[errorcorr]}" != "0" ]; then
+			if [ ! -z "{params.input_fq2}" ]; then
+				{config[tool_alt_path][spades]}spades.py -1 {input.fq1} -2 {params.input_fq2} --only-error-correction --meta -o {wildcards.sample}/reads/spades/ -t {threads} {params.errorcorr_gz} > {log} 2>&1
+				mv -v {wildcards.sample}/reads/spades/corrected/pre1.2{params.ext_spades}.00.0_0.cor.fastq{gz} {params.output_fq2} >> {log} 2>&1
+			else
+				{config[tool_alt_path][spades]}spades.py -s {input.fq1} --only-error-correction --meta -o {wildcards.sample}/reads/spades/ -t {threads} {params.errorcorr_gz} > {log} 2>&1
+			fi
+			mv -v {wildcards.sample}/reads/spades/corrected/pre1.1{params.ext_spades}.00.0_0.cor.fastq{gz} {output.fq1} >> {log} 2>&1
+			rm -rfv {wildcards.sample}/reads/spades/ >> {log} 2>&1
+		else
+			ln -sfv `readlink -f {input.fq1}` {output.fq1} > {log} 2>&1
+			if [ ! -z "{params.input_fq2}" ]; then
+				ln -sfv `readlink -f {params.input_fq2}` {params.output_fq2} >> {log} 2>&1
+			fi
+		fi
+		"""
 
 rule subsample_reads:
 	input: fq1="{sample}/reads/pre2.1.fq"+gz
 	output:expand("{{sample}}/reads/{tool}.1.fq", tool=config["tools"]) # Always outputs ungziped files
 	log: "{sample}/log/subsample_reads.log"
 	benchmark: "{sample}/log/subsample_reads.time"
-	params: 
-		input_fq2 = lambda wildcards: wildcards.sample + "/reads/pre2.2.fq"+gz if "fq2" in config["samples"][wildcards.sample] else ""	
+	params: input_fq2 = lambda wildcards: wildcards.sample + "/reads/pre2.2.fq"+gz if "fq2" in config["samples"][wildcards.sample] else ""	
 	run:
 		if config["subsample"]:
 			if params.input_fq2:

@@ -3,7 +3,7 @@ workdir: "sampledata/results/"
 dbdir: "../databases/"
 
 samples:
-  "sample_data_custom_viral":
+  sample_data_custom_viral:
      fq1: "../files/reads/sample_data_custom_viral.1.fq.gz"
      fq2: "../files/reads/sample_data_custom_viral.2.fq.gz"
 
@@ -11,9 +11,9 @@ gzipped: 1
 threads: 1
 
 databases:
-  - "custom_viral_db"
+  - custom_viral_db
 
-"custom_viral_db":
+custom_viral_db:
     clark: "../files/clark_dudes/"
     dudes: "../files/clark_dudes/"
     kaiju: "../files/kaiju/"

@@ -6,25 +6,24 @@ Vitor C. Piro (vitorpiro@gmail.com)
 
 Piro, V. C., Matschkowski, M., & Renard, B. Y. (2017). MetaMeta: integrating metagenome analysis tools to improve taxonomic profiling. Microbiome, 5(1), 101. http://doi.org/10.1186/s40168-017-0318-y
 
-NEW:
-----
-v1.1.1) Bug fixes parsing output files for kraken and kaiju
-
-v1.1) Support single and paired-end reads, multiple and custom databases, krona integration
-
 Install:
 --------
 Miniconda:
 
-    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh; chmod +x Miniconda3-latest-Linux-x86_64.sh
-    ./Miniconda3-latest-Linux-x86_64.sh 
+    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh # Download conda installer
+    chmod +x Miniconda3-latest-Linux-x86_64.sh 	# Set permissions
+    ./Miniconda3-latest-Linux-x86_64.sh 		# Execute. Make sure to "yes" to add the conda to your PATH
 
 MetaMeta:
 	
-	conda install -c bioconda metameta
+	conda install -c bioconda metameta=1.2.0
 
-* Alternatively, install MetaMeta in a separated environment with the command: ``conda create -c bioconda -n metameta metameta=1.1`` and activate it with ``source activate metameta`` (to deactivate use ``source deactivate``).
-* This command will also install snakemake=3.9.1. All other tools are installed in their own environment automatically on the first run (necessary to use the --use-conda parameter).
+* All other tools and dependencies are installed in their own environment automatically on the first run (with `--use-conda` parameter active). 
+
+Alternatively, install MetaMeta in a separated environment (named "metametaenv") with the command: 
+
+	conda create -c bioconda -n metametaenv metameta=1.2.0	
+	source activate metametaenv # Command to activate the environment. To deactivate use "source deactivate"
 
 Run:
 ----
@@ -34,12 +33,11 @@ Create a configuration file (yourconfig.yaml) with the required fields (workdir,
 	workdir: "/home/user/folder/results/"
 	dbdir: "/home/user/folder/databases/"
 	samples:
-	  "sample_name_1":
+	  sample_name_1:
 	     fq1: "/home/user/folder/reads/file.1.fq"
 	     fq2: "/home/user/folder/reads/file.2.fq"
 
 * All paths set on this file are relative to the workdir (if not absolute)
-* Alternatively, make a copy of the configuration file for the complete set of parameters ``cp ~/miniconda3/opt/metameta/config/example_complete.yaml yourconfig.yaml``
 
 Check rules and output files:
 	
@@ -49,20 +47,39 @@ Run MetaMeta:
 
 	metameta --configfile yourconfig.yaml --use-conda --keep-going --cores 24
 
-* The number of --cores is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter "threads"
-* On the first run MetaMeta will download and install the configured tools as well as the database files (archaea and bacteria by default) necessary for each tool.
+* Alternatively, make a copy of the configuration file for the complete set of parameters ``cp ~/miniconda3/opt/metameta/config/example_complete.yaml yourconfig.yaml``
+* The number of `--cores` is the total amount avaiable for the pipeline. Number of specific threads for the tools should be set on the configuration file (yourconfig.yaml) with the parameter `threads`
+* On the first run MetaMeta will download and install the configured tools as well as the database files (`archaea_bacteria_201503` by default - see below) necessary for each tool.
+
+Pre-configured databases:
+-------------------------
+
+Available databases:
+
+| Info | Date | metameta database name |
+| --- | --- | --- |
+| Archaea + Bacteria - RefSeq Complete Genomes | 2015-03 | `archaea_bacteria_201503` |
+| Fungal + Viral - RefSeq Complete Genomes | 2017-09 | `fungal_viral_201709` |
+
+
+Database availability per tool:
+
+| database | clark | dudes | gottcha | kaiju | kraken | motus |
+| --- | --- | --- | --- | --- | --- | --- |
+| `archaea_bacteria_201503` | [Yes](https://zenodo.org/record/820055) | [Yes](https://zenodo.org/record/820053) | [Yes](https://zenodo.org/record/819341) | [Yes](https://zenodo.org/record/819425) | [Yes](https://zenodo.org/record/819363) | [Yes](https://zenodo.org/record/819365) |
+| `fungal_viral_201709` | [Yes](https://zenodo.org/record/1044318) | [Yes](https://zenodo.org/record/1044328) | No | [Yes](https://zenodo.org/record/1044326) | [Yes](https://zenodo.org/record/1044330) | No |
+
 
 Running sample data:
 --------------------
 
 	cd ~/miniconda3/opt/metameta/
-	(or using environments: cd ~/miniconda3/envs/metameta/opt/metameta/)
 	
 Pre-configured Archaea and Bacteria database:
 	
 	./metameta --configfile sampledata/sample_data_archaea_bacteria.yaml --use-conda --keep-going --cores 6
 	
-Custom database (viral only reference genomes):
+Custom database (some viral reference genomes):
 		
 	./metameta --configfile sampledata/sample_data_custom_viral.yaml --use-conda --keep-going --cores 6
 
@@ -73,43 +90,34 @@ Results:
 Running MetaMeta on a cluster environment:
 ------------------------------------------	
 	
-The automatic integration of conda and Snakemake (v3.9.1) is still not available in cluster mode. It is then necessary to pre-install the necessary tools (recommended in a separated environment)
-	
-	conda create -c bioconda -n metameta metameta=1.1 bowtie2=2.3.0 clark=1.2.3 dudes=0.07 gottcha=1.0 jellyfish=1.1.11 kaiju=1.0 kraken=0.10.5beta krona=2.7 metametamerge=1.1 motus=1.0 spades=3.9.0 trimmomatic=0.36
+Make a copy of cluster configuration file:
 
-Make a copy of the configuration file and the cluster configuration file:
+	cp ~/miniconda3/opt/metameta/config/cluster.json yourcluster.json
+	
+Edit the file with your cluster specifications (threads, partitions, cpu/memory, etc) for each rule.
+	
+Run MetaMeta (slurm example):
 
-	cp ~/miniconda3/envs/metameta/opt/metameta/config/example_complete.yaml yourconfig.yaml
-	cp ~/miniconda3/envs/metameta/opt/metameta/config/cluster.json yourcluster.json
-	
-Edit those files to set-up the working directory, samples, threads and cpu/memory usage for each rule.
-	
-Activate the environment and execute MetaMeta (slurm example):	
-    
-    source activate metameta # Activate MetaMeta environment
-    
-    metameta --configfile yourconfig.yaml --keep-going -j 999 --cluster-config yourcluster.json --cluster "sbatch --job-name {cluster.job-name} --output {cluster.output} --partition {cluster.partition} --nodes {cluster.nodes} --cpus-per-task {cluster.cpus-per-task} --mem {cluster.mem} --time {cluster.time}"
-    
-    source deactivate # Deactivate MetaMeta environment
-    
-* you can change the cluster command (sbatch) and adapt them to your cluster system
+    metameta --configfile yourconfig.yaml --keep-going --use-conda -j 999 --cluster-config yourcluster.json --cluster "sbatch --job-name {cluster.job-name} --output {cluster.output} --partition {cluster.partition} --nodes {cluster.nodes} --cpus-per-task {cluster.cpus-per-task} --mem {cluster.mem} --time {cluster.time}"
+
+* you can change the cluster command (`sbatch`) and adapt them to your cluster system.
 
 Custom databases:
 -----------------
 
-MetaMeta uses by default Archaea and Bacteria sequences as reference database. Additionaly MetaMeta allows the creation of custom database (currently for clark, dudes, kaiju and kraken).
+MetaMeta uses by default Archaea and Bacteria sequences as reference database (`archaea_bacteria_201503` - see below). Additionaly MetaMeta allows the creation of custom database.
 
 First select which databses should be used on the configuration file:
 
 	databases:
-	  - "archaea_bacteria"
-	  - "custom_db"
+	  - archaea_bacteria_201503
+	  - custom_db
 
-* all samples will run agains the default "archaea_bacteria" and the new "custom_db"
+* all samples will run agains the "archaea_bacteria_201503" and the new "custom_db" databases
 
 Second, create an entry with the path to the sequences that should be added to the custom database:
   
-	"custom_db":
+	custom_db:
 	    clark: "sampledata/database/"
 	    dudes: "sampledata/database/"
 	    kaiju: "sampledata/database/"
@@ -119,7 +127,7 @@ Second, create an entry with the path to the sequences that should be added to t
 * kaiju requires one or more GenBank flat file (extension .gbff)
 * kraken requires one or more fasta files (extension .fna) with the gi identifier on the header (e.g. ">gi|9632287|ref|NC_001998.1| Guinea pig Chlamydia phage, complete genome")
 
-MetaMeta will compile the "custom_db" on the first run and use it as a database.
+MetaMeta will compile the "custom_db" on the first run and use it as a database. After finished it is possible to delete de database definition from the configuration file for the following runs.
 
 Creating a custom database based on NCBI genomes:
 -------------------------------------------------
@@ -152,26 +160,31 @@ kraken (with header conversion to GI, old NCBI style):
 Add entry on the configuration file:
 
 	databases:
-	  - "new_custom_fungi_db"
+	  - new_custom_fungi_db
 	
 Finally, add the path for each set of reference sequences on the configuration file:
 
-	"new_custom_fungi_db":
+	new_custom_fungi_db:
 	    clark: "custom_fungi_db/clark_dudes/"
 	    dudes: "custom_fungi_db/clark_dudes/"
 	    kaiju: "custom_fungi_db/kaiju/"
 	    kraken: "custom_fungi_db/kraken/"	
 
-On the first run MetaMeta will compile the "new_custom_fungi_db" database for each configured tool.
+On the first run MetaMeta will compile the "new_custom_fungi_db" database for each configured tool. After finished it is possible to delete de database definition from the configuration file for the following runs.
 
+Pre-install a complete environment:
+-----------------------------------
+
+	wget https://raw.githubusercontent.com/pirovc/metameta/master/envs/metameta_complete.yaml
+	conda env create -f metameta_complete.yaml
+	source activate metametaenv_complete
 
 Merging final results:
 ----------------------
 
-To merge final results from many samples into one final tabular file (BioBoxes format):
+To merge final results from many samples into one final tabular file:
 
-	(script location: ~/miniconda3/opt/metameta/scripts/ or using environments: ~/miniconda3/envs/metameta/opt/metameta/scripts/)
-	./merge_final_profiles.sh workdir/samples_*/metametamerge/database/final.metametamerge.profile.out
+	~/miniconda3/opt/metameta/scripts/merge_final_profiles.sh workdir/samples_*/metametamerge/database/final.metametamerge.profile.out
 
 Folder structure:
 -----------------
@@ -224,7 +237,8 @@ MetaMeta can run several tools with several samples against several databases. T
 			LOG/
 		DB_2/
 			...
-		LOG/
+		TAXONOMY/
+			LOG/
 
 (\*) removed when keepfiles=0
 (\*\*) only when running on cluster mode
@@ -271,3 +285,20 @@ MetaMeta pipeline uses Snakemake. To add a new tool to the pipeline it is necess
 		- newtool_db_custom_check -> rule to check the required database files. It should have as an input all mandatory files that should be present to the database work properly.
 
 * Template files can be found inside the folder tools/template. Once the two files are inside the tools folder, it is necessary to add the tool identifier to the YAML configuration file.
+
+
+Changelog:
+----------
+
+v1.2.0) 
+- Updated to Snakemake 4.3.0 (from 3.9.1)
+- Bug fixes on custom database creation and database profile generation
+- Centralized taxonomy download (once for all tools, kept on dbdir:taxonomy/)
+- Updated tools: kaiju 1.0 -> 1.4.5, dudes 0.07 -> 0.08, spades 3.9.0 -> 3.11.1
+- Addition of new pre-configured databases: fungal_viral_201709
+- Multiple pre-configured databases support
+- Several fixes on custom database creation
+
+v1.1.1) Bug fixes parsing output files for kraken and kaiju
+
+v1.1) Support single and paired-end reads, multiple and custom databases, krona integration

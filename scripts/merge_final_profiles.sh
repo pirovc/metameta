@@ -5,12 +5,13 @@ awk -F "\t" '{
 	values[idx]=values[idx]$1":"$6";"
 }END{
 	printf("%s\n%s\n%s\t%s\t%s\t%s\t","# Taxonomic Profiling Output","@Version:0.9.3","@@TAXID","RANK","TAXPATH","TAXPATHSN");
-	for(file in fn) printf("%s\t", file);
+	n=asorti(fn,fn_sorted);
+	for(i=1; i<=n; i++) printf("%s\t", fn_sorted[i]);
 	for(v in values){
 		printf("\n%s\t", v); 
 		split(values[v], file_ab, ";");
 		for(fab in file_ab){split(file_ab[fab], a, ":"); ab[a[1]]=a[2]};
-		for(file in fn) printf("%s\t",(file in ab) ? ab[file] : "0");
+		for(i=1; i<=n; i++) printf("%s\t",(fn_sorted[i] in ab) ? ab[fn_sorted[i]] : "0");
 		delete ab;
 	}
 	print "";

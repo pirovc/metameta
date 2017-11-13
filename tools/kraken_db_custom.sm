@@ -4,17 +4,31 @@ rule kraken_db_custom_1:
 	benchmark: config['dbdir'] + "{database}/log/kraken_db_custom_1.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/kraken.yaml")
-	params: seq_folder = lambda wildcards: config[wildcards.database]["kraken"]
-	shell: "ls -t {params.seq_folder}/*.fna | xargs --max-procs={threads} -I '{{}}' {config[tool_alt_path][kraken]}kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --add-to-library '{{}}' >> {log} 2>&1"
+	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["kraken"] if wildcards.database in customdbs and "kraken" in customdbs[wildcards.database] else ""
+	shell: 
+		"""
+		if [ -d "{params.seq_folder}" ]; then
+			ls -t {params.seq_folder}/*.fna | xargs --max-procs={threads} -I '{{}}' {config[tool_alt_path][kraken]}kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --add-to-library '{{}}' >> {log} 2>&1
+		else
+			echo "Custom database ({wildcards.database}) -> '{params.seq_folder}': No such file or directory" > {log}
+		fi
+		"""
 	
 rule kraken_db_custom_2:
-	output: config['dbdir'] + "{database}/kraken_db/taxonomy/nodes.dmp",
-			config['dbdir'] + "{database}/kraken_db/taxonomy/names.dmp",
-			temp(config['dbdir'] + "{database}/kraken_db/taxonomy/gi_taxid_nucl.dmp")
+	input: gi_taxid_nucl_gz = ancient(config['dbdir'] + "taxonomy/gi_taxid_nucl.dmp.gz"),
+			taxdump =  ancient(config["dbdir"] + "taxonomy/taxdump.tar.gz")
+	output: nodes = config['dbdir'] + "{database}/kraken_db/taxonomy/nodes.dmp",
+			names = config['dbdir'] + "{database}/kraken_db/taxonomy/names.dmp",
+			gi_taxid_nucl = temp(config['dbdir'] + "{database}/kraken_db/taxonomy/gi_taxid_nucl.dmp")
 	log: config['dbdir'] + "{database}/log/kraken_db_custom_2.log"
 	benchmark: config['dbdir'] + "{database}/log/kraken_db_custom_2.time"
 	conda: srcdir("../envs/kraken.yaml")
-	shell: "{config[tool_alt_path][kraken]}kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --download-taxonomy > {log} 2>&1"
+	shell: 
+		"""
+		mkdir -p {config[dbdir]}{wildcards.database}/kraken_db/taxonomy/
+		gzip -d -c {input.gi_taxid_nucl_gz} > {output.gi_taxid_nucl} 2> {log}
+		tar -zxvf {input.taxdump} -C {config[dbdir]}{wildcards.database}/kraken_db/taxonomy/ nodes.dmp names.dmp >> {log} 2>&1
+		"""
 
 rule kraken_db_custom_3:	
 	input: config['dbdir'] + "{database}/kraken_db/library/",
@@ -27,7 +41,11 @@ rule kraken_db_custom_3:
 	benchmark: config['dbdir'] + "{database}/log/kraken_db_custom_3.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/kraken.yaml")
-	shell: "{config[tool_alt_path][kraken]}kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --build --threads {threads} > {log} 2>&1"
+	shell: 
+		"""
+		{config[tool_alt_path][kraken]}kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --build --threads {threads} > {log} 2>&1
+		{config[tool_alt_path][kraken]}kraken-build --db {config[dbdir]}{wildcards.database}/kraken_db/ --clean >> {log} 2>&1
+		"""
 
 rule kraken_db_custom_profile:
 	input: config['dbdir'] + "{database}/kraken_db/library/"

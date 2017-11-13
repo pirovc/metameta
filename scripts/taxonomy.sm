@@ -1,0 +1,26 @@
+rule get_taxdump:
+	output: taxdump = config["dbdir"] + "taxonomy/taxdump.tar.gz", 
+			names=config["dbdir"] + "taxonomy/names.dmp", #for metametamerge
+			nodes=config["dbdir"] + "taxonomy/nodes.dmp", #for metametamerge
+			merged=config["dbdir"] + "taxonomy/merged.dmp" #for metametamerge
+	log: config["dbdir"] + "taxonomy/log/get_taxdump.log"
+	benchmark: config["dbdir"] + "taxonomy/log/get_taxdump.time"
+	run:
+		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", output.taxdump) + " > {log} 2>&1")
+		shell("tar -zxvf {output.taxdump} -C {config[dbdir]}/taxonomy/ names.dmp nodes.dmp merged.dmp >> {log} 2>&1")
+
+rule get_accession2taxid:
+	output: nucl_gb = config['dbdir'] + "taxonomy/nucl_gb.accession2taxid.gz",
+			nucl_wgs = config['dbdir'] + "taxonomy/nucl_wgs.accession2taxid.gz",
+	log: config["dbdir"] + "taxonomy/log/get_accession2taxid.log"
+	benchmark: config["dbdir"] + "taxonomy/log/get_accession2taxid.time"
+	run:
+		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz", output.nucl_gb) + " > {log} 2>&1")
+		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_wgs.accession2taxid.gz", output.nucl_wgs) + " >> {log} 2>&1")
+
+rule get_gi_taxid_nucl:
+	output: gi_taxid_nucl = config['dbdir'] + "taxonomy/gi_taxid_nucl.dmp.gz"
+	log: config["dbdir"] + "taxonomy/log/get_gi_taxid_nucl.log"
+	benchmark: config["dbdir"] + "taxonomy/log/get_gi_taxid_nucl.time"
+	run:
+		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/gi_taxid_nucl.dmp.gz", output.gi_taxid_nucl) + " > {log} 2>&1")

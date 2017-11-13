@@ -5,58 +5,55 @@ rule dudes_db_custom_1:
 			config['dbdir'] + "{database}/dudes_db/dudes_db.4.bt2l",
 			config['dbdir'] + "{database}/dudes_db/dudes_db.rev.1.bt2l",
 			config['dbdir'] + "{database}/dudes_db/dudes_db.rev.2.bt2l"
-	params: seq_folder = lambda wildcards: config[wildcards.database]["dudes"]
+	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["dudes"] if wildcards.database in customdbs and "dudes" in customdbs[wildcards.database] else ""
 	threads: config["threads"]
 	log: config['dbdir'] + "{database}/log/dudes_db_custom_1.log"
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_1.time"
 	conda: srcdir("../envs/dudes.yaml")
 	shell: 
 		"""
-		csfiles=`ls -dm {params.seq_folder}/*.fna | sed -e 's/, /,/g' | tr -d '\\n'`
-		{config[tool_alt_path][bowtie2]}bowtie2-build ${{csfiles}} {config[dbdir]}{wildcards.database}/dudes_db/dudes_db --threads {threads} --large-index > {log} 2>&1
+		if [ -d "{params.seq_folder}" ]; then
+			csfiles=`ls -dm {params.seq_folder}/*.fna | sed -e 's/, /,/g' | tr -d '\\n'`
+			{config[tool_alt_path][bowtie2]}bowtie2-build ${{csfiles}} {config[dbdir]}{wildcards.database}/dudes_db/dudes_db --threads {threads} --large-index > {log} 2>&1
+		else
+			echo "Custom database ({wildcards.database}) -> '{params.seq_folder}': No such file or directory" > {log}
+		fi
 		"""
 
 rule dudes_db_custom_2:
+	input: taxdump = ancient(config['dbdir'] + "taxonomy/taxdump.tar.gz"),
 	output: nodes = temp(config['dbdir'] + "{database}/dudes_db/nodes.dmp"),
-			names = temp(config['dbdir'] + "{database}/dudes_db/names.dmp"),
-			accession2taxid = temp(config['dbdir'] + "{database}/dudes_db/nucl_gb.accession2taxid"),
-			accession2taxid_gz = temp(config['dbdir'] + "{database}/dudes_db/nucl_gb.accession2taxid.gz"),
-			taxdump = temp(config['dbdir'] + "{database}/dudes_db/taxdump.tar.gz")
+			names = temp(config['dbdir'] + "{database}/dudes_db/names.dmp")
 	log: config['dbdir'] + "{database}/log/dudes_db_custom_2.log"
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_2.time"
-	run:
-		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", output.taxdump) + " > {log} 2>&1")
-		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz", output.accession2taxid_gz) + " >> {log} 2>&1")		
-		shell("tar -zxvf {output.taxdump} -C {config[dbdir]}{wildcards.database}/dudes_db/ nodes.dmp names.dmp >> {log} 2>&1")
-		shell("gzip -d -c {output.accession2taxid_gz} > {output.accession2taxid} 2>> {log}")
-	
+	shell: "tar -zxvf {input.taxdump} -C {config[dbdir]}{wildcards.database}/dudes_db/ nodes.dmp names.dmp > {log} 2>&1"
+
 rule dudes_db_custom_3:	
-	output: headers = temp(config['dbdir'] + "{database}/dudes_db/dudes_db_headers")
+	input: names = config['dbdir'] + "{database}/dudes_db/names.dmp",
+			nodes = config['dbdir'] + "{database}/dudes_db/nodes.dmp",
+			nucl_gb = ancient(config['dbdir'] + "taxonomy/nucl_gb.accession2taxid.gz"),
+			nucl_wgs = ancient(config['dbdir'] + "taxonomy/nucl_wgs.accession2taxid.gz")
+	output: npz = config['dbdir'] + "{database}/dudes_db/dudes_db.npz"
 	log: config['dbdir'] + "{database}/log/dudes_db_custom_3.log"
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_3.time"
-	params: seq_folder = lambda wildcards: config[wildcards.database]["dudes"]
-	# Look for accession.version on headers
-	shell: "grep -h '^>' {params.seq_folder}/*.fna | grep -o '[A-Z]*_[0-9]*\.[0-9]*' | sed 's/^/>/g' > {output.headers} 2> {log}"
-		
-rule dudes_db_custom_4:	
-	input: headers = temp(config['dbdir'] + "{database}/dudes_db/dudes_db_headers"),
-			nodes = config['dbdir'] + "{database}/dudes_db/nodes.dmp",
-			names = config['dbdir'] + "{database}/dudes_db/names.dmp",
-			accession2taxid = config['dbdir'] + "{database}/dudes_db/nucl_gb.accession2taxid"
-	output: npz = config['dbdir'] + "{database}/dudes_db/dudes_db.npz"
-	log: config['dbdir'] + "{database}/log/dudes_db_custom_4.log"
-	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_4.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/dudes.yaml")
-	params: seq_folder = lambda wildcards: config[wildcards.database]["dudes"]
-	shell: "{config[tool_alt_path][dudes]}DUDesDB.py -m 'av' -f {input.headers} -n {input.nodes} -a {input.names} -g {input.accession2taxid} -t {threads} -o {config[dbdir]}{wildcards.database}/dudes_db/dudes_db >> {log} 2>&1"
+	params: seq_folder = lambda wildcards: customdbs[wildcards.database]["dudes"] if wildcards.database in customdbs and "dudes" in customdbs[wildcards.database] else ""
+	shell: 
+		"""
+		if [ -d "{params.seq_folder}" ]; then
+			{config[tool_alt_path][dudes]}DUDesDB.py -m 'av' -f {params.seq_folder}/*.fna -n {input.nodes} -a {input.names} -g {input.nucl_gb} {input.nucl_wgs} -t {threads} -o {config[dbdir]}{wildcards.database}/dudes_db/dudes_db >> {log} 2>&1
+		else
+			echo "Custom database ({wildcards.database}) -> '{params.seq_folder}': No such file or directory" > {log}
+		fi
+		"""
 
 rule dudes_db_custom_profile:
-	input: headers = config['dbdir'] + "{database}/dudes_db/dudes_db_headers"
+	input: npz = config['dbdir'] + "{database}/dudes_db/dudes_db.npz"
 	output: temp(config['dbdir'] + "{database}/dudes.dbaccession.out")
 	log: config['dbdir'] + "{database}/log/dudes_db_custom_profile.log"
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_profile.time"
-	shell: "sed 's/>//g' {input.headers} > {output} 2> {log}"
+	shell: """python3 -c 'import numpy as np; npzfile = np.load("{input.npz}"); print("\\n".join(npzfile["refids_lookup"].item().keys()))' | sed 's/>//g' > {output} 2> {log}"""
 
 rule dudes_db_custom_check:
 	input: ancient(config['dbdir'] + "{database}/dudes.dbprofile.out"),

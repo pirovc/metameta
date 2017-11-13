@@ -1,4 +1,4 @@
-version="1.1.1"
+version="1.2.0"
 
 # Check for required parameters
 if "samples" not in config:
@@ -8,6 +8,7 @@ elif "workdir" not in config:
 elif "dbdir" not in config:
 	print("No database directory defined on the configuration file")
 else:
+	include: "scripts/util.py"
 
 	# Load default values (when they are not set on the configfile.yaml)
 	include: "scripts/default.sm"
@@ -56,27 +57,25 @@ else:
 		onend("An error has occured.", log)
 		
 	############################################################################################## 
-	import glob, os
-	include: "scripts/db.sm"
-	include: "scripts/preproc.sm"
+	include: "scripts/database_profile.sm"
 	include: "scripts/clean_files.sm"
 	include: "scripts/clean_reads.sm"
-	include: "scripts/metametamerge.sm"
 	include: "scripts/krona.sm"
-	include: "scripts/util.py"
-	
-	# Include all db_custom.sm
-	for fn in glob.glob(srcdir("tools/*_db_custom.sm")):
-		if os.path.isfile(fn): 
-			include: fn
-			
+	include: "scripts/metametamerge.sm"
+	include: "scripts/preconfigdb.sm"
+	include: "scripts/preproc.sm"
+	include: "scripts/taxonomy.sm"
+
 	# Include all selected tools
-	for t in config["tools"]:
-		include: ("tools/"+t+".sm")
+	for tool in config["tools"]:
+		if has_custom_db(tool): 
+			include: ("tools/"+tool+"_db_custom.sm")
+		include: ("tools/"+tool+".sm")
+		
 	############################################################################################## 
 
 	rule all:
 		input:
-			clean_reads =  expand("{sample}/clean_reads.done", sample=config["samples"]),
-			krona_html = expand("{sample}/metametamerge/{database}/final.metametamerge.profile.html", sample=config["samples"], database=config["databases"])
+			clean_reads =  expand("{sample}/clean_reads.done", sample=config["samples"]), #TARGET SAMPLE {sample}/clean_reads.done
+			krona_html = expand("{sample}/metametamerge/{database}/final.metametamerge.profile.html", sample=config["samples"], database=config["databases"]) # TARGET SAMPLE AND DATABASE {sample}/metametamerge/{database}/final.metametamerge.profile.html
 	############################################################################################## 

@@ -1,7 +1,4 @@
 channels:
  - bioconda
- - r
- - defaults
- - conda-forge
 dependencies:
  - motus=1.0

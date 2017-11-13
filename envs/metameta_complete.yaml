@@ -1,0 +1,20 @@
+# for f in *.yaml; do sed '1,/dependencies:/d' $f; done
+# Inline: echo $(for f in *.yaml; do sed '1,/dependencies:/d; s/ - //g' $f;done | paste -d" " -s -) 
+name: metametaenv_complete
+channels:
+ - bioconda
+dependencies:
+ - metameta=1.2.0
+ - clark=1.2.3
+ - bowtie2=2.3.0
+ - dudes=0.08
+ - gottcha=1.0
+ - kaiju=1.4.5
+ - jellyfish=1.1.11
+ - kraken=0.10.5beta
+ - krona=2.7
+ - clark=1.2.3
+ - metametamerge=1.1
+ - motus=1.0
+ - spades=3.11.1
+ - trimmomatic=0.36

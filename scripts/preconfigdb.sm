@@ -1,0 +1,33 @@
+# Pre-configured databases: the pre-configured databases are defined explixity on the variable preconfigdbs.keys()
+# The output from the rules preconfigdb_check and preconfigdb_unpack are limited to such list and have priority over the  *_db_custom_check and database_profile
+# That way once the user selects a pre-configure database, those rules will be triggered insted of building custom databases
+
+# building custom rule order -> ruleorder: preconfigdb_check > kraken_db_custom_check > dudes_db_custom_check > ...
+workflow.ruleorder(*(["preconfigdb_check"] + [tool+"_db_custom_check" for tool in config["tools"] if has_custom_db(tool)]))
+workflow.ruleorder("preconfigdb_unpack","database_profile") #ruleorder: preconfigdb_unpack > database_profile
+
+rule preconfigdb_download:
+	output: temp(config['dbdir'] + "{preconfigdb}/{tool}.tar.gz")
+	log: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_download.log"
+	benchmark: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_download.time"
+	params: url = lambda wildcards: preconfigdbs[wildcards.preconfigdb][wildcards.tool] # Get URL for the database
+	run:
+		shell(download((params.url), output[0]) + " > {log} 2>&1")
+
+rule preconfigdb_unpack:
+	input: config['dbdir'] + "{preconfigdb}/{tool}.tar.gz"
+	output: limit(config['dbdir'] + "{preconfigdb}/{{tool}}_db/", preconfigdb=preconfigdbs.keys()),
+		limit(config['dbdir'] + "{preconfigdb}/{{tool}}.dbprofile.out", preconfigdb=preconfigdbs.keys())
+	log: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_unpack.log"
+	benchmark: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_unpack.time"
+	shell: 
+		"""
+		tar zxfv {input} -C {config[dbdir]}{wildcards.preconfigdb}/ > {log} 2>&1
+		"""
+
+rule preconfigdb_check:
+	input: ancient(config['dbdir'] + "{preconfigdb}/{tool}_db/"),
+		ancient(config['dbdir'] + "{preconfigdb}/{tool}.dbprofile.out")
+	output:	touch(limit(config['dbdir'] + "{preconfigdb}/{{tool}}_db_check.done", preconfigdb=preconfigdbs.keys()))
+	log: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_check.log"
+	benchmark: config['dbdir'] + "{preconfigdb}/log/{tool}_db_{preconfigdb}_check.time"
