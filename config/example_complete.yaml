@@ -68,7 +68,7 @@ mode: linear
 cutoff: 0.0001
 # MetaMetaMerge number of bins. Default: 4
 bins: 4
-# MetaMetaMerge ranks option. Generates the merged output based only on specified ranks and estimate upper levels (0: off / 1: on). Default: 1
+# MetaMetaMerge ranks option. Generates the merged output based only on specified ranks and estimate upper levels. Default: species
 ranks: species
 # MetaMetaMerge detailed output. Generates detailed output for each taxon/tool and its normalized relative abundance estimation. It outputs 0 for tools which did not identified the taxon and -1 for tools without a taxon in the database. (0: off / 1: on). Default: 0
 detailed: 0

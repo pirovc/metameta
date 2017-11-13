@@ -19,18 +19,19 @@ rule clark_db_custom_2:
 			nucl_gb = ancient(config['dbdir'] + "taxonomy/nucl_gb.accession2taxid.gz"),
 			nucl_wgs = ancient(config['dbdir'] + "taxonomy/nucl_wgs.accession2taxid.gz")
 	output: taxonomy = temp(config['dbdir'] + "{database}/clark_db/taxonomy/"),
-			taxondata = temp(config['dbdir'] + "{database}/clark_db/.taxondata"),
 			nucl_accss = temp(config['dbdir'] + "{database}/clark_db/taxonomy/nucl_accss"),
+			taxondata = temp(touch(config['dbdir'] + "{database}/clark_db/.taxondata"))
+	log: config['dbdir'] + "{database}/log/clark_db_custom_2.log"
+	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_2.time"
 	shell:
 		"""
         # Emulate the script: opt/clark/download_taxondata.sh 
     	#	 cat nucl_gb.accession2taxid > ./nucl_accss
         #    cat nucl_wgs.accession2taxid >> ./nucl_accss
         #    touch ../.taxondata
-		mkdir -p ${{abs_db}}/taxonomy/
+		mkdir -p {output.taxonomy}
 		gzip -d -c {input.nucl_gb} {input.nucl_wgs} > {output.nucl_accss} 2> {log}
-		tar -zxvf {input.taxdump} -C {config[dbdir]}{wildcards.database}/clark_db/taxonomy/  >> {log} 2>&1
-		touch {output.taxondata}
+		tar -zxvf {input.taxdump} -C {config[dbdir]}{wildcards.database}/clark_db/taxonomy/ >> {log} 2>&1
 		"""    
 
 rule clark_db_custom_3:
