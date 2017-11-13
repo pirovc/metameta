@@ -291,11 +291,12 @@ NEW:
 ----
 v1.2.0) 
 - Updated to Snakemake 4.3.0 (from 3.9.1)
-- Bug fixes on custom database creation and database profile generation. 
+- Bug fixes on custom database creation and database profile generation
+- Centralized taxonomy download (once for all tools, kept on dbdir:taxonomy/)
 - Updated tools: kaiju 1.0 -> 1.4.5, dudes 0.07 -> 0.08, spades 3.9.0 -> 3.11.1
 - Addition of new pre-configured databases: fungal_viral_201709
 - Multiple pre-configured databases support
-- Centralized taxonomy download
+- Several fixes on custom database creation
 
 v1.1.1) Bug fixes parsing output files for kraken and kaiju
 
