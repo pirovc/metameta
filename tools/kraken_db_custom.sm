@@ -15,18 +15,18 @@ rule kraken_db_custom_1:
 		"""
 	
 rule kraken_db_custom_2:
-	input: gi_taxid_nucl = config['dbdir'] + "taxonomy/gi_taxid_nucl.dmp.gz",
-			taxdump = config["dbdir"] + "taxonomy/taxdump.tar.gz"
-	output: config['dbdir'] + "{database}/kraken_db/taxonomy/nodes.dmp",
-			config['dbdir'] + "{database}/kraken_db/taxonomy/names.dmp",
-			temp(config['dbdir'] + "{database}/kraken_db/taxonomy/gi_taxid_nucl.dmp")
+	input: gi_taxid_nucl_gz = ancient(config['dbdir'] + "taxonomy/gi_taxid_nucl.dmp.gz"),
+			taxdump =  ancient(config["dbdir"] + "taxonomy/taxdump.tar.gz")
+	output: nodes = config['dbdir'] + "{database}/kraken_db/taxonomy/nodes.dmp",
+			names = config['dbdir'] + "{database}/kraken_db/taxonomy/names.dmp",
+			gi_taxid_nucl = temp(config['dbdir'] + "{database}/kraken_db/taxonomy/gi_taxid_nucl.dmp")
 	log: config['dbdir'] + "{database}/log/kraken_db_custom_2.log"
 	benchmark: config['dbdir'] + "{database}/log/kraken_db_custom_2.time"
 	conda: srcdir("../envs/kraken.yaml")
 	shell: 
 		"""
 		mkdir -p {config[dbdir]}{wildcards.database}/kraken_db/taxonomy/
-		gzip -d -c {input.gi_taxid_nucl} > {config[dbdir]}{wildcards.database}/kraken_db/taxonomy/gi_taxid_nucl.dmp 2> {log}
+		gzip -d -c {input.gi_taxid_nucl_gz} > {output.gi_taxid_nucl} 2> {log}
 		tar -zxvf {input.taxdump} -C {config[dbdir]}{wildcards.database}/kraken_db/taxonomy/ nodes.dmp names.dmp >> {log} 2>&1
 		"""
 

@@ -15,9 +15,9 @@ rule clark_db_custom_1:
 		"""
 
 rule clark_db_custom_2:
-	input: 	taxdump = config["dbdir"] + "taxonomy/taxdump.tar.gz", 
-			nucl_gb = config['dbdir'] + "taxonomy/nucl_gb.accession2taxid.gz",
-			nucl_wgs = config['dbdir'] + "taxonomy/nucl_wgs.accession2taxid.gz"
+	input: 	taxdump = ancient(config["dbdir"] + "taxonomy/taxdump.tar.gz"),
+			nucl_gb = ancient(config['dbdir'] + "taxonomy/nucl_gb.accession2taxid.gz"),
+			nucl_wgs = ancient(config['dbdir'] + "taxonomy/nucl_wgs.accession2taxid.gz")
 	output: taxonomy = temp(config['dbdir'] + "{database}/clark_db/taxonomy/"),
 			taxondata = temp(config['dbdir'] + "{database}/clark_db/.taxondata"),
 			nucl_accss = temp(config['dbdir'] + "{database}/clark_db/taxonomy/nucl_accss"),
