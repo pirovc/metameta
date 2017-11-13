@@ -4,6 +4,8 @@ Vitor C. Piro (vitorpiro@gmail.com)
 
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/metameta/README.html)
 
+Piro, V. C., Matschkowski, M., & Renard, B. Y. (2017). MetaMeta: integrating metagenome analysis tools to improve taxonomic profiling. Microbiome, 5(1), 101. http://doi.org/10.1186/s40168-017-0318-y
+
 Install:
 --------
 Miniconda:
