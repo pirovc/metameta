@@ -7,13 +7,13 @@ rule get_taxdump:
 	benchmark: config["dbdir"] + "taxonomy/log/get_taxdump.time"
 	run:
 		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", output.taxdump) + " > {log} 2>&1")
-		shell("tar -zxvf {output.taxdump} names.dmp nodes.dmp merged.dmp >> {log} 2>&1")
+		shell("tar -zxvf {output.taxdump} -C {config[dbdir]}/taxonomy/ names.dmp nodes.dmp merged.dmp >> {log} 2>&1")
 
 rule get_accession2taxid:
 	output: nucl_gb = temp(config['dbdir'] + "taxonomy/nucl_gb.accession2taxid.gz"),
 			nucl_wgs = temp(config['dbdir'] + "taxonomy/nucl_wgs.accession2taxid.gz"),
-	log: config["dbdir"] + "taxonomy/log/get_taxdump.log"
-	benchmark: config["dbdir"] + "taxonomy/log/get_taxdump.time"
+	log: config["dbdir"] + "taxonomy/log/get_accession2taxid.log"
+	benchmark: config["dbdir"] + "taxonomy/log/get_accession2taxid.time"
 	run:
 		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz", output.nucl_gb) + " > {log} 2>&1")
 		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_wgs.accession2taxid.gz", output.nucl_wgs) + " >> {log} 2>&1")
