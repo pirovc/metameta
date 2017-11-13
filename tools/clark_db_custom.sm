@@ -25,19 +25,11 @@ rule clark_db_custom_2:
 	shell:
 		"""
 		# The script should be on set_targets.sh script folder (ENV/opt/clark/) to generate the database 
-		# with correct paths. Since there's not much control over conda file yet, the rule checks if 
-		# there's an environment for this rule (first 8 chards of the md5 of the environment .yaml file),
-		# otherwise looks for the files on the activated environment path
-		
-		# First check if there's a pre-defined alternate path to the tool
-		tap="{config[tool_alt_path][clark]}"
-		if [[ "${{tap}}" != "" ]]; then
-			clark_opt_path="${{tap}}"
+		# with correct paths. If there's no alternative path set, get current environment path 
+		if [[ "{config[tool_alt_path][clark]}" != "" ]]; then
+			clark_opt_path="{config[tool_alt_path][clark]}"
 		else
-			echo "${{PATH%%/bin:*}}"
-		 	condadir=`conda env list | grep -o '\*.*' | grep -o '/.*'` # get active conda environment path
-		 	clark_opt_path="${{condadir}}/opt/clark/"
-		 	echo ${{clark_opt_path}}
+			clark_opt_path="${{PATH%%/bin:*}}/opt/clark/"
 		fi
 		# Get absolute paths in case they are relative
 		abs_log=$(readlink -e {config[dbdir]}{wildcards.database}/log/)
