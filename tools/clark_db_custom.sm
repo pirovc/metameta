@@ -22,9 +22,9 @@ rule clark_db_custom_2:
 	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_2.time"
 	conda: srcdir("../envs/clark.yaml")
 	params: srcdir = srcdir("")
-	shell: 
+	shell:
 		"""
-		# The script should be on set_targets.sh script folder (opt/clark/) to generate the database 
+		# The script should be on set_targets.sh script folder (ENV/opt/clark/) to generate the database 
 		# with correct paths. Since there's not much control over conda file yet, the rule checks if 
 		# there's an environment for this rule (first 8 chards of the md5 of the environment .yaml file),
 		# otherwise looks for the files on the activated environment path
@@ -34,15 +34,10 @@ rule clark_db_custom_2:
 		if [[ "${{tap}}" != "" ]]; then
 			clark_opt_path="${{tap}}"
 		else
-			md5=($(md5sum "{params.srcdir}/../envs/clark.yaml"))
-			if [ -d ".snakemake/conda/${{md5}}" ]; then # Environment for rule was created
-				clark_opt_path=".snakemake/conda/${{md5}}/opt/clark/"
-			elif [ -d ".snakemake/conda/${{md5:0:8}}" ]; then  # some versions of conda use just first 8 chars
-				clark_opt_path=".snakemake/conda/${{md5:0:8}}/opt/clark/"
-			else
-				condadir=`conda env list | grep -o '\*.*' | grep -o '/.*'` # get active conda environment path
-				clark_opt_path="${{condadir}}/opt/clark/"
-			fi
+			echo "${{PATH%%/bin:*}}"
+		 	condadir=`conda env list | grep -o '\*.*' | grep -o '/.*'` # get active conda environment path
+		 	clark_opt_path="${{condadir}}/opt/clark/"
+		 	echo ${{clark_opt_path}}
 		fi
 		# Get absolute paths in case they are relative
 		abs_log=$(readlink -e {config[dbdir]}{wildcards.database}/log/)
