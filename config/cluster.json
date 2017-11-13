@@ -10,9 +10,17 @@
     "job-name": "all",
     "output": "clusterlog/all.%j.out"
   },
-  "metametamerge_get_taxdump": {
-    "job-name": "metameta_get_taxdump",
-    "output": "clusterlog/metameta_get_taxdump.%j.out"
+  "get_taxdump": {
+    "job-name": "get_taxdump",
+    "output": "clusterlog/get_taxdump.%j.out"
+  },
+  "get_accession2taxid": {
+    "job-name": "get_accession2taxid",
+    "output": "clusterlog/get_accession2taxid.%j.out"
+  },
+  "get_gi_taxid_nucl": {
+    "job-name": "get_gi_taxid_nucl",
+    "output": "clusterlog/get_gi_taxid_nucl.%j.out"
   },
   "metametamerge": {
     "job-name": "metametamerge",
@@ -128,9 +136,7 @@
   },
   "dudes_db_custom_2": {
     "job-name": "dudes_db_custom_2",
-    "output": "clusterlog/dudes_db_custom_2.%j.out",
-    "partition": "small",
-    "time": "24:00:00"
+    "output": "clusterlog/dudes_db_custom_2.%j.out"
   },
   "dudes_db_custom_3": {
     "job-name": "dudes_db_custom_4",
