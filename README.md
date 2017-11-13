@@ -72,7 +72,6 @@ Running sample data:
 --------------------
 
 	cd ~/miniconda3/opt/metameta/
-	(or using environments: cd ~/miniconda3/envs/metametaenv/opt/metameta/)
 	
 Pre-configured Archaea and Bacteria database:
 	
@@ -89,14 +88,13 @@ Results:
 Running MetaMeta on a cluster environment:
 ------------------------------------------	
 	
-Make a copy of the configuration file and the cluster configuration file:
+Make a copy of cluster configuration file:
 
-	cp ~/miniconda3/opt/metameta/config/example_complete.yaml yourconfig.yaml
 	cp ~/miniconda3/opt/metameta/config/cluster.json yourcluster.json
 	
-Edit those files to set-up the working directory, samples, threads and cpu/memory usage for each rule.
+Edit the file with your cluster specifications (threads, partitions, cpu/memory, etc) for each rule.
 	
-Run MetaMeta (slurm example):	
+Run MetaMeta (slurm example):
 
     metameta --configfile yourconfig.yaml --keep-going --use-conda -j 999 --cluster-config yourcluster.json --cluster "sbatch --job-name {cluster.job-name} --output {cluster.output} --partition {cluster.partition} --nodes {cluster.nodes} --cpus-per-task {cluster.cpus-per-task} --mem {cluster.mem} --time {cluster.time}"
 
@@ -105,7 +103,7 @@ Run MetaMeta (slurm example):
 Custom databases:
 -----------------
 
-MetaMeta uses by default Archaea and Bacteria sequences as reference database. Additionaly MetaMeta allows the creation of custom database (check "Pre-configured databases" section).
+MetaMeta uses by default Archaea and Bacteria sequences as reference database (`archaea_bacteria_201503` - see below). Additionaly MetaMeta allows the creation of custom database.
 
 First select which databses should be used on the configuration file:
 
@@ -184,8 +182,7 @@ Merging final results:
 
 To merge final results from many samples into one final tabular file:
 
-	(script location: ~/miniconda3/opt/metameta/scripts/ or using environments: ~/miniconda3/envs/metameta/opt/metameta/scripts/)
-	./merge_final_profiles.sh workdir/samples_*/metametamerge/database/final.metametamerge.profile.out
+	~/miniconda3/opt/metameta/scripts/merge_final_profiles.sh workdir/samples_*/metametamerge/database/final.metametamerge.profile.out
 
 Folder structure:
 -----------------
@@ -238,7 +235,8 @@ MetaMeta can run several tools with several samples against several databases. T
 			LOG/
 		DB_2/
 			...
-		LOG/
+		TAXONOMY/
+			LOG/
 
 (\*) removed when keepfiles=0
 (\*\*) only when running on cluster mode
@@ -287,8 +285,9 @@ MetaMeta pipeline uses Snakemake. To add a new tool to the pipeline it is necess
 * Template files can be found inside the folder tools/template. Once the two files are inside the tools folder, it is necessary to add the tool identifier to the YAML configuration file.
 
 
-NEW:
-----
+Changelog:
+----------
+
 v1.2.0) 
 - Updated to Snakemake 4.3.0 (from 3.9.1)
 - Bug fixes on custom database creation and database profile generation
@@ -301,4 +300,3 @@ v1.2.0)
 v1.1.1) Bug fixes parsing output files for kraken and kaiju
 
 v1.1) Support single and paired-end reads, multiple and custom databases, krona integration
-
