@@ -21,24 +21,18 @@ rule dudes_db_custom_1:
 		"""
 
 rule dudes_db_custom_2:
+	input: taxdump = config['dbdir'] + "taxonomy/taxdump.tar.gz",
 	output: nodes = temp(config['dbdir'] + "{database}/dudes_db/nodes.dmp"),
-			names = temp(config['dbdir'] + "{database}/dudes_db/names.dmp"),
-			nucl_gb = temp(config['dbdir'] + "{database}/dudes_db/nucl_gb.accession2taxid.gz"),
-			nucl_wgs = temp(config['dbdir'] + "{database}/dudes_db/nucl_wgs.accession2taxid.gz"),
-			taxdump = temp(config['dbdir'] + "{database}/dudes_db/taxdump.tar.gz")
+			names = temp(config['dbdir'] + "{database}/dudes_db/names.dmp")
 	log: config['dbdir'] + "{database}/log/dudes_db_custom_2.log"
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_2.time"
-	run:
-		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", output.taxdump) + " > {log} 2>&1")
-		shell("tar -zxvf {output.taxdump} -C {config[dbdir]}{wildcards.database}/dudes_db/ nodes.dmp names.dmp >> {log} 2>&1")
-		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz", output.nucl_gb) + " >> {log} 2>&1")
-		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_wgs.accession2taxid.gz", output.nucl_wgs) + " >> {log} 2>&1")
-		
+	shell: "tar -zxvf {input.taxdump} -C {config[dbdir]}{wildcards.database}/dudes_db/ nodes.dmp names.dmp > {log} 2>&1"
+
 rule dudes_db_custom_3:	
-	input: nodes = config['dbdir'] + "{database}/dudes_db/nodes.dmp",
-			names = config['dbdir'] + "{database}/dudes_db/names.dmp",
-			nucl_gb = config['dbdir'] + "{database}/dudes_db/nucl_gb.accession2taxid.gz",
-			nucl_wgs = config['dbdir'] + "{database}/dudes_db/nucl_wgs.accession2taxid.gz"
+	input: names = config['dbdir'] + "{database}/dudes_db/names.dmp",
+			nodes = config['dbdir'] + "{database}/dudes_db/nodes.dmp",
+			nucl_gb = config['dbdir'] + "taxonomy/nucl_gb.accession2taxid.gz",
+			nucl_wgs = config['dbdir'] + "taxonomy/nucl_wgs.accession2taxid.gz"
 	output: npz = config['dbdir'] + "{database}/dudes_db/dudes_db.npz"
 	log: config['dbdir'] + "{database}/log/dudes_db_custom_3.log"
 	benchmark: config['dbdir'] + "{database}/log/dudes_db_custom_3.time"

@@ -58,13 +58,14 @@ else:
 		
 	############################################################################################## 
 	include: "scripts/database_profile.sm"
-	include: "scripts/preconfigdb.sm"
-	include: "scripts/preproc.sm"
 	include: "scripts/clean_files.sm"
 	include: "scripts/clean_reads.sm"
-	include: "scripts/metametamerge.sm"
 	include: "scripts/krona.sm"
-	
+	include: "scripts/metametamerge.sm"
+	include: "scripts/preconfigdb.sm"
+	include: "scripts/preproc.sm"
+	include: "scripts/taxonomy.sm"
+
 	# Include all selected tools
 	for tool in config["tools"]:
 		if has_custom_db(tool): 

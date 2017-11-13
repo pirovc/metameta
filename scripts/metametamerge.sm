@@ -4,22 +4,11 @@ def target_tools(wildcards):
 	elif wildcards.database in customdbs:
 		return [tool for tool in customdbs[wildcards.database] if tool in config["tools"]]
 		
-rule metametamerge_get_taxdump:
-	output: taxdump=temp(config["dbdir"] + "taxdump.tar.gz")
-			, names=config["dbdir"] + "names.dmp"
-			, nodes=config["dbdir"] + "nodes.dmp"
-			, merged=config["dbdir"] + "merged.dmp"
-	log: config["dbdir"] + "log/metametamerge_get_taxdump.log"
-	benchmark: config["dbdir"] + "log/metametamerge_get_taxdump.time"
-	run:
-		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", output.taxdump) + " > {log} 2>&1")
-		shell("tar -zxvf {output.taxdump} -C {config[dbdir]} names.dmp nodes.dmp merged.dmp >> {log} 2>&1")
-
 rule metametamerge:
 	input: clean_files =  lambda wildcards: [wildcards.sample + "/profiles/" + wildcards.database + "/" + tool + "_clean_files.done" for tool in target_tools(wildcards)],
-		names=config["dbdir"] + "names.dmp", 
-		nodes=config["dbdir"] + "nodes.dmp", 
-		merged=config["dbdir"] + "merged.dmp"
+		names=config["dbdir"] + "taxonomy/names.dmp", 
+		nodes=config["dbdir"] + "taxonomy/nodes.dmp", 
+		merged=config["dbdir"] + "taxonomy/merged.dmp"
 	output: final_profile = "{sample}/metametamerge/{database}/final.metametamerge.profile.out"
 	log: "{sample}/log/{database}/metametamerge.log"
 	benchmark: "{sample}/log/{database}/metametamerge.time"

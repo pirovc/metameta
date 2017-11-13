@@ -15,7 +15,10 @@ rule clark_db_custom_1:
 		"""
 
 rule clark_db_custom_2:
-	input: sep_seq_folder = config['dbdir'] + "{database}/clark_db/Custom/"
+	input: sep_seq_folder = config['dbdir'] + "{database}/clark_db/Custom/",
+			taxdump = config["dbdir"] + "taxonomy/taxdump.tar.gz", 
+			nucl_gb = config['dbdir'] + "taxonomy/nucl_gb.accession2taxid.gz",
+			nucl_wgs = config['dbdir'] + "taxonomy/nucl_wgs.accession2taxid.gz"
 	output: targets = config['dbdir'] + "{database}/clark_db/targets.txt",
 		taxonomy = temp(config['dbdir'] + "{database}/clark_db/taxonomy/")
 	log: config['dbdir'] + "{database}/log/clark_db_custom_2.log"
@@ -34,8 +37,15 @@ rule clark_db_custom_2:
 		# Get absolute paths in case they are relative
 		abs_log=$(readlink -e {config[dbdir]}{wildcards.database}/log/)
 		abs_db=$(readlink -e {config[dbdir]}{wildcards.database}/clark_db/)
+
+		# Create folder and unpack taxonomy files
+		mkdir -p ${{abs_db}}/taxonomy/
+		gzip -d -c {input.nucl_gb} > ${{abs_db}}/taxonomy/nucl_gb.accession2taxid 2>> {log}
+		gzip -d -c {input.nucl_wgs} > ${{abs_db}}/taxonomy/nucl_wgs.accession2taxid 2>> {log}
+		tar -zxvf {input.taxdump} -C ${{abs_db}}/taxonomy/ >> {log} 2>&1
+
 		cd ${{clark_opt_path}}
-		./set_targets.sh ${{abs_db}}/ custom > ${{abs_log}}/clark_db_custom_2.log 2>&1
+		./set_targets.sh ${{abs_db}}/ custom >> ${{abs_log}}/clark_db_custom_2.log 2>&1
 		# Remove custom_0 in case it exists to force execution of the next rule
 		rm -rfv ${{abs_db}}/custom_0/ >> ${{abs_log}}/clark_db_custom_2.log 2>&1
 		"""	

@@ -33,13 +33,11 @@ rule kaiju_db_custom_3:
 	shell: "{config[tool_alt_path][kaiju]}mkfmi {config[dbdir]}{wildcards.database}/kaiju_db/kaiju_db > {log} 2>&1"
 
 rule kaiju_db_custom_4:
-	output: config['dbdir'] + "{database}/kaiju_db/nodes.dmp",
-			taxdump = temp(config['dbdir'] + "{database}/kaiju_db/taxdump.tar.gz")
+	input: taxdump = config["dbdir"] + "taxonomy/taxdump.tar.gz"
+	output: config['dbdir'] + "{database}/kaiju_db/nodes.dmp"
 	log: config['dbdir'] + "{database}/log/kaiju_db_custom_4.log"
 	benchmark: config['dbdir'] + "{database}/log/kaiju_db_custom_4.time"
-	run:
-		shell(download("ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", output.taxdump) + " > {log} 2>&1")
-		shell("tar -zxvf {output.taxdump} -C {config[dbdir]}{wildcards.database}/kaiju_db/ nodes.dmp >> {log} 2>&1")
+	shell: "tar -zxvf {input.taxdump} -C {config[dbdir]}{wildcards.database}/kaiju_db/ nodes.dmp > {log} 2>&1"
 	
 rule kaiju_db_custom_profile:
 	output: temp(config['dbdir'] + "{database}/kaiju.dbaccession.out")
