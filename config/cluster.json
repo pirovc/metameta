@@ -26,20 +26,20 @@
     "job-name": "metametamerge",
     "output": "clusterlog/metametamerge.%j.out",
     "partition": "small",
-    "mem": "16G"
+    "mem": "8000M"
   },
   "krona": {
     "job-name": "krona",
     "output": "clusterlog/krona.%j.out",
     "partition": "small",
-    "mem": "4G"
+    "mem": "2000M"
   },
   "trim_reads": {
     "job-name": "trim_reads",
     "output": "clusterlog/trim_reads.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "8G",
+    "mem": "4000M",
     "time": "24:00:00"
   },
   "errorcorr_reads": {
@@ -47,7 +47,7 @@
     "output": "clusterlog/errorcorr_reads.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "32G",
+    "mem": "32000M",
     "time": "24:00:00"
   },
   "subsample_reads": {
@@ -69,20 +69,16 @@
     "output": "clusterlog/database_profile.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "4G",
+    "mem": "1000M",
     "time": "24:00:00"
   },
   "preconfigdb_download": {
     "job-name": "preconfigdb_download",
-    "output": "clusterlog/preconfigdb_download.%j.out",
-    "partition": "small",
-    "time": "24:00:00"
+    "output": "clusterlog/preconfigdb_download.%j.out"
   },
   "preconfigdb_unpack": {
     "job-name": "preconfigdb_unpack",
-    "output": "clusterlog/preconfigdb_unpack.%j.out",
-    "partition": "small",
-    "time": "24:00:00"
+    "output": "clusterlog/preconfigdb_unpack.%j.out"
   },
   "preconfigdb_check": {
     "job-name": "preconfigdb_check",
@@ -94,16 +90,20 @@
   },
   "clark_db_custom_2": {
     "job-name": "clark_db_custom_2",
-    "output": "clusterlog/clark_db_custom_2.%j.out",
-    "partition": "small",
-    "time": "24:00:00"
+    "output": "clusterlog/clark_db_custom_2.%j.out"
   },
   "clark_db_custom_3": {
     "job-name": "clark_db_custom_3",
     "output": "clusterlog/clark_db_custom_3.%j.out",
+    "partition": "small",
+    "time": "24:00:00"
+  },
+  "clark_db_custom_4": {
+    "job-name": "clark_db_custom_4",
+    "output": "clusterlog/clark_db_custom_4.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "256G",
+    "mem": "64000M",
     "time": "24:00:00"
   },
   "clark_db_custom_profile": {
@@ -119,7 +119,7 @@
     "output": "clusterlog/clark_run_1.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "128G",
+    "mem": "64000M",
     "time": "24:00:00"
   },
   "clark_rpt": {
@@ -131,7 +131,7 @@
     "output": "clusterlog/dudes_db_custom_1.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "128G",
+    "mem": "64000M",
     "time": "24:00:00"
   },
   "dudes_db_custom_2": {
@@ -143,7 +143,7 @@
     "output": "clusterlog/dudes_db_custom_4.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "32G",
+    "mem": "32000M",
     "time": "24:00:00"
   },
   "dudes_db_custom_profile": {
@@ -159,7 +159,7 @@
     "output": "clusterlog/dudes_run_1.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "128G",
+    "mem": "64000M",
     "time": "24:00:00"
   },
   "dudes_run_2": {
@@ -167,7 +167,7 @@
     "output": "clusterlog/dudes_run_2.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "128G",
+    "mem": "64000M",
     "time": "24:00:00"
   },
   "dudes_rpt": {
@@ -179,7 +179,7 @@
     "output": "clusterlog/gottcha_run_1.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "128G",
+    "mem": "64000M",
     "time": "24:00:00"
   },
   "gottcha_rpt": {
@@ -195,14 +195,14 @@
     "output": "clusterlog/kaiju_db_custom_2.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "32G",
+    "mem": "32000M",
     "time": "24:00:00"
   },
   "kaiju_db_custom_3": {
     "job-name": "kaiju_db_custom_3",
     "output": "clusterlog/kaiju_db_custom_3.%j.out",
     "partition": "big",
-    "mem": "32G",
+    "mem": "32000M",
     "time": "24:00:00"
   },
   "kaiju_db_custom_4": {
@@ -222,7 +222,7 @@
     "output": "clusterlog/kaiju_run_1.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "128G",
+    "mem": "64000M",
     "time": "24:00:00"
   },
   "kaiju_rpt": {
@@ -234,7 +234,7 @@
     "output": "clusterlog/kraken_db_custom_1.%j.out",
     "partition": "small",
     "cpus-per-task": 12,
-    "mem": "1G",
+    "mem": "1000M",
     "time": "24:00:00"
   },
   "kraken_db_custom_2": {
@@ -246,7 +246,7 @@
     "output": "clusterlog/kraken_db_custom_3.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "128G",
+    "mem": "64000M",
     "time": "24:00:00"
   },
   "kraken_db_3": {
@@ -266,7 +266,7 @@
     "output": "clusterlog/kraken_run_1.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "128G",
+    "mem": "64000M",
     "time": "24:00:00"
   },
   "kraken_rpt": {
@@ -278,7 +278,7 @@
     "output": "clusterlog/motus_run_1.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "128G",
+    "mem": "64000M",
     "time": "24:00:00"
   },
   "motus_rpt": {

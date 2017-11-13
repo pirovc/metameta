@@ -15,14 +15,32 @@ rule clark_db_custom_1:
 		"""
 
 rule clark_db_custom_2:
-	input: sep_seq_folder = config['dbdir'] + "{database}/clark_db/Custom/",
-			taxdump = config["dbdir"] + "taxonomy/taxdump.tar.gz", 
+	input: 	taxdump = config["dbdir"] + "taxonomy/taxdump.tar.gz", 
 			nucl_gb = config['dbdir'] + "taxonomy/nucl_gb.accession2taxid.gz",
 			nucl_wgs = config['dbdir'] + "taxonomy/nucl_wgs.accession2taxid.gz"
+	output: taxonomy = temp(config['dbdir'] + "{database}/clark_db/taxonomy/"),
+			taxondata = temp(config['dbdir'] + "{database}/clark_db/.taxondata"),
+			nucl_accss = temp(config['dbdir'] + "{database}/clark_db/taxonomy/nucl_accss"),
+	shell:
+		"""
+        # Emulate the script: opt/clark/download_taxondata.sh 
+    	#	 cat nucl_gb.accession2taxid > ./nucl_accss
+        #    cat nucl_wgs.accession2taxid >> ./nucl_accss
+        #    touch ../.taxondata
+		mkdir -p ${{abs_db}}/taxonomy/
+		gzip -d -c {input.nucl_gb} {input.nucl_wgs} > {output.nucl_accss} 2> {log}
+		tar -zxvf {input.taxdump} -C {config[dbdir]}{wildcards.database}/clark_db/taxonomy/  >> {log} 2>&1
+		touch {output.taxondata}
+		"""    
+
+rule clark_db_custom_3:
+	input: sep_seq_folder = config['dbdir'] + "{database}/clark_db/Custom/",
+			taxonomy = config['dbdir'] + "{database}/clark_db/taxonomy/",
+			taxondata = config['dbdir'] + "{database}/clark_db/.taxondata",
+			nucl_accss = config['dbdir'] + "{database}/clark_db/taxonomy/nucl_accss"
 	output: targets = config['dbdir'] + "{database}/clark_db/targets.txt",
-		taxonomy = temp(config['dbdir'] + "{database}/clark_db/taxonomy/")
-	log: config['dbdir'] + "{database}/log/clark_db_custom_2.log"
-	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_2.time"
+	log: config['dbdir'] + "{database}/log/clark_db_custom_3.log"
+	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_3.time"
 	conda: srcdir("../envs/clark.yaml")
 	params: srcdir = srcdir("")
 	shell:
@@ -38,26 +56,20 @@ rule clark_db_custom_2:
 		abs_log=$(readlink -e {config[dbdir]}{wildcards.database}/log/)
 		abs_db=$(readlink -e {config[dbdir]}{wildcards.database}/clark_db/)
 
-		# Create folder and unpack taxonomy files
-		mkdir -p ${{abs_db}}/taxonomy/
-		gzip -d -c {input.nucl_gb} > ${{abs_db}}/taxonomy/nucl_gb.accession2taxid 2>> {log}
-		gzip -d -c {input.nucl_wgs} > ${{abs_db}}/taxonomy/nucl_wgs.accession2taxid 2>> {log}
-		tar -zxvf {input.taxdump} -C ${{abs_db}}/taxonomy/ >> {log} 2>&1
-
 		cd ${{clark_opt_path}}
 		./set_targets.sh ${{abs_db}}/ custom >> ${{abs_log}}/clark_db_custom_2.log 2>&1
 		# Remove custom_0 in case it exists to force execution of the next rule
 		rm -rfv ${{abs_db}}/custom_0/ >> ${{abs_log}}/clark_db_custom_2.log 2>&1
 		"""	
 
-rule clark_db_custom_3:
+rule clark_db_custom_4:
 	input: sep_seq_folder = config['dbdir'] + "{database}/clark_db/Custom/",
 			targets = config['dbdir'] + "{database}/clark_db/targets.txt",
 			dummy_file = ancient(srcdir("../scripts/dummy.fq"))
 	output: db_folder = config['dbdir'] + "{database}/clark_db/custom_0/",
 			dummy_out = temp(config['dbdir'] + "{database}/clark_db/dummy_out.csv")
-	log: config['dbdir'] + "{database}/log/clark_db_custom_3.log"
-	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_3.time"
+	log: config['dbdir'] + "{database}/log/clark_db_custom_4.log"
+	benchmark: config['dbdir'] + "{database}/log/clark_db_custom_4.time"
 	threads: config["threads"]
 	conda: srcdir("../envs/clark.yaml")
 	# Use custom_0/ as input because db output files have variable names
