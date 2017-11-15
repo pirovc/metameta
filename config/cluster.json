@@ -266,7 +266,7 @@
     "output": "clusterlog/kraken_run_1.%j.out",
     "partition": "big",
     "cpus-per-task": 12,
-    "mem": "64000M",
+    "mem": "128000M",
     "time": "24:00:00"
   },
   "kraken_rpt": {
