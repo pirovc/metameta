@@ -13,16 +13,20 @@ Miniconda:
     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh # Download conda installer
     chmod +x Miniconda3-latest-Linux-x86_64.sh 	# Set permissions
     ./Miniconda3-latest-Linux-x86_64.sh 		# Execute. Make sure to "yes" to add the conda to your PATH
+    # Add channels
+    conda config --add channels defaults
+    conda config --add channels conda-forge
+    conda config --add channels bioconda
 
 MetaMeta:
 	
-	conda install -c bioconda metameta=1.2.0
+	conda install metameta=1.2.0
 
 * All other tools and dependencies are installed in their own environment automatically on the first run (with `--use-conda` parameter active). 
 
 Alternatively, install MetaMeta in a separated environment (named "metametaenv") with the command: 
 
-	conda create -c bioconda -n metametaenv metameta=1.2.0	
+	conda create -n metametaenv metameta=1.2.0	
 	source activate metametaenv # Command to activate the environment. To deactivate use "source deactivate"
 
 Run:
