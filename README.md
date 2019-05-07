@@ -64,20 +64,14 @@ Run MetaMeta:
 Pre-configured databases:
 -------------------------
 
-Available databases:
-
-| Info | Date | metameta database name |
-| --- | --- | --- |
-| Archaea + Bacteria - RefSeq Complete Genomes | 2015-03 | `archaea_bacteria_201503` |
-| Fungal + Viral - RefSeq Complete Genomes | 2017-09 | `fungi_viral_201709` |
-
-
 Database availability per tool:
 
-| database | clark | dudes | gottcha | kaiju | kraken | motus |
-| --- | --- | --- | --- | --- | --- | --- |
-| `archaea_bacteria_201503` | [Yes](https://zenodo.org/record/820055) | [Yes](https://zenodo.org/record/820053) | [Yes](https://zenodo.org/record/819341) | [Yes](https://zenodo.org/record/819425) | [Yes](https://zenodo.org/record/819363) | [Yes](https://zenodo.org/record/819365) |
-| `fungi_viral_201709` | [Yes](https://zenodo.org/record/1044318) | [Yes](https://zenodo.org/record/1044328) | No | [Yes](https://zenodo.org/record/1044326) | [Yes](https://zenodo.org/record/1044330) | No |
+| database | clark | dudes | gottcha | kaiju | kraken | metaphlan2 | motus |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `archaea` | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | [Yes]() | Yes? |
+| `bacteria` | [Yes]() | [Yes]() | [Yes]() | [Yes]() | [Yes]() | [Yes]() | Yes? |
+| `fungi` | [Yes]() | [Yes]() | No | [Yes]() | [Yes]() | [Yes]() | No |
+| `viral` | [Yes]() | [Yes]() | [Yes]() | [Yes]() | [Yes]() | [Yes]() | No |
 
 
 Running sample data:
