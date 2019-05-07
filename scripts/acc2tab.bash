@@ -75,8 +75,8 @@ do
 		fi
 	done
 	# Remove last "|"
-	lineage_name="${lineage_name::-1}"
-	lineage_taxid="${lineage_taxid::-1}"
+	lineage_name="${lineage_name%?}"
+	lineage_taxid="${lineage_taxid%?}"
 
 	# Print output to STDOUT
 	echo ${ACC}$'\t'${len}$'\t'${name}$'\t'${taxid}$'\t'${lineage_name}$'\t'${lineage_taxid}
