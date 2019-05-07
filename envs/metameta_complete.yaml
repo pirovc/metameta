@@ -4,7 +4,7 @@ name: metametaenv_complete
 channels:
  - bioconda
 dependencies:
- - metameta=1.2.0
+ - metameta=1.3.0
  - clark=1.2.3
  - bowtie2=2.3.0
  - dudes=0.08
